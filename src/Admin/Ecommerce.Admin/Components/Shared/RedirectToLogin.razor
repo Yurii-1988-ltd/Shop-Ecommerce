@@ -1,0 +1,11 @@
+﻿
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (!Navigation.Uri.EndsWith("/login", StringComparison.OrdinalIgnoreCase))
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+}

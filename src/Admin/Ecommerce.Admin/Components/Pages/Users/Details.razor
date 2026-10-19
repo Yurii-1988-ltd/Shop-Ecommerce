@@ -1,0 +1,53 @@
+﻿@page "/users/{Id:guid}"
+<PageTitle>User Details</PageTitle>
+
+@if (_user is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <PageHeader Title="@($"{_user.FirstName} {_user.LastName}")" Subtitle="@_user.Email">
+        <Actions>
+            <MudButton Variant="Variant.Text"
+                       StartIcon="@Icons.Material.Filled.Edit"
+                       Href="@($"users/{_user.Id}/edit")">
+                Edit
+            </MudButton>
+            <MudButton Variant="Variant.Text"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       OnClick="GoBack">
+                Back
+            </MudButton>
+        </Actions>
+    </PageHeader>
+
+    <MudGrid>
+        <MudItem xs="12" md="8">
+            <UserInformationCard User="_user" />
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <UserRolesCard UserId="Id" />
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private UserResponse? _user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await UserApi.GetAsync(Id);
+
+        if (_user is null)
+        {
+            Navigation.NavigateTo("/users");
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/users");
+}

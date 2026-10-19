@@ -1,0 +1,149 @@
+﻿@page "/products"
+@attribute [Authorize(Roles = "Admin")]
+
+@inject IHttpClientFactory HttpClientFactory
+
+<PageHeader Title="Products"
+            Subtitle="Manage your product catalog">
+
+    <Actions>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Href="/products/create">
+
+            Add Product
+
+        </MudButton>
+
+    </Actions>
+
+</PageHeader>
+
+<SearchToolbar Placeholder="Search products..."
+               SearchText="@_search"
+               SearchTextChanged="OnSearchChanged"
+               OnRefresh="Refresh" />
+
+<MudPaper Class="entity-card" Elevation="2">
+
+    <MudTable T="ProductListItemResponse"
+              Class="entity-table"
+              ServerData="LoadProductsAsync"
+              @ref="_table"
+              Hover="true"
+              Dense="true"
+              Striped="true">
+
+        <HeaderContent>
+
+            <MudTh>Product</MudTh>
+            <MudTh Width="80px"></MudTh>
+            <MudTh>Price</MudTh>
+            <MudTh>Inventory</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh Align="Align.Right">Actions</MudTh>
+
+        </HeaderContent>
+
+        <RowTemplate>
+
+            <MudTd Width="80px">
+
+                @if (!string.IsNullOrEmpty(context.ImageUrl))
+                {
+                    var catalogClient =
+                        HttpClientFactory.CreateClient("Catalog");
+
+                    var baseUri =
+                        catalogClient.BaseAddress?
+                            .ToString()
+                            .TrimEnd('/');
+
+                    var imageUrl =
+                        $"{baseUri}/{context.ImageUrl.TrimStart('/')}";
+
+                    <MudAvatar Size="Size.Large">
+
+                        <MudImage Src="@imageUrl"
+                                  Alt="@context.Name" />
+
+                    </MudAvatar>
+                }
+                else
+                {
+                    <MudAvatar Size="Size.Large">
+                        <MudIcon Icon="@Icons.Material.Filled.Image" />
+                    </MudAvatar>
+                }
+
+            </MudTd>
+
+            <MudTd Class="product-column">
+
+                <MudStack Spacing="0">
+
+                    <MudLink Class="product-name"
+                             Href="@($"/products/{context.Id}")">
+
+                        @context.Name
+
+                    </MudLink>
+
+                    <MudText Class="product-sku">
+
+                        SKU: @context.Sku
+
+                    </MudText>
+
+                </MudStack>
+
+            </MudTd>
+
+            <MudTd>
+
+                <ProductPrice Price="@context.Price"
+                              Currency="@context.Currency" />
+
+            </MudTd>
+
+            <MudTd>
+
+                <InventoryChip StockQuantity="@context.StockQuantity" />
+
+            </MudTd>
+
+            <MudTd>
+
+                <StatusChip IsActive="@context.IsActive" />
+
+            </MudTd>
+
+            <MudTd Align="Align.Right">
+
+                <EntityActions
+                    OnDetails="@(() => Details(context.Id))"
+                    OnEdit="@(() => Edit(context.Id))"
+                    OnDelete="@(() => Delete(context))" />
+
+            </MudTd>
+
+        </RowTemplate>
+
+        <NoRecordsContent>
+
+            <EmptyState Title="No products"
+                        Description="Create your first product."
+                        ActionText="Add Product"
+                        ActionHref="/products/create" />
+
+        </NoRecordsContent>
+
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+
+    </MudTable>
+
+</MudPaper>

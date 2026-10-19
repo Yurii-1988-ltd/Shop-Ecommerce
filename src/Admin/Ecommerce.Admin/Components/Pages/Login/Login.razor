@@ -1,0 +1,49 @@
+﻿@page "/login"
+
+<PageTitle>Admin Login</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small"
+              Class="mt-16">
+
+    <MudPaper Class="pa-6">
+
+        <MudText Typo="Typo.h5"
+                 Align="Align.Center"
+                 Class="mb-6">
+            Admin Login
+        </MudText>
+
+        <form method="post"
+              action="/account/login"
+              data-enhance="false">
+
+            <AntiforgeryToken />
+
+            <MudTextField T="string"
+                          Label="Email"
+                          InputType="InputType.Email"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          Name="email"
+                          Required="true" />
+
+            <MudTextField T="string"
+                          Label="Password"
+                          InputType="InputType.Password"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          Name="password"
+                          Required="true" />
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true">
+                Login
+            </MudButton>
+
+        </form>
+
+    </MudPaper>
+
+</MudContainer>

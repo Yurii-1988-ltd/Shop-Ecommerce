@@ -1,0 +1,102 @@
+﻿@page "/users"
+
+@using Ecommerce.Admin.ApiClients.Users.Responses
+
+@inject IUserApiClient UserApi
+
+<PageTitle>Users</PageTitle>
+
+<PageHeader Title="Users" />
+
+<MudPaper Class="pa-4">
+    <MudTextField @bind-Value="_search"
+                  Label="Search"
+                  Placeholder="Name or email"
+                  Variant="Variant.Outlined"
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Search"
+                  Immediate="true"
+                  DebounceInterval="400"
+                  OnDebounceIntervalElapsed="SearchAsync"
+                  Class="mb-4" />
+
+    <MudTable T="UserResponse"
+              @ref="_table"
+              ServerData="LoadUsersAsync"
+              Hover="true"
+              Dense="true"
+              Striped="true">
+
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Created</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Name">
+                @context.FirstName @context.LastName
+            </MudTd>
+
+            <MudTd DataLabel="Email">
+                @context.Email
+            </MudTd>
+
+            <MudTd DataLabel="Created">
+                @context.CreatedAtUtc.ToLocalTime()
+            </MudTd>
+
+            <MudTd Align="Align.Right">
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Primary"
+                           Href="@($"/users/{context.Id}")">
+                    Details
+                </MudButton>
+
+            </MudTd>
+        </RowTemplate>
+
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new[] { 10, 20, 50 }" />
+        </PagerContent>
+
+    </MudTable>
+
+</MudPaper>
+
+@code
+{
+    private TableState? _tableState;
+    private string? _search;
+    private MudTable<UserResponse> _table = default!;
+    private async Task<TableData<UserResponse>> LoadUsersAsync(
+        TableState state,
+        CancellationToken cancellationToken)
+    {
+        var page = state.Page + 1;
+        var pageSize = state.PageSize;
+
+        var result = await UserApi.GetAllAsync(
+            page,
+            pageSize,
+            _search,
+
+            cancellationToken);
+
+        return new TableData<UserResponse>
+        {
+            Items = result.Items,
+            TotalItems = result.TotalCount
+        };
+    }
+    private async Task SearchAsync(string value)
+    {
+        if(_tableState is not null)
+        {
+            _tableState.Page = 0;
+        }
+        await _table.ReloadServerData();
+    }
+}

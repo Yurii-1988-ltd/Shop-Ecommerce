@@ -1,0 +1,210 @@
+﻿@page "/carts/{CustomerId:guid}"
+<PageHeader Title="Shopping Cart"
+            Subtitle="Manage customer cart">
+
+    <Actions>
+        <MudButton Href="/carts"
+                   Variant="Variant.Outlined"
+                   StartIcon="@Icons.Material.Filled.ArrowBack">
+            Back
+        </MudButton>
+
+        @if (_cart is not null && _cart.Items.Any())
+        {
+            <MudButton Color="Color.Warning"
+                       Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.DeleteSweep"
+                       OnClick="ClearCart">
+                Clear Cart
+            </MudButton>
+        }
+    </Actions>
+
+</PageHeader>
+
+@if (_loading)
+{
+    <MudProgressLinear Indeterminate="true" />
+}
+else if (_cart is null)
+{
+    <MudAlert Severity="Severity.Error">
+        Cart not found.
+    </MudAlert>
+}
+else
+{
+    <MudPaper Class="entity-card">
+
+        <MudStack Row="true"
+                  Justify="Justify.SpaceBetween"
+                  AlignItems="AlignItems.Center"
+                  Class="mb-4">
+
+            <MudText Typo="Typo.h6">
+                Cart Items
+            </MudText>
+
+            <MudText Typo="Typo.body1">
+                <b>@_cart.Items.Count</b> items
+            </MudText>
+
+        </MudStack>
+
+        <MudTable T="CartItemResponse"
+                  Items="_cart.Items"
+                  Hover="true"
+                  Dense="true"
+                  Striped="true">
+
+            <HeaderContent>
+                <MudTh>Product</MudTh>
+                <MudTh>Price</MudTh>
+                <MudTh Align="Align.Center">Quantity</MudTh>
+                <MudTh Align="Align.Right">Total</MudTh>
+                <MudTh Align="Align.Right">Actions</MudTh>
+            </HeaderContent>
+
+            <RowTemplate>
+
+                <MudTd DataLabel="Product">
+                    @context.Name
+                </MudTd>
+
+                <MudTd DataLabel="Price">
+                    @($"{context.Price:N2} {context.Currency}")
+                </MudTd>
+
+                <MudTd DataLabel="Quantity"
+                       Align="Align.Center">
+                    @context.Quantity
+                </MudTd>
+
+                <MudTd DataLabel="Total"
+                       Align="Align.Right">
+
+                    @($"{context.TotalPrice:N2} {context.Currency}")
+
+                </MudTd>
+
+                <MudTd DataLabel="Actions"
+                       Align="Align.Right">
+
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Primary"
+                                   OnClick="@(() => ChangeQuantity(context))" />
+
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   OnClick="@(() => RemoveItem(context.ProductId))" />
+
+                </MudTd>
+
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <MudText>No items in this cart.</MudText>
+            </NoRecordsContent>
+
+        </MudTable>
+
+        @if (_cart.Items.Any())
+        {
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Spacing="2">
+
+                <MudText Typo="Typo.h6">
+                    Coupon
+                </MudText>
+
+                @if (string.IsNullOrWhiteSpace(_cart.CouponCode))
+                {
+                    <MudStack Row="true"
+                              AlignItems="AlignItems.Center">
+
+                        <MudTextField @bind-Value="_couponCode"
+                                      Label="Coupon code"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Immediate="true" />
+
+                        <MudButton Color="Color.Primary"
+                                   Variant="Variant.Filled"
+                                   OnClick="ApplyCoupon"
+                                   Disabled="@_couponLoading">
+                            Apply
+                        </MudButton>
+
+                    </MudStack>
+                }
+                else
+                {
+                    <MudStack Row="true"
+                              AlignItems="AlignItems.Center">
+
+                        <MudChip T="string"
+                                 Color="Color.Success"
+                                 Variant="Variant.Outlined">
+                            @_cart.CouponCode
+                        </MudChip>
+
+                        <MudButton Color="Color.Error"
+                                   Variant="Variant.Outlined"
+                                   OnClick="RemoveCoupon"
+                                   Disabled="@_couponLoading">
+                            Remove
+                        </MudButton>
+
+                    </MudStack>
+                }
+
+            </MudStack>
+            <MudDivider Class="my-4" />
+
+            
+
+            <MudStack AlignItems="AlignItems.End" Spacing="1">
+
+                <MudText>
+                    Subtotal:
+                    <b>
+                        @_cart.SubTotal.ToString("N2") @_cart.Currency
+                    </b>
+                </MudText>
+
+                @if (_cart.Discount > 0)
+                {
+                    <MudText Color="Color.Success">
+                        Discount:
+                        <b>
+                            -@_cart.Discount.ToString("N2") @_cart.Currency
+                        </b>
+                    </MudText>
+                }
+
+                <MudText Typo="Typo.h6">
+                    Total:
+                    <b>
+                        @_cart.TotalAmount.ToString("N2") @_cart.Currency
+                    </b>
+                </MudText>
+
+            </MudStack>
+            @if(!string.IsNullOrWhiteSpace(_couponError))
+            {
+                <MudAlert Severity="Severity.Error"
+                Dense="true"
+                Class="mt-2">
+                    @_couponError
+                </MudAlert>
+            }
+        }
+
+    </MudPaper>
+}
+@code
+{
+  
+}
