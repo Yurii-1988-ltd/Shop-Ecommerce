@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Ecommerce.Presentation\Ecommerce.Presentation.csproj" />
+    <ProjectReference Include="..\Ecommerce.Currency.Modules.Infrastructure\Ecommerce.Currency.Modules.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -50,6 +50,7 @@ var postgres = builder.AddPostgres("postgres")
 var inventory = postgres.AddDatabase("inventories");
 var notification = postgres.AddDatabase("notifications");
 var localization = postgres.AddDatabase("localizations");
+var currency = postgres.AddDatabase("currencies");
 // 5. MongoDB
 var mongo = builder.AddMongoDB("mongo")
     .WithDataVolume();
@@ -75,6 +76,7 @@ var api = builder.AddProject<Projects.Ecommerce_API>(
     .WithReference(coupon)
     .WithReference(messaging)
     .WithReference(localization)
+    .WithReference(currency)
     .WithEnvironment(
         "SmtpOptions__Host",
         smtpEndpoint.Property(EndpointProperty.Host))

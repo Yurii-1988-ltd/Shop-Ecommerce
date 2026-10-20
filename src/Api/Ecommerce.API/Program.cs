@@ -9,6 +9,7 @@ using Ecommerce.Localization.Modules.Infrastructure;
 using Ecommerce.Localization.Modules.Presentation;
 using Ecommerce.API.Swagger;
 using Ecommerce.Promotions.Modules.Presentation.Promotions;
+using Ecommerce.Currency.Modules.Presentation.Currencies;
 
 internal class Program
 {
@@ -40,7 +41,8 @@ internal class Program
             .AddModule<InventoriesModule>(builder.Configuration)
             .AddModule<NotificationModule>(builder.Configuration)
             .AddModule<LocalizationModule>(builder.Configuration)
-            .AddModule<PromotionsModule>(builder.Configuration);
+            .AddModule<PromotionsModule>(builder.Configuration)
+            .AddModule<CurrencyModule>(builder.Configuration) ;
 
 
           
