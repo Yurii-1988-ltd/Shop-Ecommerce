@@ -16,4 +16,5 @@ public interface IExchangeRateRepository
     Task UpsertAsync(
         ExchangeRate exchangeRate,
         CancellationToken cancellationToken = default);
+    Task UpsertRangeAsync(IReadOnlyCollection<ExchangeRate> exchangeRates, CancellationToken cancellationToken = default);
 }

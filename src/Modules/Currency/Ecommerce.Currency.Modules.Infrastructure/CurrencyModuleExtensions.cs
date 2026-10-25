@@ -1,5 +1,7 @@
 ﻿
 
+using Ecommerce.Currency.Modules.Application.Features.GetLatestExchangeRates;
+
 namespace Ecommerce.Currency.Modules.Infrastructure;
 
 public static class CurrencyModuleExtensions
@@ -18,8 +20,10 @@ public static class CurrencyModuleExtensions
     public static IServiceCollection AddApplication(
         this IServiceCollection services)
     {
-        // Зарегистрируй здесь CQRS handlers из Application.
-        // Например, через MediatR, если обработчики уже созданы.
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(typeof(GetLatestExchangeRatesQuery).Assembly);
+        });
 
         return services;
     }
@@ -66,6 +70,7 @@ public static class CurrencyModuleExtensions
 
         services.AddScoped<IExchangeRateRepository, ExchangeRateRepository>();    
         services.AddScoped<ICurrencyConversionService, CurrencyConversionService>();
+        services.AddHostedService<ExchangeRateSynchronizationBackgroundService>();
 
         return services;
     }

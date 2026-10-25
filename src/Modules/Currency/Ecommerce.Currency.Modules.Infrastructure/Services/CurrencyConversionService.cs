@@ -1,10 +1,15 @@
 ﻿
+using Microsoft.Extensions.Caching.Memory;
+
 namespace Ecommerce.Currency.Modules.Infrastructure.Services;
 
 internal sealed class CurrencyConversionService(
-    IExchangeRateRepository exchangeRateRepository)
+    IExchangeRateRepository exchangeRateRepository,
+    IMemoryCache cache)
     : ICurrencyConversionService
 {
+    private static readonly TimeSpan CacheDuration =
+    TimeSpan.FromHours(1);
     public async Task<Result<Money>> ConvertAsync(
         Money source,
         string targetCurrency,
@@ -71,9 +76,14 @@ internal sealed class CurrencyConversionService(
         CancellationToken cancellationToken)
     {
         if (currencyCode == "UAH")
-        {
+        
             return Result.Success(1m);
+        var cacheKey = $"exchange-rate:{currencyCode}";
+        if(cache.TryGetValue(cacheKey, out decimal cachedRate))
+        {
+            return Result.Success(cachedRate);
         }
+        
 
         var exchangeRate = await exchangeRateRepository.GetLatestAsync(
             currencyCode,
@@ -86,7 +96,14 @@ internal sealed class CurrencyConversionService(
                     "Currency.ExchangeRateNotFound",
                     $"Exchange rate for '{currencyCode}' was not found."));
         }
+        var ratePerUnit = exchangeRate.GetRatePerUnit();
+        cache.Set(cacheKey,
+            ratePerUnit,
+            new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = CacheDuration
+            });
 
-        return Result.Success(exchangeRate.GetRatePerUnit());
+        return Result.Success(ratePerUnit);
     }
 }

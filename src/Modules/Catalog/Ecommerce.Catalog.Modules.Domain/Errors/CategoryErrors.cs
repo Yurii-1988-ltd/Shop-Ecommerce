@@ -12,4 +12,7 @@ public static class CategoryErrors
         Error.NotFound(
             "Category.NotFound",
             $"Category '{id}' was not found.");
+
+    public static Error InvalidParentCategory
+        => new("Invalid.ParentCategory", "Parent Category is invalid", ErrorType.Validation);
 }

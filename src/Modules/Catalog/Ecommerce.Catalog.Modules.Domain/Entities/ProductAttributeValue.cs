@@ -19,7 +19,7 @@ public class ProductAttributeValue
     public static ProductAttributeValue Create(Guid attributeId, string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Значение атрибута не может быть пустым.");
+            throw new ArgumentException("value can not be empty.");
 
         return new ProductAttributeValue
         {

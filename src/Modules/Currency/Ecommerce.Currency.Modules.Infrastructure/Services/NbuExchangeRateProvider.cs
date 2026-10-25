@@ -43,7 +43,7 @@ internal sealed class NbuExchangeRateProvider(
             url,
             cancellationToken);
 
-        if (response is null)
+        if (response is null || response.Length==0)
         {
             throw new HttpRequestException(
                 "The NBU API returned an empty response.");

@@ -12,7 +12,9 @@ public sealed class CurrencyModule : IModule
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        
+        new GetLatestExchangeRatesEndpoint().MapEndPoint(app);
+        new SynchronizeExchangeRatesEndpoint().MapEndPoint(app);
+        new ConvertCurrencyEndpoint().MapEndPoint(app);
     }
 
     public void RegisterServices(IServiceCollection services, IConfiguration config)

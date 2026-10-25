@@ -1,7 +1,5 @@
-﻿using Ecommerce.Currency.Modules.Application.Abstractions;
+﻿
 using Ecommerce.Currency.Modules.Domain.Entities;
-using Ecommerce.Currency.Modules.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Currency.Modules.Infrastructure.Repositories;
 
@@ -62,5 +60,74 @@ internal sealed class ExchangeRateRepository(ExchangeRateContext context) : IExc
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(currencyCode);
         return currencyCode.Trim().ToUpperInvariant();
+    }
+
+    public async Task UpsertRangeAsync(
+     IReadOnlyCollection<ExchangeRate> exchangeRates,
+     CancellationToken cancellationToken = default)
+    {
+        // Return early if there are no exchange rates to process.
+        if (exchangeRates.Count == 0)
+            return;
+
+        // Collect distinct currency codes from the incoming exchange rates.
+        var currencyCodes = exchangeRates
+            .Select(x => x.CurrencyCode)
+            .Distinct()
+            .ToArray();
+
+        // Collect distinct rate dates from the incoming exchange rates.
+        var dates = exchangeRates
+            .Select(x => x.RateDate)
+            .Distinct()
+            .ToArray();
+
+        // Load existing records matching the incoming currency codes and dates.
+        // These records will be updated instead of creating duplicates.
+        var existingRates = await context.ExchangeRates
+            .Where(x => currencyCodes.Contains(x.CurrencyCode)
+                        && dates.Contains(x.RateDate))
+            .ToListAsync(cancellationToken);
+
+        // Create a lookup using currency code and rate date as the composite key.
+        var existingLookup = existingRates.ToDictionary(
+            x => (x.CurrencyCode, x.RateDate));
+
+        // Process each incoming exchange rate.
+        foreach (var rate in exchangeRates)
+        {
+            // If a record with the same currency code and date exists,
+            // update its rate and units.
+            if (existingLookup.TryGetValue(
+                    (rate.CurrencyCode, rate.RateDate),
+                    out var existing))
+            {
+                var result = existing.Update(
+                    rate.Rate,
+                    rate.Units,
+                    rate.RateDate);
+
+                // Throw an exception if the domain entity rejects the update.
+                if (result.IsFailure)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to update exchange rate for {rate.CurrencyCode}.");
+                }
+            }
+            else
+            {
+                // Add a new record when no matching record exists.
+                context.ExchangeRates.Add(rate);
+
+                // Update the lookup to prevent duplicate additions
+                // within the same batch.
+                existingLookup.Add(
+                    (rate.CurrencyCode, rate.RateDate),
+                    rate);
+            }
+        }
+
+        // Persist all additions and updates in a single database operation.
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

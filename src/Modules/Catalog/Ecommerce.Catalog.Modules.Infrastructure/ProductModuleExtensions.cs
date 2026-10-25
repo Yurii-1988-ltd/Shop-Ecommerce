@@ -7,6 +7,7 @@ using Ecommerce.Catalog.Modules.Infrastructure.Services;
 using Ecommerce.Mongo;
 using Microsoft.AspNetCore.Builder;
 
+
 namespace Ecommerce.Catalog.Modules.Infrastructure;
 
 public static class ProductModuleExtensions
@@ -15,6 +16,7 @@ public static class ProductModuleExtensions
     {
         services.AddMongo(configuration);
         services.AddApplication();
+        services.AddMemoryCache();
         return services;
 
     }
@@ -42,6 +44,7 @@ public static class ProductModuleExtensions
         services.AddScoped<IFileStorage, LocalFileStorage>();
         services.AddScoped<IFileValidator, FileValidator>();
 
+     
         return services;
     }
     private static IServiceCollection AddApplication(this IServiceCollection services)
