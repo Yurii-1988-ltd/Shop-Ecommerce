@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Application.Abstractions;
 using Ecommerce.Domain.Constants;
 using Ecommerce.Domain.ValueObjects;
+using Ecommerce.Currency.Modules.Application.Abstractions;
+using Ecommerce.Order.Modules.Domain.Entities;
 using Ecommerce.Order.Modules.Domain.ValueObjects;
 using Ecommerce.Shared.Contracts.IntegrationEvent;
 using Ecommerce.Shared.Contracts.Orders;
@@ -9,6 +11,7 @@ using MassTransit;
 public sealed class CreateOrderCommandHandler(
     IOrderRepository repository,
     IEntityNumberGenerator orderNumberGenerator,
+    ICurrencyConversionService conversionService,
     IPublishEndpoint publishEndpoint)
     : ICommandHandler<CreateOrderCommand, CreateOrderResponse>
 {
@@ -23,10 +26,13 @@ public sealed class CreateOrderCommandHandler(
                 "Customer email is required.");
         }
 
-        var orderNumber =
-            await orderNumberGenerator.GenerateAsync(
-                NumberPrefixes.Order,
-                cancellationToken);
+        var currency = string.IsNullOrWhiteSpace(request.Currency)
+            ? CurrencyConstant.UAH
+            : request.Currency.Trim().ToUpperInvariant();
+
+        var orderNumber = await orderNumberGenerator.GenerateAsync(
+            NumberPrefixes.Order,
+            cancellationToken);
 
         var shippingAddress = new OrderAddress(
             request.ShippingAddress.FirstName,
@@ -40,42 +46,110 @@ public sealed class CreateOrderCommandHandler(
             request.CustomerId,
             request.CustomerEmail,
             orderNumber,
-           
             shippingAddress,
-            request.Currency);
+            currency);
 
         if (orderResult.IsFailure)
             return orderResult.Error;
 
         var order = orderResult.Value;
 
+        // Для иностранной валюты фиксируем курс один раз на весь заказ.
+        if (currency != CurrencyConstant.UAH && request.Items.Count > 0)
+        {
+            var firstItem = request.Items.First();
+
+            var originPriceResult = Money.Create(
+                firstItem.UnitPrice,
+                CurrencyConstant.UAH);
+
+            if (originPriceResult.IsFailure)
+                return originPriceResult.Error;
+
+            var conversionResult =
+                await conversionService.ConvertWithRateAsync(
+                    originPriceResult.Value,
+                    currency,
+                    cancellationToken);
+
+            if (conversionResult.IsFailure)
+                return conversionResult.Error;
+
+            var conversion = conversionResult.Value;
+
+            if (!conversion.ExchangeRateDate.HasValue)
+            {
+                return Error.Failure(
+                    "Currency.ExchangeRateDateRequired",
+                    "Exchange rate date is required for a non-UAH order.");
+            }
+
+            var snapshotResult = order.SetExchangeRateSnapshot(
+                conversion.ExchangeRate,
+                conversion.ExchangeRateDate.Value);
+
+            if (snapshotResult.IsFailure)
+                return snapshotResult.Error;
+        }
+
         foreach (var item in request.Items)
         {
-            var moneyResult = Money.Create(
+            var originPriceResult = Money.Create(
                 item.UnitPrice,
-                request.Currency);
+                CurrencyConstant.UAH);
 
-            if (moneyResult.IsFailure)
-                return moneyResult.Error;
+            if (originPriceResult.IsFailure)
+                return originPriceResult.Error;
+
+            var originUnitPrice = originPriceResult.Value;
+            Money unitPrice;
+
+            if (currency == CurrencyConstant.UAH)
+            {
+                unitPrice = originUnitPrice;
+            }
+            else
+            {
+                if (!order.ExchangeRate.HasValue)
+                {
+                    return Error.Failure(
+                        "Currency.ExchangeRateRequired",
+                        "Exchange rate snapshot is required.");
+                }
+
+                // Используем снимок заказа, а не актуальный курс NBU.
+                var conversionResult =
+                    await conversionService.ConvertAtRateAsync(
+                        originUnitPrice,
+                        currency,
+                        order.ExchangeRate.Value,
+                        cancellationToken);
+
+                if (conversionResult.IsFailure)
+                    return conversionResult.Error;
+
+                unitPrice = conversionResult.Value;
+            }
 
             var addItemResult = order.AddItem(
                 item.ProductId,
                 item.ProductName,
                 item.Sku,
-                moneyResult.Value,
+                originUnitPrice,
+                unitPrice,
                 item.Quantity);
 
             if (addItemResult.IsFailure)
                 return addItemResult.Error;
         }
 
-        // Рассчитываем итоговую сумму заказа
         var totalResult = order.GetTotalAmount();
 
         if (totalResult.IsFailure)
             return totalResult.Error;
-        var items = order.Items.Select(
-            item =>new OrderCreatedItemIntegrationEvent(
+
+        var items = order.Items
+            .Select(item => new OrderCreatedItemIntegrationEvent(
                 item.ProductId,
                 item.ProductName,
                 item.SKU,
@@ -90,15 +164,15 @@ public sealed class CreateOrderCommandHandler(
         await publishEndpoint.Publish(
             new OrderCreatedIntegrationEvent(
                 OrderId: order.Id,
-                OrderNumber:orderNumber,
+                OrderNumber: order.OrderNumber,
                 CustomerId: order.CustomerId,
-                CustomerEmail: request.CustomerEmail,
+                CustomerEmail: order.CustomerEmail,
                 TotalAmount: totalResult.Value.Amount,
                 Currency: order.Currency,
                 Items: items,
-                CreatedAtUtc: DateTime.UtcNow),
+                CreatedAtUtc: order.CreatedAtUtc),
             cancellationToken);
 
-        return new CreateOrderResponse(order.Id, orderNumber);
+        return new CreateOrderResponse(order.Id, order.OrderNumber);
     }
 }

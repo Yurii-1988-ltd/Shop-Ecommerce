@@ -1,7 +1,4 @@
-﻿using Ecommerce.Application.Abstractions;
-using Ecommerce.Shared.Contracts.IntegrationEvent;
-using Ecommerce.Shared.Contracts.Orders;
-using MassTransit;
+﻿
 
 namespace Ecommerce.Orders.Modules.Application.Tests;
 
@@ -13,6 +10,7 @@ public sealed class CreateOrderCommandHandlerTest
         // Arrange
         var repositoryMock = new Mock<IOrderRepository>();
         var orderNumberGeneratorMock = new Mock<IEntityNumberGenerator>();
+        var conversionServiceMock = new Mock<ICurrencyConversionService>();
         var publishEndpointMock = new Mock<IPublishEndpoint>();
 
         const string orderNumber = "ORD-2026-100001";
@@ -35,6 +33,7 @@ public sealed class CreateOrderCommandHandlerTest
         var handler = new CreateOrderCommandHandler(
             repositoryMock.Object,
             orderNumberGeneratorMock.Object,
+            conversionServiceMock.Object,
             publishEndpointMock.Object);
 
         var addressDto = new OrderAddressDto(
@@ -75,6 +74,8 @@ public sealed class CreateOrderCommandHandlerTest
             x => x.InsertAsync(
                 It.Is<Order.Modules.Domain.Entities.Order>(o =>
                     o.Items.Count == 1 &&
+                    o.Items.First().OriginUnitPrice.Amount == 150.00m &&
+                    o.Items.First().UnitPrice.Amount == 150.00m &&
                     o.Currency == CurrencyConstant.UAH &&
                     o.CustomerId == customerId),
                 It.IsAny<CancellationToken>()),
@@ -86,8 +87,24 @@ public sealed class CreateOrderCommandHandlerTest
                     e.CustomerId == customerId &&
                     e.CustomerEmail == customerEmail &&
                     e.TotalAmount == 300.00m &&
+                    e.Currency == CurrencyConstant.UAH &&
                     e.OrderId == result.Value.OrderId),
                 It.IsAny<CancellationToken>()),
             Times.Once);
+
+        conversionServiceMock.Verify(
+            x => x.ConvertWithRateAsync(
+                It.IsAny<Ecommerce.Domain.ValueObjects.Money>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+
+        conversionServiceMock.Verify(
+            x => x.ConvertAtRateAsync(
+                It.IsAny<Money>(),
+                It.IsAny<string>(),
+                It.IsAny<decimal>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }

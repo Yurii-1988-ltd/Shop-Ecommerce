@@ -18,6 +18,15 @@ public sealed class Order : Entity
     public OrderStatus Status { get; private set; }
     public OrderAddress ShippingAddress { get; private set; }
     public string Currency { get; private set; }
+
+    /// <summary>
+    /// Exchange rate expressed as UAH per one unit of the order currency
+    /// </summary>
+    public decimal? ExchangeRate { get; private set; }
+
+    public DateOnly? ExchangeRateDate { get; private set; }
+
+    public DateTime? ExchangeRateCapturedAtUtc { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? UpdatedAtUtc { get; private set; }
     public DateTime? PaidAtUtc { get; private set; }
@@ -122,30 +131,36 @@ public sealed class Order : Entity
     }
 
     public Result AddItem(
-        Guid productId,
-        string productName,
-        string sku,
-        Money price,
-        int quantity)
+    Guid productId,
+    string productName,
+    string sku,
+    Money originUnitPrice,
+    Money unitPrice,
+    int quantity)
     {
         if (Status != OrderStatus.Draft)
-        {
             return OrderErrors.OrderCannotBeModified(Status);
-        }
 
-        var existing = _items.FirstOrDefault(x => x.ProductId == productId);
+        var existing = _items.FirstOrDefault(
+            x => x.ProductId == productId);
 
         if (existing is not null)
         {
+            var result = existing.AddQuantity(quantity);
+
+            if (result.IsFailure)
+                return result.Error;
+
             UpdatedAtUtc = DateTime.UtcNow;
-            return existing.AddQuantity(quantity);
+            return Result.Success();
         }
 
         var itemResult = OrderItem.Create(
             productId,
             productName,
             sku,
-            price,
+            originUnitPrice,
+            unitPrice,
             quantity);
 
         if (itemResult.IsFailure)
@@ -300,6 +315,34 @@ public sealed class Order : Entity
         }
         item.ChangeQuantity(quantity);
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
+    }
+    public Result SetExchangeRateSnapshot(
+      decimal exchangeRate,
+      DateOnly exchangeRateDate)
+    {
+
+
+        if (Status != OrderStatus.Draft)
+            return OrderErrors.OrderCannotBeModified(Status);
+
+        if (exchangeRate <= 0)
+            return OrderErrors.InvalidExchangeRate;
+
+        if (ExchangeRate.HasValue || ExchangeRateDate.HasValue)
+        {
+            return Error.Failure(
+                "Order.ExchangeRateAlreadySet",
+                "Exchange rate snapshot has already been set.");
+        }
+
+        var now = DateTime.UtcNow;
+
+        ExchangeRate = exchangeRate;
+        ExchangeRateDate = exchangeRateDate;
+        ExchangeRateCapturedAtUtc = now;
+        UpdatedAtUtc = now;
+
         return Result.Success();
     }
     #endregion

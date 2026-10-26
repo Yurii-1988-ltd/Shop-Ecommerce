@@ -3,10 +3,12 @@ using Ecommerce.Application.CQRS;
 using Ecommerce.Currency.Modules.Application.Abstractions;
 using Ecommerce.Currency.Modules.Domain.Entities;
 using Ecommerce.Domain.Domain;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Ecommerce.Currency.Modules.Application.Features.SynchronizeExchangeRates;
 
 internal sealed class SynchronizeExchangeRatesCommandHandler(IExchangeRateRepository repository,
+                IMemoryCache cache,
                 IExchangeRateProvider rateProvider) : ICommandHandler<SynchronizeExchangeRatesCommand, int>
 {
     public async Task<Result<int>> Handle(SynchronizeExchangeRatesCommand request, CancellationToken cancellationToken)
@@ -30,6 +32,10 @@ internal sealed class SynchronizeExchangeRatesCommandHandler(IExchangeRateReposi
         await repository.UpsertRangeAsync(
     exchangeRates,
     cancellationToken);
+        foreach(var exchangeRate in exchangeRates)
+        {
+            cache.Remove($"exchange-rate:{exchangeRate.CurrencyCode}");
+        }
 
 
         return Result.Success(exchangeRates.Count);

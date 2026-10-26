@@ -1,4 +1,6 @@
-﻿using Ecommerce.Domain.Constants;
+﻿
+using Ecommerce.Currency.Modules.Application.Abstractions;
+using Ecommerce.Domain.Constants;
 using Ecommerce.Domain.Domain;
 using Ecommerce.Domain.ValueObjects;
 using Ecommerce.Order.Modules.Application.Contracts;
@@ -20,6 +22,7 @@ public sealed class AddOrderItemCommandHandlerTest
         // Arrange
         var repository = new Mock<IOrderRepository>();
         var productService = new Mock<IProductService>();
+        var conversionService = new Mock<ICurrencyConversionService>();
 
         var address = new OrderAddress(
             "Ivan",
@@ -45,9 +48,7 @@ public sealed class AddOrderItemCommandHandlerTest
             Guid.NewGuid(),
             "iPhone",
             "IP-001",
-            Money.Create(
-                100,
-                CurrencyConstant.UAH).Value);
+            Money.Create(100, CurrencyConstant.UAH).Value);
 
         productService
             .Setup(x => x.GetProductAsync(
@@ -63,7 +64,8 @@ public sealed class AddOrderItemCommandHandlerTest
 
         var handler = new AddOrderItemCommandHandler(
             repository.Object,
-            productService.Object);
+            productService.Object,
+            conversionService.Object);
 
         var command = new AddOrderItemCommand(
             order.Id,
@@ -86,7 +88,27 @@ public sealed class AddOrderItemCommandHandlerTest
         item.ProductName.Should().Be(product.Name);
         item.SKU.Should().Be(product.Sku);
         item.Quantity.Should().Be(2);
+
+        item.OriginUnitPrice.Amount.Should().Be(100);
+        item.OriginUnitPrice.Currency.Should().Be(CurrencyConstant.UAH);
+
         item.UnitPrice.Amount.Should().Be(100);
+        item.UnitPrice.Currency.Should().Be(CurrencyConstant.UAH);
+
+        conversionService.Verify(
+            x => x.ConvertWithRateAsync(
+                It.IsAny<Money>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+
+        conversionService.Verify(
+            x => x.ConvertAtRateAsync(
+                It.IsAny<Money>(),
+                It.IsAny<string>(),
+                It.IsAny<decimal>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
 
         repository.Verify(
             x => x.UpdateAsync(
@@ -101,6 +123,7 @@ public sealed class AddOrderItemCommandHandlerTest
         // Arrange
         var repository = new Mock<IOrderRepository>();
         var productService = new Mock<IProductService>();
+        var conversionService = new Mock<ICurrencyConversionService>();
 
         var orderId = Guid.NewGuid();
         var productId = Guid.NewGuid();
@@ -109,11 +132,13 @@ public sealed class AddOrderItemCommandHandlerTest
             .Setup(x => x.GetByIdAsync(
                 orderId,
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Order.Modules.Domain.Entities.Order?)null);
+            .ReturnsAsync(
+                (Order.Modules.Domain.Entities.Order?)null);
 
         var handler = new AddOrderItemCommandHandler(
             repository.Object,
-            productService.Object);
+            productService.Object,
+            conversionService.Object);
 
         var command = new AddOrderItemCommand(
             orderId,
@@ -132,6 +157,21 @@ public sealed class AddOrderItemCommandHandlerTest
         productService.Verify(
             x => x.GetProductAsync(
                 It.IsAny<Guid>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+
+        conversionService.Verify(
+            x => x.ConvertWithRateAsync(
+                It.IsAny<Money>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+
+        conversionService.Verify(
+            x => x.ConvertAtRateAsync(
+                It.IsAny<Money>(),
+                It.IsAny<string>(),
+                It.IsAny<decimal>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
 

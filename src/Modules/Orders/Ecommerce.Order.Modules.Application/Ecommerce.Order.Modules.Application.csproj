@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\Contracts\Ecommerce.Catalog.Contracts\Ecommerce.Catalog.Contracts.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Ecommerce.Application\Ecommerce.Application.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Shared\Ecommerce.Shared.Contracts\Ecommerce.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\Currency\Ecommerce.Currency.Modules.Application\Ecommerce.Currency.Modules.Application.csproj" />
     <ProjectReference Include="..\..\Users\Ecommerce.Modules.Users.Contracts\Ecommerce.Modules.Users.Contracts.csproj" />
     <ProjectReference Include="..\Ecommerce.Order.Modules.Domain\Ecommerce.Order.Modules.Domain.csproj" />
   </ItemGroup>

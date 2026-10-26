@@ -68,4 +68,6 @@ public static class OrderErrors
 
     public static Error AccessDenied =>
         new("Order.AccessDenied", "You do not have access to this order", ErrorType.Validation);
+    public static Error InvalidExchangeRate =>
+        new("Invalid.ExchangeRate", "Exchange is invalid", ErrorType.Validation);
 }
