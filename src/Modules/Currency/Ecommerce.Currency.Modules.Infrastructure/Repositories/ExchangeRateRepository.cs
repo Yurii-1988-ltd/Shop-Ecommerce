@@ -19,6 +19,7 @@ internal sealed class ExchangeRateRepository(ExchangeRateContext context) : IExc
     {
      
         var latestDates = context.ExchangeRates
+            .AsNoTracking()
             .GroupBy(x => x.CurrencyCode)
             .Select(group => new
             {

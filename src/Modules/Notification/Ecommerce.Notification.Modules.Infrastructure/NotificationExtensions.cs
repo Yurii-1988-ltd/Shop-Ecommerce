@@ -1,4 +1,5 @@
-﻿using Ecommerce.Notification.Modules.Infrastructure.Adapters;
+﻿
+using Ecommerce.Notification.Modules.Infrastructure.Adapters;
 using Ecommerce.Notification.Modules.Infrastructure.Configuration;
 using Ecommerce.Notification.Modules.Infrastructure.Templates;
 
@@ -10,12 +11,12 @@ public static class NotificationsModuleExtensions
         this IServiceCollection services,
         IConfiguration config)
     {
-        // 1. MediatR
+        // MediatR
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(
                 typeof(INotificationService).Assembly));
 
-        // 2. PostgreSQL
+        // PostgreSQL
         var connectionString =
             config.GetConnectionString("notifications")
             ?? throw new InvalidOperationException(
@@ -34,12 +35,12 @@ public static class NotificationsModuleExtensions
             options.UseNpgsql(dataSource);
         });
 
-        // 3. MassTransit
+        // MassTransit
         services.AddCustomTransit(
             config,
             typeof(NotificationsModuleExtensions).Assembly);
 
-        // 4. SMTP configuration
+        // SMTP
         var smtpOptions = config
             .GetSection("SmtpOptions")
             .Get<SmtpOptions>()
@@ -64,15 +65,6 @@ public static class NotificationsModuleExtensions
                 "SmtpOptions:Password is not configured.");
         }
 
-        // TEMPORARY SMTP diagnostics — do not log credentials.
-        Console.WriteLine(
-            $"[SMTP DEBUG] Host={smtpOptions.Host}; " +
-            $"Port={smtpOptions.Port}; " +
-            $"UseSsl={smtpOptions.UseSsl}; " +
-            $"UsernameConfigured={!string.IsNullOrWhiteSpace(smtpOptions.Username)}; " +
-            $"PasswordConfigured={!string.IsNullOrWhiteSpace(smtpOptions.Password)}");
-
-        // 5. FluentEmail + SMTP
         services
             .AddFluentEmail(
                 smtpOptions.FromEmail,
@@ -88,7 +80,7 @@ public static class NotificationsModuleExtensions
                     smtpOptions.Password)
             });
 
-        // 6. Application services
+        // Application services
         services.AddScoped<
             INotificationUnitOfWork,
             NotificationsUnitOfWork>();

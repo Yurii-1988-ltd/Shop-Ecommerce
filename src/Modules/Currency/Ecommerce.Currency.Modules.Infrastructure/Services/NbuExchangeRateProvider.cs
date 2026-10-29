@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿
+using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Ecommerce.Currency.Modules.Application.Abstractions;
@@ -10,9 +11,11 @@ namespace Ecommerce.Currency.Modules.Infrastructure.Services;
 
 internal sealed class NbuExchangeRateProvider(
     HttpClient httpClient,
-    IOptions<NbuOptions> options) : IExchangeRateProvider
+    IOptions<NbuOptions> options)
+    : IExchangeRateProvider
 {
-    private readonly string _baseUrl = options.Value.BaseUrl.TrimEnd('/');
+    private readonly string _baseUrl =
+        options.Value.BaseUrl.TrimEnd('/');
 
     public Task<IReadOnlyCollection<ExchangeRateData>> GetRatesAsync(
         CancellationToken cancellationToken = default)
@@ -39,11 +42,12 @@ internal sealed class NbuExchangeRateProvider(
         string url,
         CancellationToken cancellationToken)
     {
-        var response = await httpClient.GetFromJsonAsync<NbuExchangeRateDto[]>(
-            url,
-            cancellationToken);
+        var response =
+            await httpClient.GetFromJsonAsync<NbuExchangeRateDto[]>(
+                url,
+                cancellationToken);
 
-        if (response is null || response.Length==0)
+        if (response is null || response.Length == 0)
         {
             throw new HttpRequestException(
                 "The NBU API returned an empty response.");
