@@ -1,13 +1,4 @@
 ﻿
-
-
-using Ecommerce.Application.Mappings;
-using Ecommerce.Catalog.Contracts.Products;
-using Ecommerce.Catalog.Modules.Infrastructure.Services;
-using Ecommerce.Mongo;
-using Microsoft.AspNetCore.Builder;
-
-
 namespace Ecommerce.Catalog.Modules.Infrastructure;
 
 public static class ProductModuleExtensions
@@ -43,8 +34,9 @@ public static class ProductModuleExtensions
         services.AddSingleton<ICatalogDatabase, CatalogDatabase>();
         services.AddScoped<IFileStorage, LocalFileStorage>();
         services.AddScoped<IFileValidator, FileValidator>();
+        services.AddScoped<CategoryTreeService>();
 
-     
+
         return services;
     }
     private static IServiceCollection AddApplication(this IServiceCollection services)

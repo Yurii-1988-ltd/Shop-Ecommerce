@@ -21,6 +21,13 @@ namespace Ecommerce.Storefront.ApiClients.Catalogs
 
         }
 
+        public async Task<List<CategoryListItemResponse>?> GetCategoriesAsync(CancellationToken cancellationToken = default)
+        {
+            return await httpClient.GetFromJsonAsync<List<CategoryListItemResponse>>(
+                        "/categories/all",
+                        cancellationToken);
+        }
+
         public async Task<PagedResult<ProductListItemResponse>?> GetProductsAsync(
          int page = 1,
          int pageSize = 20,

@@ -1,27 +1,28 @@
-﻿using Ardalis.Specification.EntityFrameworkCore; // Или Ardalis.Specification.IQueryable
-using Ecommerce.Application.CQRS;
-using Ecommerce.Application.Pagination;
-using Ecommerce.Catalog.Modules.Application.Abstractions.Data;
-using Ecommerce.Catalog.Modules.Application.Mapping;
-using Ecommerce.Catalog.Modules.Domain.Entities;
-using Ecommerce.Catalog.Modules.Domain.Specifications;
-using Ecommerce.Domain.Domain;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+﻿
 
 namespace Ecommerce.Catalog.Modules.Application.Features.Products.GetProducts;
 
 internal sealed class GetProductsQueryHandler(
-    ICatalogDatabase context)
+    ICatalogDatabase context,
+    CategoryTreeService categoryTreeService) 
     : IQueryHandler<GetProductsQuery, PagedResult<ProductListItemResponse>>
 {
     public async Task<Result<PagedResult<ProductListItemResponse>>> Handle(
         GetProductsQuery request,
         CancellationToken cancellationToken)
     {
-        // 1. Создаем экземпляр спецификации из параметров запроса
+        // 0. Если передан CategoryId, собираем саму категорию и все ее подкатегории
+        List<Guid>? targetCategoryIds = null;
+        if (request.CategoryId.HasValue)
+        {
+            targetCategoryIds = await categoryTreeService.GetCategoryAndSubCategoryIdsAsync(
+                request.CategoryId.Value,
+                cancellationToken);
+        }
+
+        
         var spec = new ProductFilterAndSortSpec(
-            categoryId: request.CategoryId,
+            categoryIds: targetCategoryIds, 
             brandId: request.BrandId,
             minPrice: request.MinPrice,
             maxPrice: request.MaxPrice,
@@ -33,7 +34,7 @@ internal sealed class GetProductsQueryHandler(
         // 2. Получаем IQueryable от MongoDB
         var query = context.Products.AsQueryable();
 
-        // Если есть поисковый запрос по строке, добавляем его в LINQ-цепочку
+        // Поиск по строке
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var search = request.Search.Trim().ToLower();
@@ -43,22 +44,21 @@ internal sealed class GetProductsQueryHandler(
                 x.ProductNumber.ToLower().Contains(search));
         }
 
-        // 3. Подсчет общего количества ДО применения Skip/Take (пагинации)
-        // Применяем спецификацию БЕЗ учета Skip/Take для Count
+        // 3. Подсчет общего количества ДО применения Skip/Take
         var countSpec = new ProductFilterAndSortSpec(
-            categoryId: request.CategoryId,
+            categoryIds: targetCategoryIds, 
             brandId: request.BrandId,
             minPrice: request.MinPrice,
             maxPrice: request.MaxPrice,
             inStockOnly: request.InStockOnly,
             sortOption: request.SortOption,
-            page: 0,       // Сбрасываем пагинацию
-            pageSize: 0);  // чтобы посчитать общее кол-во
+            page: 0,
+            pageSize: 0);
 
         var totalCountQuery = SpecificationEvaluator.Default.GetQuery(query, countSpec);
         var totalCount = await totalCountQuery.CountAsync(cancellationToken);
 
-        // 4. Применяем полную спецификацию (с фильтрами, сортировкой и Skip/Take)
+        // 4. Применяем полную спецификацию
         var filteredQuery = SpecificationEvaluator.Default.GetQuery(query, spec);
         var products = await filteredQuery.ToListAsync(cancellationToken);
 

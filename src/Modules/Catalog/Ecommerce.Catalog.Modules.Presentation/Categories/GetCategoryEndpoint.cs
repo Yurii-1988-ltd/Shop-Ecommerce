@@ -1,10 +1,7 @@
 ﻿
 
 using Ecommerce.Catalog.Modules.Application.Features.Categories.GetCategory;
-using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+
 
 namespace Ecommerce.Catalog.Modules.Presentation.Categories;
 

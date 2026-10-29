@@ -5,6 +5,7 @@ public sealed record CreateCatalogCommand(
   
     string ProductNumber,
     string Description,
+    Guid? CategoryId,
     string Sku,
     decimal Price,
     string Currency

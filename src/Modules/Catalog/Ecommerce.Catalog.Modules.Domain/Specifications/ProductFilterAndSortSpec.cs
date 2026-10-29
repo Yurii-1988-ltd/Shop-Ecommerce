@@ -7,7 +7,7 @@ namespace Ecommerce.Catalog.Modules.Domain.Specifications;
 public sealed class ProductFilterAndSortSpec : Specification<Product>
 {
     public ProductFilterAndSortSpec(
-        Guid? categoryId = null,
+        IEnumerable<Guid>? categoryIds = null,
         Guid? brandId = null,
         decimal? minPrice = null,
         decimal? maxPrice = null,
@@ -19,8 +19,12 @@ public sealed class ProductFilterAndSortSpec : Specification<Product>
         // 1. Фильтрация
         Query.Where(p => p.IsActive);
 
-        if (categoryId.HasValue)
-            Query.Where(p => p.CategoryId == categoryId.Value);
+        
+        var idsList = categoryIds?.ToList();
+        if (idsList is { Count: > 0 })
+        {
+            Query.Where(p => p.CategoryId != null && idsList.Contains(p.CategoryId.Value));
+        }
 
         if (brandId.HasValue)
             Query.Where(p => p.BrandId == brandId.Value);
@@ -60,7 +64,7 @@ public sealed class ProductFilterAndSortSpec : Specification<Product>
                 break;
         }
 
-        // 3. Подгрузка изображений (EF Core подгрузит всю коллекцию Images для сущности)
+        // 3. Подгрузка изображений
         Query.Include(p => p.Images);
 
         // 4. Пагинация

@@ -463,3 +463,84 @@ section {
         font-size: 36px;
     }
 }
+/*===================================================================Categories sections========
+    /* Основной контейнер сайдбара с фильтрами */
+.catalog-page {
+    display: flex;
+    gap: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.catalog-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: #f9f9fb;
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+    border: 1px solid #eaeaea;
+}
+
+.catalog-content {
+    flex-grow: 1;
+}
+
+/* Заголовок фильтра */
+.category-filter .filter-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #111;
+}
+
+/* Список категорий */
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    /* Кнопки категорий в сайдбаре */
+    .category-list li button {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #555;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        /* Эффект наведения */
+        .category-list li button:hover {
+            background: #f0f0f4;
+            color: #111;
+        }
+
+    /* Активная (выбранная) категория */
+    .category-list li.active button {
+        background: #111;
+        color: #fff;
+        font-weight: 600;
+    }
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .catalog-page {
+        flex-direction: column;
+    }
+
+    .catalog-sidebar {
+        width: 100%;
+    }
+}
+

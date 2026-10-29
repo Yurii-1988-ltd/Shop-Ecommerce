@@ -1,0 +1,62 @@
+﻿@inject ICatalogApiClient CatalogApiClient
+
+<div class="category-filter">
+    <h3 class="filter-title">Categories</h3>
+
+    @if (_loading)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <ul class="category-list">
+            <!-- Кнопка "Все категории" для сброса фильтра -->
+            <li class="@(SelectedCategoryId == null ? "active" : "")">
+                <button @onclick="() => SelectCategory(null)">All Categories</button>
+            </li>
+
+            @foreach (var category in _categories)
+            {
+                <li class="@(SelectedCategoryId == category.Id ? "active" : "")">
+                    <button @onclick="() => SelectCategory(category.Id)">
+                        @category.Name
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid? SelectedCategoryId { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid?> OnCategoryChanged { get; set; }
+
+    private List<CategoryListItemResponse> _categories = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await CatalogApiClient.GetCategoriesAsync();
+            if (result is not null)
+            {
+                _categories = result;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task SelectCategory(Guid? categoryId)
+    {
+        SelectedCategoryId = categoryId;
+        // Уведомляем родительскую страницу о смене категории
+        await OnCategoryChanged.InvokeAsync(categoryId);
+    }
+}

@@ -1,7 +1,7 @@
 ﻿
 
 using Ecommerce.Catalog.Modules.Domain.Entities;
-using Ecommerce.Mongo;
+
 
 namespace Ecommerce.Catalog.Modules.Infrastructure.Repositories;
 
@@ -18,6 +18,12 @@ internal sealed class CategoryRepository : ICategoryRepository
     {
         return _collection.DeleteOneAsync(
                x => x.Id == id, cancellationToken);
+    }
+
+    public async Task<List<Category>> GetAllActiveAsync(CancellationToken cancellationToken)
+    {
+        return await _collection.Find(x => x.IsActive)
+            .ToListAsync();
     }
 
     public async Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken)

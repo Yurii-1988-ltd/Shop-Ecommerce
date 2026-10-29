@@ -1,12 +1,4 @@
-﻿using Ecommerce.Application.Abstractions;
-using Ecommerce.Domain.Constants;
-using Ecommerce.Domain.ValueObjects;
-using Ecommerce.Currency.Modules.Application.Abstractions;
-using Ecommerce.Order.Modules.Domain.Entities;
-using Ecommerce.Order.Modules.Domain.ValueObjects;
-using Ecommerce.Shared.Contracts.IntegrationEvent;
-using Ecommerce.Shared.Contracts.Orders;
-using MassTransit;
+﻿
 
 public sealed class CreateOrderCommandHandler(
     IOrderRepository repository,

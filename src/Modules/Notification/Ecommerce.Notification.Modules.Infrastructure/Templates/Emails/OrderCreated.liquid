@@ -1,39 +1,43 @@
-<h2>Thank you for your order!</h2>
+ <html>
+	<body>
+		<h2>Thank you for your order!</h2>
 
-<p>
-	Your order <strong>#{{ OrderNumber }}</strong> has been accepted.
-</p>
+		<p>
+			Your order <strong>#{{ OrderNumber }}</strong> has been accepted.
+		</p>
 
-<h3>Order items</h3>
+		<h3>Order items</h3>
 
-<table>
-	<thead>
-		<tr>
-			<th>Product</th>
-			<th>SKU</th>
-			<th>Quantity</th>
-			<th>Unit price</th>
-			<th>Total</th>
-		</tr>
-	</thead>
+		<table style="width: 100%; border-collapse: collapse;">
+			<thead>
+				<tr>
+					<th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Product</th>
+					<th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">SKU</th>
+					<th style="text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">Quantity</th>
+					<th style="text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">Unit price</th>
+					<th style="text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">Total</th>
+				</tr>
+			</thead>
 
-	<tbody>
-		{% for item in Items %}
-		<tr>
-			<td>{{ item.ProductName }}</td>
-			<td>{{ item.Sku }}</td>
-			<td>{{ item.Quantity }}</td>
-			<td>{{ item.UnitPrice }} {{ Currency }}</td>
-			<td>{{ item.LineTotal }} {{ Currency }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+			<tbody>
+				{% for item in Items %}
+				<tr>
+					<td style="padding: 8px; border-bottom: 1px solid #eee;">{{ item.ProductName }}</td>
+					<td style="padding: 8px; border-bottom: 1px solid #eee;">{{ item.Sku }}</td>
+					<td style="text-align: right; padding: 8px; border-bottom: 1px solid #eee;">{{ item.Quantity }}</td>
+					<td style="text-align: right; padding: 8px; border-bottom: 1px solid #eee;">{{ item.FormattedUnitPrice }} {{ Currency }}</td>
+					<td style="text-align: right; padding: 8px; border-bottom: 1px solid #eee;">{{ item.FormattedLineTotal }} {{ Currency }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 
-<p>
-	<strong>Total: {{ TotalAmount }} {{ Currency }}</strong>
-</p>
+		<p style="text-align: right; font-size: 18px; margin-top: 20px;">
+			<strong>Total: {{ FormattedTotalAmount }} {{ Currency }}</strong>
+		</p>
 
-<p>
-	Thank you for shopping with Ecommerce Store!
-</p>
+		<p>
+			Thank you for shopping with Ecommerce Store!
+		</p>
+	</body>
+</html>

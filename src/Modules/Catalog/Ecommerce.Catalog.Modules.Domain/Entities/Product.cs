@@ -55,7 +55,8 @@ public sealed class Product : Entity
         string productNumber,
         string sku,
         Money price,
-        string description = "")
+        string description = "",
+        Guid? categoryId = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             return ProductErrors.NameIsRequired;
@@ -71,6 +72,7 @@ public sealed class Product : Entity
             Sku = sku.Trim().ToUpperInvariant(),
             Price = price,
             Description = description,
+            CategoryId = categoryId,
             StockQuantity = 0,
             IsActive = true,
             CreatedAtUtc = DateTime.UtcNow
@@ -226,6 +228,13 @@ public sealed class Product : Entity
         for (var i = 0; i < ordered.Count; i++)
             ordered[i].ChangeDisplayOrder(i);
 
+        UpdatedAtUtc = DateTime.UtcNow;
+
+        return Result.Success();
+    }
+    public Result UpdateCategory(Guid? categoryId)
+    {
+        CategoryId = categoryId;
         UpdatedAtUtc = DateTime.UtcNow;
 
         return Result.Success();

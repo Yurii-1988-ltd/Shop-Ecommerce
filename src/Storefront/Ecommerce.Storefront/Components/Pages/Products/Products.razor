@@ -1,51 +1,56 @@
 ﻿@page "/products"
+@using Ecommerce.Application.Pagination
+@inject ICatalogApiClient CatalogApiClient
+@inject NavigationManager Navigation
 
-<PageTitle>Products</PageTitle>
+<div class="catalog-page">
+ 
+    <aside class="catalog-sidebar">
+        <CategoryFilter SelectedCategoryId="_selectedCategoryId"
+                        OnCategoryChanged="HandleCategoryChanged" />
+    </aside>
 
-<h1>Products</h1>
+  
+    <main class="catalog-content">
+        <h2>Products</h2>
 
-@if (_loading)
-{
-    <p>Loading...</p>
-}
-else if (_products.Count == 0)
-{
-    <p>No products found.</p>
-}
-else
-{
-    <div class="products-grid">
-        @foreach (var product in _products)
+        @if (_products == null)
         {
-            <ProductCard Product="product" />
+            <p>Loading products...</p>
         }
-    </div>
-}
+        else
+        {
+            <div class="products-grid">
+                @foreach (var product in _products.Items)
+                {
+                    <ProductCard Product="product" />
+                }
+            </div>
+        }
+    </main>
+</div>
 
-@code
-{
-    private readonly List<ProductListItemResponse> _products = [];
+@code {
+    [SupplyParameterFromQuery(Name = "categoryId")]
+    private Guid? _selectedCategoryId { get; set; }
 
-    private bool _loading;
+    private PagedResult<ProductListItemResponse>? _products;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        _loading = true;
+    
+        _products = await CatalogApiClient.GetProductsAsync(categoryId: _selectedCategoryId);
+    }
 
-        try
-        {
-            var result = await CatalogApiClient.GetProductsAsync(
-                1,
-                20);
+    private async Task HandleCategoryChanged(Guid? categoryId)
+    {
+        _selectedCategoryId = categoryId;
 
-            if (result is not null)
-            {
-                _products.AddRange(result.Items);
-            }
-        }
-        finally
-        {
-            _loading = false;
-        }
+    
+        var uri = Navigation.GetUriWithQueryParameter("categoryId", categoryId);
+        Navigation.NavigateTo(uri);
+
+
+        _products = await CatalogApiClient.GetProductsAsync(categoryId: categoryId);
     }
 }

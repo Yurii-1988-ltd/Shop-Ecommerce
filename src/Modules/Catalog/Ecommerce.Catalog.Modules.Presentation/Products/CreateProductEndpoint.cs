@@ -18,6 +18,7 @@ internal sealed class CreateProductEndpoint
                 request.Name,
                 request.ProductNumber,
                 request.Description,
+                request.CategoryId,
                 request.Sku,
                 request.Price,
                 request.Currency);
@@ -61,6 +62,7 @@ public sealed class CreateProductRequest
     public string ProductNumber { get; set; }
 
     public string Description { get; set; } = string.Empty;
+    public Guid? CategoryId { get; set; }
 
     public string Sku { get; set; } = string.Empty;
 

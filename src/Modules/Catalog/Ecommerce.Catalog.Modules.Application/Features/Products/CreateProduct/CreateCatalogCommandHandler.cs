@@ -17,7 +17,8 @@ public sealed class CreateCatalogCommandHandler(IProductRepository productReposi
                                             request.ProductNumber,
                                             request.Sku,
                                             money.Value,
-                                            request.Description);
+                                            request.Description,
+                                            request.CategoryId);
         if (productResult.IsFailure)
             return productResult.Error;
         await productRepository.InsertAsync(productResult.Value, cancellationToken);

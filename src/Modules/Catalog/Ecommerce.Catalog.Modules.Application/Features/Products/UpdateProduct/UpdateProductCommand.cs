@@ -7,6 +7,7 @@ public sealed record UpdateProductCommand(Guid Id,
     string Name,
     string Description,
     string Sku,
+    Guid? CategoryId,
     MoneyDto Price)
     : ICommand<Guid>;
 

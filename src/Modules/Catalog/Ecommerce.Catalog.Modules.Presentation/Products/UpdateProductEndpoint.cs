@@ -1,7 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+﻿
 using Ecommerce.Catalog.Modules.Application.Dto;
 using Ecommerce.Catalog.Modules.Application.Features.Products.UpdateProduct;
 
@@ -21,7 +18,10 @@ internal sealed class UpdateProductEndpoint
                 id,
                 request.Name,
                 request.Description,
+         
                 request.Sku,
+                 request.CategoryId,
+
                 new MoneyDto(request.Price, request.Currency));
 
             var result = await sender.Send(command, cancellationToken);
@@ -38,6 +38,7 @@ public sealed class UpdateProductRequest
     public string Name { get; set; } = string.Empty;
 
     public string Description { get; set; } = string.Empty;
+    public Guid? CategoryId { get; set; }
 
     public string Sku { get; set; } = string.Empty;
 

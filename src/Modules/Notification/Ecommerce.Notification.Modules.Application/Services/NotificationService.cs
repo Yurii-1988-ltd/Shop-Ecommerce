@@ -94,8 +94,7 @@ public sealed class NotificationService(
 
             notification.MarkAsFailed(sendResult.Error);
 
-            await unitOfWork.SaveChangesAsync(
-                cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return sendResult.Error;
         }

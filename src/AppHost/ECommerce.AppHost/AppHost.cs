@@ -25,18 +25,7 @@ var messaging = builder.AddRabbitMQ(
         "RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS",
         "-rabbit loopback_users []");
 
-// 3. Mailpit
-var mailpit = builder.AddContainer(
-        "mailpit",
-        "axllent/mailpit")
-    .WithHttpEndpoint(
-        targetPort: 8025,
-        name: "dashboard")
-    .WithEndpoint(
-        targetPort: 1025,
-        name: "smtp");
-
-// 4. PostgreSQL
+// 3. PostgreSQL
 var postgres = builder.AddPostgres("postgres")
     .WithEnvironment(
         "POSTGRES_PASSWORD",
@@ -51,7 +40,8 @@ var inventory = postgres.AddDatabase("inventories");
 var notification = postgres.AddDatabase("notifications");
 var localization = postgres.AddDatabase("localizations");
 var currency = postgres.AddDatabase("currencies");
-// 5. MongoDB
+
+// 4. MongoDB
 var mongo = builder.AddMongoDB("mongo")
     .WithDataVolume();
 
@@ -60,11 +50,7 @@ var cart = mongo.AddDatabase("Cart");
 var order = mongo.AddDatabase("Order");
 var coupon = mongo.AddDatabase("Coupon");
 
-// 6. SMTP endpoint
-var smtpEndpoint = mailpit.GetEndpoint(
-    "smtp",
-    KnownNetworkIdentifiers.LocalhostNetwork);
-
+// 5. API
 var api = builder.AddProject<Projects.Ecommerce_API>(
         "ecommerce-api")
     .WithReference(database)
@@ -77,21 +63,15 @@ var api = builder.AddProject<Projects.Ecommerce_API>(
     .WithReference(messaging)
     .WithReference(localization)
     .WithReference(currency)
-    .WithEnvironment(
-        "SmtpOptions__Host",
-        smtpEndpoint.Property(EndpointProperty.Host))
-    .WithEnvironment(
-        "SmtpOptions__Port",
-        smtpEndpoint.Property(EndpointProperty.Port))
     .WaitFor(messaging);
 
-// 8. Admin
+// 6. Admin
 builder.AddProject<Projects.Ecommerce_Admin>(
         "ecommerce-admin")
     .WithReference(api)
     .WaitFor(api);
 
-// 9. Storefront
+// 7. Storefront
 builder.AddProject<Projects.Ecommerce_Storefront>(
         "ecommerce-storefront")
     .WithReference(api)

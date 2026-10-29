@@ -1,14 +1,8 @@
-﻿using Ecommerce.Application.CQRS;
-using Ecommerce.Application.Pagination;
-using Ecommerce.Catalog.Modules.Application.Abstractions.Data;
-using Ecommerce.Catalog.Modules.Application.Mapping;
-using Ecommerce.Catalog.Modules.Domain.Entities;
-using Ecommerce.Domain.Domain;
-using MongoDB.Driver;
+﻿using Ecommerce.Catalog.Modules.Domain.Entities;
 
 namespace Ecommerce.Catalog.Modules.Application.Features.Categories.GetCategories;
 
-internal sealed class GetCategoryQueryHandler(ICatalogDatabase context) : IQueryHandler<GetCategoriesQuery, PagedResult<CategoryListItemResponse>>
+internal sealed class GetCategoriesQueryHandler(ICatalogDatabase context) : IQueryHandler<GetCategoriesQuery, PagedResult<CategoryListItemResponse>>
 {
     public async Task<Result<PagedResult<CategoryListItemResponse>>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {

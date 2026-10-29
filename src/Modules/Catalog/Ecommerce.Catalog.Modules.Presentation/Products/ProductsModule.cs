@@ -29,6 +29,7 @@ public sealed class ProductsModule : IModule
         new CreateCategoryEndpoint().MapEndpoints(app);
         new UpdateCategoryEndpoint().MapEndpoints(app);
         new RemoveCategoryEndpoint().MapEndpoints(app);
+        new GetAllCategoriesEndpoint().MapEndpoints(app);
 
         //brand endpoints
         new CreateBrandEndpoint().MapEndpoints(app);

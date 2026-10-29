@@ -46,16 +46,47 @@ public static class NotificationsModuleExtensions
             ?? throw new InvalidOperationException(
                 "SmtpOptions configuration is not configured.");
 
+        if (string.IsNullOrWhiteSpace(smtpOptions.Host))
+        {
+            throw new InvalidOperationException(
+                "SmtpOptions:Host is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(smtpOptions.Username))
+        {
+            throw new InvalidOperationException(
+                "SmtpOptions:Username is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(smtpOptions.Password))
+        {
+            throw new InvalidOperationException(
+                "SmtpOptions:Password is not configured.");
+        }
+
+        // TEMPORARY SMTP diagnostics — do not log credentials.
+        Console.WriteLine(
+            $"[SMTP DEBUG] Host={smtpOptions.Host}; " +
+            $"Port={smtpOptions.Port}; " +
+            $"UseSsl={smtpOptions.UseSsl}; " +
+            $"UsernameConfigured={!string.IsNullOrWhiteSpace(smtpOptions.Username)}; " +
+            $"PasswordConfigured={!string.IsNullOrWhiteSpace(smtpOptions.Password)}");
+
         // 5. FluentEmail + SMTP
-        // Liquid rendering is handled by our custom
-        // IEmailTemplateRenderer implementation.
         services
             .AddFluentEmail(
                 smtpOptions.FromEmail,
                 smtpOptions.FromName)
-            .AddSmtpSender(
-                smtpOptions.Host,
-                smtpOptions.Port);
+            .AddSmtpSender(() => new System.Net.Mail.SmtpClient
+            {
+                Host = smtpOptions.Host,
+                Port = smtpOptions.Port,
+                EnableSsl = smtpOptions.UseSsl,
+                UseDefaultCredentials = false,
+                Credentials = new System.Net.NetworkCredential(
+                    smtpOptions.Username,
+                    smtpOptions.Password)
+            });
 
         // 6. Application services
         services.AddScoped<

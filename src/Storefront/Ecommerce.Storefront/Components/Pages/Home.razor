@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Ecommerce.Domain.Enums
+@using Ecommerce.Storefront.ApiClients.Catalogs.Models
 
 @inject ICatalogApiClient CatalogApiClient
 
@@ -21,7 +22,7 @@
             <a href="/products" class="hero__button hero__button--primary">
                 Shop now
             </a>
-            <a href="/products?category=featured" class="hero__button hero__button--secondary">
+            <a href="/products?sort=newest" class="hero__button hero__button--secondary">
                 Explore collection
             </a>
         </div>
@@ -47,22 +48,27 @@
     </div>
 
     <div class="categories-grid">
-        <a href="/products?category=electronics" class="category-card">
-            <span class="category-card__icon">📱</span>
-            <span class="category-card__title">Electronics</span>
-        </a>
-        <a href="/products?category=computers" class="category-card">
-            <span class="category-card__icon">💻</span>
-            <span class="category-card__title">Computers</span>
-        </a>
-        <a href="/products?category=audio" class="category-card">
-            <span class="category-card__icon">🎧</span>
-            <span class="category-card__title">Audio</span>
-        </a>
-        <a href="/products?category=accessories" class="category-card">
-            <span class="category-card__icon">⌚</span>
-            <span class="category-card__title">Accessories</span>
-        </a>
+        @if (_categories.Count == 0 && _loading)
+        {
+            @for (int i = 0; i < 4; i++)
+            {
+                <div class="category-skeleton" style="height: 100px; background: #eee; border-radius: 8px;"></div>
+            }
+        }
+        else if (_categories.Count == 0)
+        {
+            <p>No categories found.</p>
+        }
+        else
+        {
+            @foreach (var category in _categories.Take(4))
+            {
+                <a href="/products?categoryId=@category.Id" class="category-card">
+                    <span class="category-card__icon">@GetCategoryIcon(category.Name)</span>
+                    <span class="category-card__title">@category.Name</span>
+                </a>
+            }
+        }
     </div>
 </section>
 
@@ -139,9 +145,9 @@
 
 @code {
     private readonly List<ProductListItemResponse> _products = [];
+    private List<CategoryListItemResponse> _categories = [];
     private bool _loading;
 
-    // Переменные для движения карточки за мышью
     private double _mouseX = 0;
     private double _mouseY = 0;
 
@@ -151,15 +157,26 @@
 
         try
         {
-            // Передаем параметр сортировки (например, ProductSortOption.Relevance или ProductSortOption.Newest)
-            var result = await CatalogApiClient.GetProductsAsync(
+            // Параллельно загружаем товары и список категорий для главной страницы
+            var productsTask = CatalogApiClient.GetProductsAsync(
                 page: 1,
                 pageSize: 4,
                 sortOption: ProductSortOptions.Relevance);
 
-            if (result is not null)
+            var categoriesTask = CatalogApiClient.GetCategoriesAsync();
+
+            await Task.WhenAll(productsTask, categoriesTask);
+
+            var productsResult = productsTask.Result;
+            if (productsResult is not null)
             {
-                _products.AddRange(result.Items);
+                _products.AddRange(productsResult.Items);
+            }
+
+            var categoriesResult = categoriesTask.Result;
+            if (categoriesResult is not null)
+            {
+                _categories = categoriesResult;
             }
         }
         finally
@@ -168,10 +185,24 @@
         }
     }
 
-    // Обработчик движения мыши
     private void HandleMouseMove(MouseEventArgs e)
     {
         _mouseX = (e.OffsetX - 150) * 0.03;
         _mouseY = (e.OffsetY - 150) * 0.03;
+    }
+    private string GetCategoryIcon(string categoryName)
+    {
+        var name = categoryName.ToLowerInvariant();
+
+        return name switch
+        {
+            var n when n.Contains("mobile") || n.Contains("phone") || n.Contains("смартфон") => "📱",
+            var n when n.Contains("notebook") || n.Contains("laptop") || n.Contains("computer") || n.Contains("ноутбук") => "💻",
+            var n when n.Contains("audio") || n.Contains("headphone") || n.Contains("наушник") => "🎧",
+            var n when n.Contains("game") || n.Contains("gamer") || n.Contains("игра") || n.Contains("геймер") => "🎮",
+            var n when n.Contains("watch") || n.Contains("accessory") || n.Contains("аксессуар") => "⌚",
+            var n when n.Contains("tv") || n.Contains("video") => "📺",
+            _ => "📦"
+        };
     }
 }

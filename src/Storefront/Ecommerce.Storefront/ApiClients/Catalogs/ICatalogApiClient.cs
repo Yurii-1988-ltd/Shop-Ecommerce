@@ -21,4 +21,6 @@ public interface ICatalogApiClient
     Task<ProductDetailsResponse?> GetAsync(
         Guid id,
         CancellationToken cancellationToken = default);
+    Task<List<CategoryListItemResponse>?> GetCategoriesAsync(
+        CancellationToken cancellationToken = default);
 }
