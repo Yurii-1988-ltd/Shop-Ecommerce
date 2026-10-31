@@ -4,11 +4,15 @@
 
 @using Ecommerce.Shared.Contracts.Orders
 @using Ecommerce.Storefront.ApiClients.Orders
+@using Ecommerce.Storefront.Services
 
 @inject ICartApiClient CartApiClient
 @inject NavigationManager Navigation
 @inject IOrderApiClient OrdersApiClient
 @inject ICurrentUser CurrentUser
+@inject CurrencyState CurrencyState
+
+@implements IDisposable
 
 <PageTitle>Checkout</PageTitle>
 
@@ -54,6 +58,7 @@
 
             <main class="checkout-main">
 
+                @* Customer information *@
                 <section class="checkout-card">
                     <div class="checkout-card__header">
                         <div>
@@ -66,7 +71,6 @@
                     </div>
 
                     <div class="checkout-form">
-
                         <div class="checkout-field">
                             <label for="checkout-email">Email</label>
 
@@ -80,10 +84,10 @@
                                 We'll send your order confirmation to this email.
                             </span>
                         </div>
-
                     </div>
                 </section>
 
+                @* Shipping address *@
                 <section class="checkout-card">
                     <div class="checkout-card__header">
                         <div>
@@ -171,6 +175,7 @@
                     </div>
                 </section>
 
+                @* Delivery *@
                 <section class="checkout-card">
                     <div class="checkout-card__header">
                         <div>
@@ -203,6 +208,7 @@
                     </div>
                 </section>
 
+                @* Payment *@
                 <section class="checkout-card">
                     <div class="checkout-card__header">
                         <div>
@@ -236,6 +242,7 @@
 
             </main>
 
+            @* Order summary *@
             <aside class="checkout-sidebar">
 
                 <section class="checkout-summary">
@@ -255,14 +262,17 @@
                                     <strong>@item.Name</strong>
 
                                     <span>
-                                        @item.Quantity × @item.Price.ToString("N2")
-                                        @item.Currency
+                                        @item.Quantity ×
+                                        @CurrencyState.FormatPrice(
+                                            item.Price,
+                                            item.Currency)
                                     </span>
                                 </div>
 
                                 <strong class="checkout-item__total">
-                                    @item.TotalPrice.ToString("N2")
-                                    @item.Currency
+                                    @CurrencyState.FormatPrice(
+                                        item.TotalPrice,
+                                        item.Currency)
                                 </strong>
 
                             </div>
@@ -276,7 +286,9 @@
                         <span>Subtotal</span>
 
                         <span>
-                            @_cart.Subtotal.ToString("N2") @_cart.Currency
+                            @CurrencyState.FormatPrice(
+                                _cart.Subtotal,
+                                _cart.Currency)
                         </span>
                     </div>
 
@@ -286,7 +298,9 @@
                             <span>Discount</span>
 
                             <span>
-                                -@_cart.Discount.ToString("N2") @_cart.Currency
+                                -@CurrencyState.FormatPrice(
+                                                                    _cart.Discount,
+                                                                    _cart.Currency)
                             </span>
                         </div>
                     }
@@ -302,20 +316,33 @@
                         <span>Total</span>
 
                         <strong>
-                            @_cart.TotalAmount.ToString("N2") @_cart.Currency
+                            @CurrencyState.FormatPrice(
+                                _cart.TotalAmount,
+                                _cart.Currency)
                         </strong>
                     </div>
+
                     @if (!string.IsNullOrWhiteSpace(_errorMessage))
                     {
                         <div style="margin-top:12px; padding:12px; border:1px solid #ccc;">
                             @_errorMessage
                         </div>
                     }
+
                     <button type="button"
                             class="checkout-button checkout-button--primary checkout-button--full"
+                            disabled="@_isSubmitting"
                             @onclick="PlaceOrder">
 
-                        Place order
+                        @if (_isSubmitting)
+                        {
+                            <span>Processing...</span>
+                        }
+                        else
+                        {
+                            <span>Place order</span>
+                        }
+
                     </button>
 
                     <p class="checkout-secure">
@@ -330,5 +357,3 @@
     }
 
 </div>
-
-

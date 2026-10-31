@@ -1,8 +1,13 @@
-﻿@inject CartState CartState
+﻿
+@using Ecommerce.Storefront.Services
+
+@inject CartState CartState
+@inject CurrencyState CurrencyState
+@inject IJSRuntime JS
+
 @implements IDisposable
 
 <nav class="nav">
-
     <div class="nav__container">
 
         <a href="/" class="nav__logo">
@@ -32,6 +37,19 @@
 
             <input type="text"
                    placeholder="Search products..." />
+        </div>
+
+        <div class="nav__currency">
+            <select id="currency-select"
+                    class="nav__currency-select"
+                    value="@CurrencyState.SelectedCurrency"
+                    @onchange="ChangeCurrency"
+                    aria-label="Select currency">
+
+                <option value="UAH">UAH ₴</option>
+                <option value="USD">USD $</option>
+                <option value="EUR">EUR €</option>
+            </select>
         </div>
 
         <div class="nav__actions">
@@ -76,13 +94,11 @@
                         @CartState.TotalItems
                     </span>
                 }
-
             </a>
 
         </div>
 
     </div>
-
 </nav>
 
 @code {
@@ -93,7 +109,22 @@
 
     private void OnCartChanged()
     {
-        InvokeAsync(StateHasChanged);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ChangeCurrency(ChangeEventArgs args)
+    {
+        var currency = args.Value?.ToString();
+
+        if (string.IsNullOrWhiteSpace(currency))
+            return;
+
+        CurrencyState.SetCurrency(currency);
+
+        await JS.InvokeVoidAsync(
+            "currencyStorage.set",
+            CurrencyState.CookieName,
+            currency);
     }
 
     public void Dispose()

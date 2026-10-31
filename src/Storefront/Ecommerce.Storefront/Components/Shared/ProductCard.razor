@@ -1,11 +1,20 @@
 ﻿@using Ecommerce.Storefront.ApiClients.Catalogs.Models
+
+@using Ecommerce.Storefront.Services
+
+
 @inject IConfiguration Configuration
+@inject CurrencyState CurrencyState
+
+@implements IDisposable
 
 <div class="product-card">
     <a href="/products/@Product.Id" class="product-card__image">
         @if (!string.IsNullOrWhiteSpace(Product.ImageUrl))
         {
-            <img src="@GetFullImageUrl(Product.ImageUrl)" alt="@Product.Name" loading="lazy" />
+            <img src="@GetFullImageUrl(Product.ImageUrl)"
+                 alt="@Product.Name"
+                 loading="lazy" />
         }
         else
         {
@@ -16,12 +25,23 @@
     </a>
 
     <div class="product-card__content">
-        <a href="/products/@Product.Id" class="product-card__name" title="@Product.Name">
+        <a href="/products/@Product.Id"
+           class="product-card__name"
+           title="@Product.Name">
             @Product.Name
         </a>
 
         <div class="product-card__price">
-            <span>@Product.Price @Product.Currency</span>
+            @if (_ratesLoaded)
+            {
+                <span>
+                    @CurrencyState.FormatPrice(Product.Price, Product.Currency)
+                </span>
+            }
+            else
+            {
+                <span>@Product.Price @Product.Currency</span>
+            }
         </div>
     </div>
 </div>
@@ -29,6 +49,28 @@
 @code {
     [Parameter, EditorRequired]
     public ProductListItemResponse Product { get; set; } = default!;
+
+    private bool _ratesLoaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrencyState.Changed += OnCurrencyChanged;
+
+        try
+        {
+            await CurrencyState.InitializeAsync();
+            _ratesLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Currency rates loading failed: {ex.Message}");
+        }
+    }
+
+    private void OnCurrencyChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
 
     private string GetFullImageUrl(string url)
     {
@@ -38,8 +80,14 @@
             return url;
         }
 
-        // Берем URL бэкенда из appsettings.json фронтенда
-        var apiBaseUrl = Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7125";
+        var apiBaseUrl = Configuration["ApiSettings:BaseUrl"]
+                         ?? "https://localhost:7125";
+
         return $"{apiBaseUrl.TrimEnd('/')}/{url.TrimStart('/')}";
+    }
+
+    public void Dispose()
+    {
+        CurrencyState.Changed -= OnCurrencyChanged;
     }
 }

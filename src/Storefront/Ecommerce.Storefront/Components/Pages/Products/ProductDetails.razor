@@ -1,7 +1,14 @@
-﻿@page "/products/{Id:guid}"
+﻿
+@page "/products/{Id:guid}"
 @rendermode InteractiveServer
+
+@using Ecommerce.Storefront.Services
+
 @inject CartState CartState
+@inject CurrencyState CurrencyState
 @inject IConfiguration Configuration
+
+@implements IDisposable
 
 <PageTitle>@(_product?.Name ?? "Product Details")</PageTitle>
 
@@ -30,12 +37,14 @@ else
         </a>
 
         <div class="product-details__grid">
-            @* 1. Галерея изображений *@
+
+            @* Image gallery *@
             <div class="product-details__media">
                 <div class="product-details__main-image">
                     @if (!string.IsNullOrEmpty(_selectedImageUrl))
                     {
-                        <img src="@GetFullImageUrl(_selectedImageUrl)" alt="@_product.Name" />
+                        <img src="@GetFullImageUrl(_selectedImageUrl)"
+                             alt="@_product.Name" />
                     }
                     else
                     {
@@ -46,7 +55,9 @@ else
 
                     @if (_product.SalePrice.HasValue)
                     {
-                        <span class="product-details__badge product-details__badge--sale">Sale</span>
+                        <span class="product-details__badge product-details__badge--sale">
+                            Sale
+                        </span>
                     }
                 </div>
 
@@ -58,7 +69,10 @@ else
                             <button type="button"
                                     class="thumbnail-btn @(_selectedImageUrl == img.Url ? "active" : "")"
                                     @onclick="() => SelectImage(img.Url)">
-                                <img src="@GetFullImageUrl(string.IsNullOrEmpty(img.ThumbnailUrl) ? img.Url : img.ThumbnailUrl)"
+                                <img src="@GetFullImageUrl(
+                                                                    string.IsNullOrEmpty(img.ThumbnailUrl)
+                                                                        ? img.Url
+                                                                        : img.ThumbnailUrl)"
                                      alt="@(img.AltText ?? _product.Name)" />
                             </button>
                         }
@@ -66,28 +80,40 @@ else
                 }
             </div>
 
-            @* 2. Информационный блок *@
+            @* Product information *@
             <div class="product-details__info">
-                <h1 class="product-details__title">@_product.Name</h1>
+                <h1 class="product-details__title">
+                    @_product.Name
+                </h1>
 
                 <div class="product-details__meta">
-                    <span class="product-details__sku">SKU: <strong>@_product.Sku</strong></span>
+                    <span class="product-details__sku">
+                        SKU: <strong>@_product.Sku</strong>
+                    </span>
                 </div>
 
+                @* Prices are converted only for display *@
                 <div class="product-details__price">
                     @if (_product.SalePrice.HasValue)
                     {
                         <span class="product-details__sale-price">
-                            @_product.SalePrice.Value @_product.Currency
+                            @CurrencyState.FormatPrice(
+                                _product.SalePrice.Value,
+                                _product.Currency)
                         </span>
+
                         <del class="product-details__old-price">
-                            @_product.Price @_product.Currency
+                            @CurrencyState.FormatPrice(
+                                _product.Price,
+                                _product.Currency)
                         </del>
                     }
                     else
                     {
                         <span class="product-details__current-price">
-                            @_product.Price @_product.Currency
+                            @CurrencyState.FormatPrice(
+                                _product.Price,
+                                _product.Currency)
                         </span>
                     }
                 </div>
@@ -111,7 +137,7 @@ else
                     }
                 </div>
 
-                @* 3. Действия (Количество и Кнопка) *@
+                @* Quantity and Add to Cart *@
                 <div class="product-actions">
                     @if (_product.IsActive && _availableQuantity > 0)
                     {
@@ -122,7 +148,11 @@ else
                                     disabled="@(_quantity <= 1 || _isAdding)">
                                 −
                             </button>
-                            <span class="quantity-value">@_quantity</span>
+
+                            <span class="quantity-value">
+                                @_quantity
+                            </span>
+
                             <button type="button"
                                     class="quantity-btn"
                                     @onclick="IncreaseQuantity"
@@ -136,6 +166,7 @@ else
                             class="add-to-cart-btn @(_isAdding ? "loading" : "")"
                             disabled="@(!_product.IsActive || _availableQuantity <= 0 || _isAdding)"
                             @onclick="AddToCart">
+
                         @if (_isAdding)
                         {
                             <span class="btn-spinner"></span>
@@ -143,11 +174,18 @@ else
                         }
                         else
                         {
-                            <svg class="cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg class="cart-icon"
+                                 width="20"
+                                 height="20"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2">
                                 <circle cx="9" cy="21" r="1"></circle>
                                 <circle cx="20" cy="21" r="1"></circle>
                                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                             </svg>
+
                             <span>Add to cart</span>
                         }
                     </button>
@@ -156,19 +194,29 @@ else
                 @if (!string.IsNullOrEmpty(_toastMessage))
                 {
                     <div class="toast-notification">
-                        <svg class="toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg class="toast-icon"
+                             width="18"
+                             height="18"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
+
                         <span>@_toastMessage</span>
                     </div>
                 }
 
                 <div class="product-details__features">
                     <div class="feature-item">
-                        <strong>Fast Delivery:</strong> Ships within 1-2 business days.
+                        <strong>Fast Delivery:</strong>
+                        Ships within 1-2 business days.
                     </div>
+
                     <div class="feature-item">
-                        <strong>Official Guarantee:</strong> Quality assurance from the manufacturer.
+                        <strong>Official Guarantee:</strong>
+                        Quality assurance from the manufacturer.
                     </div>
                 </div>
             </div>
@@ -182,11 +230,19 @@ else
 
     private ProductDetailsResponse? _product;
     private string? _selectedImageUrl;
+
     private int _availableQuantity;
     private int _quantity = 1;
+
     private bool _loading;
     private bool _isAdding;
+
     private string? _toastMessage;
+
+    protected override void OnInitialized()
+    {
+        CurrencyState.Changed += OnCurrencyChanged;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -194,22 +250,32 @@ else
 
         try
         {
+            await CurrencyState.InitializeAsync();
+
             _product = await CatalogApiClient.GetAsync(Id);
 
             if (_product is not null)
             {
-                // Приоритет изображения: IsPrimary == true, либо первое из коллекции
-                _selectedImageUrl = _product.Images?.FirstOrDefault(i => i.IsPrimary)?.Url
-                                    ?? _product.Images?.FirstOrDefault()?.Url;
+                _selectedImageUrl =
+                    _product.Images?.FirstOrDefault(i => i.IsPrimary)?.Url
+                    ?? _product.Images?.FirstOrDefault()?.Url;
 
-                var inventory = await InventoryApiClient.GetAvailabilityAsync(_product.Id);
-                _availableQuantity = inventory?.AvailableQuantity ?? _product.StockQuantity;
+                var inventory =
+                    await InventoryApiClient.GetAvailabilityAsync(_product.Id);
+
+                _availableQuantity =
+                    inventory?.AvailableQuantity ?? _product.StockQuantity;
             }
         }
         finally
         {
             _loading = false;
         }
+    }
+
+    private void OnCurrencyChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
     }
 
     private void SelectImage(string url)
@@ -235,7 +301,10 @@ else
 
     private async Task AddToCart()
     {
-        if (_product is null || !_product.IsActive || _availableQuantity <= 0 || _isAdding)
+        if (_product is null ||
+            !_product.IsActive ||
+            _availableQuantity <= 0 ||
+            _isAdding)
         {
             return;
         }
@@ -244,6 +313,8 @@ else
 
         try
         {
+            // Keep the original product price and currency.
+            // Currency conversion is only for display.
             var request = new AddCartItemRequest(
                 _product.Id,
                 _product.Name,
@@ -253,7 +324,9 @@ else
                 _quantity);
 
             await CartApiClient.AddItemAsync(request);
+
             var cart = await CartApiClient.GetAsync();
+
             CartState.SetTotalItems(cart?.TotalItems ?? 0);
 
             ShowToast($"Added {_quantity} item(s) to cart");
@@ -272,7 +345,9 @@ else
         _ = Task.Run(async () =>
         {
             await Task.Delay(3000);
+
             _toastMessage = null;
+
             await InvokeAsync(StateHasChanged);
         });
     }
@@ -284,13 +359,24 @@ else
             return "/images/no-image.png";
         }
 
-        if (relativeOrAbsoluteUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-            relativeOrAbsoluteUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        if (relativeOrAbsoluteUrl.StartsWith(
+                "http://",
+                StringComparison.OrdinalIgnoreCase) ||
+            relativeOrAbsoluteUrl.StartsWith(
+                "https://",
+                StringComparison.OrdinalIgnoreCase))
         {
             return relativeOrAbsoluteUrl;
         }
 
-        var apiBaseUrl = Configuration["ApiBaseUrl"]?.TrimEnd('/') ?? "";
+        var apiBaseUrl =
+            Configuration["ApiBaseUrl"]?.TrimEnd('/') ?? "";
+
         return $"{apiBaseUrl}/{relativeOrAbsoluteUrl.TrimStart('/')}";
+    }
+
+    public void Dispose()
+    {
+        CurrencyState.Changed -= OnCurrencyChanged;
     }
 }

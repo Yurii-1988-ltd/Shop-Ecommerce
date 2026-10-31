@@ -1,10 +1,12 @@
-﻿using Ecommerce.Shared.Contracts.Orders;
-using Ecommerce.Storefront.ApiClients.Carts.Models;
+﻿
+
+using Ecommerce.Shared.Contracts.Orders;
+using Ecommerce.Storefront.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace Ecommerce.Storefront.Components.Pages.Checkout;
 
-public partial class Checkout
+public partial class Checkout : IDisposable
 {
     private CartResponse? _cart;
 
@@ -18,19 +20,32 @@ public partial class Checkout
     private string _postalCode = string.Empty;
     private string _country = "Ukraine";
     private string _phone = string.Empty;
+
     private bool _isSubmitting;
     private string? _errorMessage;
+
+    protected override void OnInitialized()
+    {
+        CurrencyState.Changed += OnCurrencyChanged;
+    }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            await CurrencyState.InitializeAsync();
+
             _cart = await CartApiClient.GetAsync();
         }
         finally
         {
             _isLoading = false;
         }
+    }
+
+    private void OnCurrencyChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
     }
 
     private void OnEmailChanged(ChangeEventArgs e)
@@ -63,6 +78,8 @@ public partial class Checkout
 
             _isSubmitting = true;
 
+            // Используем исходные цены товаров.
+            // Конвертация выполняется на стороне Orders.
             var items = _cart.Items
                 .Select(item => new CreateOrderItemDto(
                     item.ProductId,
@@ -73,7 +90,9 @@ public partial class Checkout
                 .ToList();
 
             var request = new CreateOrderRequest(
-                CustomerId: CurrentUser.IsAuthenticated ? CurrentUser.UserId : null,
+                CustomerId: CurrentUser.IsAuthenticated
+                    ? CurrentUser.UserId
+                    : null,
                 CustomerEmail: _email,
                 ShippingAddress: new OrderAddressDto(
                     _firstName,
@@ -87,9 +106,10 @@ public partial class Checkout
 
             _errorMessage = "Creating order...";
 
-            var result = await OrdersApiClient.CreateAsync(request, cancellationToken: default);
+            var result = await OrdersApiClient.CreateAsync(
+                request,
+                cancellationToken: default);
 
-            // Очистка корзины в зависимости от статуса авторизации
             if (CurrentUser.IsAuthenticated)
             {
                 await CartApiClient.ClearAsync();
@@ -99,7 +119,8 @@ public partial class Checkout
                 await CartApiClient.ClearGuestCartAsync();
             }
 
-            Navigation.NavigateTo($"/order-success/{result.OrderId}?orderNumber={Uri.EscapeDataString(result.OrderNumber)}");
+            Navigation.NavigateTo(
+                $"/order-success/{result.OrderId}?orderNumber={Uri.EscapeDataString(result.OrderNumber)}");
         }
         catch (Exception ex)
         {
@@ -109,5 +130,10 @@ public partial class Checkout
         {
             _isSubmitting = false;
         }
+    }
+
+    public void Dispose()
+    {
+        CurrencyState.Changed -= OnCurrencyChanged;
     }
 }

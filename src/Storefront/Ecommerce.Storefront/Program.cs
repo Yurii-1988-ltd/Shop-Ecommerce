@@ -1,10 +1,8 @@
-using Ecommerce.Storefront.ApiClients.Carts.Models;
-using Ecommerce.Storefront.ApiClients.Carts.Services;
-using Ecommerce.Storefront.ApiClients.Inventories;
-using Ecommerce.Storefront.ApiClients.Orders;
-using Ecommerce.Storefront.Endpoints;
-using Ecommerce.Storefront.Endpoints.Identity;
-using Ecommerce.Storefront.Middleware;
+
+
+using Ecommerce.Storefront.ApiClients.Currencies.Endpoints;
+using Ecommerce.Storefront.ApiClients.Currencies.Services;
+using Ecommerce.Storefront.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +33,10 @@ builder.Services.AddHttpClient<IInventoryApiClient, InventoryApiClient>(client =
 {
     client.BaseAddress = new Uri("https://localhost:7125");
 });
+builder.Services.AddHttpClient<ICurrencyApiClient, CurrencyApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7125");
+});
 
 builder.Services.AddHttpClient<IOrderApiClient, OrderApiClient>(client =>
 {
@@ -53,6 +55,7 @@ builder.Services.AddRazorComponents()
 // Authentication
 builder.Services.AddStorefrontAuthentication();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<CurrencyState>();
 
 var app = builder.Build();
 
@@ -71,6 +74,7 @@ app.UseAuthorization();
 new LoginEndpoint().MapEndpoint(app);
 new LogoutEndpoint().MapEndpoint(app);
 new RegisterEndpoint().MapEndpoint(app);
+new CurrencyEndpoint().MapEndpoint(app);
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
