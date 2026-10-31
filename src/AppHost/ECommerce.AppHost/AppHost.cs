@@ -40,6 +40,7 @@ var inventory = postgres.AddDatabase("inventories");
 var notification = postgres.AddDatabase("notifications");
 var localization = postgres.AddDatabase("localizations");
 var currency = postgres.AddDatabase("currencies");
+var shipping = postgres.AddDatabase("shippings");
 
 // 4. MongoDB
 var mongo = builder.AddMongoDB("mongo")
@@ -62,6 +63,7 @@ var api = builder.AddProject<Projects.Ecommerce_API>(
     .WithReference(coupon)
     .WithReference(messaging)
     .WithReference(localization)
+    .WithReference(shipping)
     .WithReference(currency)
     .WaitFor(messaging);
 

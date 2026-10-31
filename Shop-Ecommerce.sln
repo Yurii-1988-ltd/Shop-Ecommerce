@@ -225,6 +225,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Currency.Modules.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Currency.Modules.Presentation", "src\Modules\Currency\Ecommerce.Currency.Modules.Presentation\Ecommerce.Currency.Modules.Presentation.csproj", "{7402E729-3CB2-4506-8D31-D79B0593BD14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Shippings.Modules.Domain", "src\Modules\Shippings\Ecommerce.Shippings.Modules.Domain\Ecommerce.Shippings.Modules.Domain.csproj", "{682A23A3-4459-486A-90B2-341E30AF2175}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Shippings.Modules.Application", "src\Modules\Shippings\Ecommerce.Shippings.Modules.Application\Ecommerce.Shippings.Modules.Application.csproj", "{5466C984-D599-4466-96E8-FBFF34351407}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Shippings.Modules.Infrastructure", "src\Modules\Shippings\Ecommerce.Shippings.Modules.Infrastructure\Ecommerce.Shippings.Modules.Infrastructure.csproj", "{6C035892-7BCD-4749-B6D2-98099D16DD36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Shippings.Modules.Presentation", "src\Modules\Shippings\Ecommerce.Shippings.Modules.Presentation\Ecommerce.Shippings.Modules.Presentation.csproj", "{D38F9883-49C6-4EF7-9309-19C51C357A0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -511,6 +519,22 @@ Global
 		{7402E729-3CB2-4506-8D31-D79B0593BD14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7402E729-3CB2-4506-8D31-D79B0593BD14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7402E729-3CB2-4506-8D31-D79B0593BD14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{682A23A3-4459-486A-90B2-341E30AF2175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{682A23A3-4459-486A-90B2-341E30AF2175}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{682A23A3-4459-486A-90B2-341E30AF2175}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{682A23A3-4459-486A-90B2-341E30AF2175}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5466C984-D599-4466-96E8-FBFF34351407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5466C984-D599-4466-96E8-FBFF34351407}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5466C984-D599-4466-96E8-FBFF34351407}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5466C984-D599-4466-96E8-FBFF34351407}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C035892-7BCD-4749-B6D2-98099D16DD36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C035892-7BCD-4749-B6D2-98099D16DD36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C035892-7BCD-4749-B6D2-98099D16DD36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C035892-7BCD-4749-B6D2-98099D16DD36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D38F9883-49C6-4EF7-9309-19C51C357A0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D38F9883-49C6-4EF7-9309-19C51C357A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D38F9883-49C6-4EF7-9309-19C51C357A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D38F9883-49C6-4EF7-9309-19C51C357A0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -625,6 +649,10 @@ Global
 		{18BA8777-47CB-49B6-A651-DFA6DD1D68A7} = {DC37FDEF-9EE0-4E30-827B-5F50BF8EDD32}
 		{D3779EEF-3CFD-49BB-B6A8-C96AD0A218CC} = {DC37FDEF-9EE0-4E30-827B-5F50BF8EDD32}
 		{7402E729-3CB2-4506-8D31-D79B0593BD14} = {DC37FDEF-9EE0-4E30-827B-5F50BF8EDD32}
+		{682A23A3-4459-486A-90B2-341E30AF2175} = {46B845EB-C544-4B2C-8167-E6772FAC72B2}
+		{5466C984-D599-4466-96E8-FBFF34351407} = {46B845EB-C544-4B2C-8167-E6772FAC72B2}
+		{6C035892-7BCD-4749-B6D2-98099D16DD36} = {46B845EB-C544-4B2C-8167-E6772FAC72B2}
+		{D38F9883-49C6-4EF7-9309-19C51C357A0D} = {46B845EB-C544-4B2C-8167-E6772FAC72B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78F4FA7E-BCD1-44F6-A576-5FAF7ADDA7CD}

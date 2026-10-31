@@ -18,7 +18,7 @@ public static class OrderErrors
         new("Sku.Required", "Sku is required", ErrorType.Validation);
 
     public static Error SlugIsRequired =>
-        new("Slug.Required", "Slug is required", ErrorType.Validation); // 👈 Исправлена опечатка в коде
+        new("Slug.Required", "Slug is required", ErrorType.Validation); 
 
     public static Error InvalidProductId =>
         new("Invalid.ProductId", "Product ID is invalid", ErrorType.Validation);
@@ -70,4 +70,21 @@ public static class OrderErrors
         new("Order.AccessDenied", "You do not have access to this order", ErrorType.Validation);
     public static Error InvalidExchangeRate =>
         new("Invalid.ExchangeRate", "Exchange is invalid", ErrorType.Validation);
+
+    public static Error ShipmentIdRequired =>
+        new("Shipping.ShipmentIdRequired", "Shipment ID is required", ErrorType.Validation);
+
+    public static Error StatusIsRequired =>
+        new("Shipping.StatusIsRequired", "Tracking status is required", ErrorType.Validation);
+
+    public static Error DescriptionIsRequired =>
+        new("Shipping.DescriptionIsRequired", "Tracking description is required", ErrorType.Validation);
+
+    public static Error InvalidOccurredAt =>
+        new("Shipping.InvalidOccurredAt", "Tracking event date cannot be in the future", ErrorType.Validation);
+    public static Error ShipmentIdIsRequired =>
+    new("Shipping.ShipmentIdIsRequired", "Shipment ID is required", ErrorType.Validation);
+
+    
+
 }
