@@ -1,6 +1,6 @@
 ﻿
 
-namespace Ecommerce.Shippings.Modules.Domain.Enums;
+namespace Ecommerce.Shipings.Modules.Domain.Enums;
 
 public enum ShippingStatus
 {

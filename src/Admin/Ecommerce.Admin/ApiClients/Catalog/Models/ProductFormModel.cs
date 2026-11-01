@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Ecommerce.Domain.ValueObjects;
 
 namespace Ecommerce.Admin.ApiClients.Catalog.Models;
 

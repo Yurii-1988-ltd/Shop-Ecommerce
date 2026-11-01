@@ -1,13 +1,13 @@
-﻿
-using Ecommerce.Domain.Domain;
+﻿using Ecommerce.Domain.Domain;
 using Ecommerce.Domain.ValueObjects;
-using Ecommerce.Shippings.Modules.Domain.Errors;
+using Ecommerce.Shipings.Modules.Domain.Errors;
 
 namespace Ecommerce.Shippings.Modules.Domain.Entities;
 
 public sealed class ShippingMethod : Entity
 {
     public string Name { get; private set; } = string.Empty;
+    public string Code { get;private set; }
     public string? Description { get; private set; }
     public Money Price { get; private set; } = Money.Zero();
     public bool IsFree => Price.Amount == 0;
@@ -21,11 +21,13 @@ public sealed class ShippingMethod : Entity
     private ShippingMethod(
         Guid id,
         string name,
+        string code,
         string? description,
         Money price)
     {
         Id = id;
         Name = name;
+        Code = code;
         Description = description;
         Price = price;
         IsActive = true;
@@ -34,6 +36,7 @@ public sealed class ShippingMethod : Entity
     public static Result<ShippingMethod> Create(
         Guid id,
         string name,
+        string code,
         string? description,
         Money price)
     {
@@ -42,28 +45,36 @@ public sealed class ShippingMethod : Entity
 
         if (string.IsNullOrWhiteSpace(name))
             return ShippingErrors.NameIsRequired;
+        if (string.IsNullOrWhiteSpace(code))
+            return ShippingErrors.CodeIsRequired;
         if (price is null)
             return ShippingErrors.InvalidPrice;
 
         return new ShippingMethod(
             id,
             name.Trim(),
+            code.Trim().ToLowerInvariant(),
             description?.Trim(),
             price);
     }
 
     public Result Update(
         string name,
+        string code,
         string? description,
         Money price)
     {
         if (string.IsNullOrWhiteSpace(name))
             return ShippingErrors.NameIsRequired;
 
+        if (string.IsNullOrWhiteSpace(code))
+            return ShippingErrors.CodeIsRequired;
+
         if (price is null)
             return ShippingErrors.InvalidPrice;
 
         Name = name.Trim();
+        Code = code.Trim().ToLowerInvariant();
         Description = description?.Trim();
         Price = price;
 

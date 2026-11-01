@@ -1,9 +1,10 @@
 ﻿
 
+using Ecommerce.Shippings.Modules.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Ecommerce.Shippings.Modules.Infrastructure.Database;
+namespace Ecommerce.Shipings.Modules.Infrastructure.Database;
 
 internal sealed class ShippingsContextFactory : IDesignTimeDbContextFactory<ShippingContext>
 {

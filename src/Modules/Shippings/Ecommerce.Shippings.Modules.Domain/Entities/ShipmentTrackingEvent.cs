@@ -1,8 +1,8 @@
 ﻿using Ecommerce.Domain.Domain;
-using Ecommerce.Shippings.Modules.Domain.Enums;
-using Ecommerce.Shippings.Modules.Domain.Errors;
+using Ecommerce.Shipings.Modules.Domain.Enums;
+using Ecommerce.Shipings.Modules.Domain.Errors;
 
-namespace Ecommerce.Shippings.Modules.Domain.Entities;
+namespace Ecommerce.Shipings.Modules.Domain.Entities;
 
 public sealed class ShipmentTrackingEvent : Entity
 {

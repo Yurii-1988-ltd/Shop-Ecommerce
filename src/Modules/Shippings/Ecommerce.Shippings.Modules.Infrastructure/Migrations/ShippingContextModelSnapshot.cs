@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Ecommerce.Shippings.Modules.Infrastructure.Migrations
+namespace Ecommerce.Shipings.Modules.Infrastructure.Migrations
 {
     [DbContext(typeof(ShippingContext))]
     partial class ShippingContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace Ecommerce.Shippings.Modules.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Ecommerce.Shippings.Modules.Domain.Entities.ShipmentTrackingEvent", b =>
+            modelBuilder.Entity("Ecommerce.Shipings.Modules.Domain.Entities.ShipmentTrackingEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace Ecommerce.Shippings.Modules.Infrastructure.Migrations
                     b.ToTable("Shipment_Tracking_Events", (string)null);
                 });
 
-            modelBuilder.Entity("Ecommerce.Shippings.Modules.Domain.Entities.Shipping", b =>
+            modelBuilder.Entity("Ecommerce.Shipings.Modules.Domain.Entities.Shipping", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,6 +158,11 @@ namespace Ecommerce.Shippings.Modules.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -172,10 +177,13 @@ namespace Ecommerce.Shippings.Modules.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.ToTable("Shipping_Method", (string)null);
                 });
 
-            modelBuilder.Entity("Ecommerce.Shippings.Modules.Domain.Entities.Shipping", b =>
+            modelBuilder.Entity("Ecommerce.Shipings.Modules.Domain.Entities.Shipping", b =>
                 {
                     b.OwnsOne("Ecommerce.Domain.ValueObjects.Money", "ShippingCost", b1 =>
                         {

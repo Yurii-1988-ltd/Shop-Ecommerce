@@ -1,8 +1,8 @@
-﻿using Ecommerce.Shippings.Modules.Domain.Entities;
+﻿using Ecommerce.Shipings.Modules.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Shippings.Modules.Infrastructure.Database.Configurations;
+namespace Ecommerce.Shipings.Modules.Infrastructure.Database.Configurations;
 
 internal class ShipmentTrackingEventConfiguration : IEntityTypeConfiguration<ShipmentTrackingEvent>
 {

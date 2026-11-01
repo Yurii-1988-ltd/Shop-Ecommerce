@@ -15,11 +15,17 @@ internal sealed class ShippingMethodConfiguration : IEntityTypeConfiguration<Shi
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(150);
+        builder.Property(x => x.Code)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.HasIndex(x => x.Code)
+            .IsUnique();
 
         builder.Property(x => x.Description)
             .HasMaxLength(500);
 
-        // Маппинг объекта-значения Money для цены метода доставки
+     
         builder.OwnsOne(x => x.Price, money =>
         {
             money.Property(x => x.Amount)

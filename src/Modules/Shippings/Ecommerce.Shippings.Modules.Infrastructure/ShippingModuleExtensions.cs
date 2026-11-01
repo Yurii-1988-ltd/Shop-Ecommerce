@@ -1,11 +1,4 @@
-﻿using Ecommerce.Shippings.Modules.Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-
-
+﻿
 namespace Ecommerce.Shippings.Modules.Infrastructure;
 
 public static class ShippingModuleExtensions
@@ -15,27 +8,31 @@ public static class ShippingModuleExtensions
         IConfiguration config)
     {
         // MediatR
-
-
-        // PostgreSQL
-        var connectionString =
-            config.GetConnectionString("shippings")
-            ?? throw new InvalidOperationException(
-                "Connection string 'shippings' is not configured.");
-
-       
-        services.AddDbContext<ShippingContext>(options =>
+        services.AddMediatR(options =>
         {
-            options.UseNpgsql(connectionString);
+            options.RegisterServicesFromAssembly(
+                typeof(CreateShippingMethodCommandHandler).Assembly);
         });
 
-        // MassTransit
+        // PostgreSQL
+        var connectionString = config.GetConnectionString("shippings")
+                               ?? throw new InvalidOperationException(
+                                   "Connection string 'shippings' is not configured.");
+
+        services.AddDbContext<ShippingContext>(options =>
+            options.UseNpgsql(connectionString));
+
+        // Repositories
+        services.AddScoped<IShippingRepository, ShippingRepository>();
+        services.AddScoped<IShippingMethodRepository, ShippingMethodRepository>();
+
+        // Unit of Work
+        services.AddScoped<IUnitOfWork, ShippingUnitOfWork>();
 
         return services;
     }
 
-    public static async Task ApplyShippingMigrationsAsync(
-        this IHost host)
+    public static async Task ApplyShippingMigrationsAsync(this IHost host)
     {
         using var scope = host.Services.CreateScope();
 

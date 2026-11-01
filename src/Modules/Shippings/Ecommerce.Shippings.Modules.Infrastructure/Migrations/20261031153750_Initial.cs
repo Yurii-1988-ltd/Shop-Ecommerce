@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Ecommerce.Shippings.Modules.Infrastructure.Migrations
+namespace Ecommerce.Shipings.Modules.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

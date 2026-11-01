@@ -34,13 +34,14 @@
 
         <MudItem xs="3">
 
-            <MudNumericField @bind-Value="Model.Price"
-            For="@(() => Model.Price)"
-            Label="Price"
-            Required="true"
-            Min="0"
-            Format="0.00"
-            Immediate="true"/>
+            <MudNumericField T="decimal"
+                             @bind-Value="Model.Price"
+                             For="@(() => Model.Price)"
+                             Label="Price"
+                             Required="true"
+                             Min="0m"
+                             Format="0.00"
+                             Immediate="true" />
 
 
         </MudItem>

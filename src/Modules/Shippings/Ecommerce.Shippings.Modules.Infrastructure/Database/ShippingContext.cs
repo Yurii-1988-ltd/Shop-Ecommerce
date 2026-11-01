@@ -1,5 +1,4 @@
-﻿
-
+﻿using Ecommerce.Shipings.Modules.Domain.Entities;
 using Ecommerce.Shippings.Modules.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +11,7 @@ public sealed class ShippingContext : DbContext
         
     }
     public DbSet<Shipping> Shippings => Set<Shipping>();
-    public DbSet<ShippingMethod> ShippingMethod => Set<ShippingMethod>();
+    public DbSet<ShippingMethod> ShippingMethods => Set<ShippingMethod>();
     public DbSet<ShipmentTrackingEvent> shipmentTrackingEvents => Set<ShipmentTrackingEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

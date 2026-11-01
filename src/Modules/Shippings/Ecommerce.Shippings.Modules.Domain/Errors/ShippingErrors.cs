@@ -1,7 +1,7 @@
 ﻿
 using Ecommerce.Domain.Domain;
 
-namespace Ecommerce.Shippings.Modules.Domain.Errors;
+namespace Ecommerce.Shipings.Modules.Domain.Errors;
 
 public static class ShippingErrors
 {
@@ -80,6 +80,10 @@ public static class ShippingErrors
 
     public static Error TrackingNumberIsRequired =>
         new("Shipping.TrackingNumberIsRequired", "Tracking number is required", ErrorType.Validation);
+    public static Error CodeIsRequired
+    => new("Shipping.CodeIsRequired", "Code is required", ErrorType.Validation);
 
+    public static Error ShippingMethodNotFound =>
+        new("Shipping.MethodNotFound", "Shipping method not found", ErrorType.Validation);
 
 }
