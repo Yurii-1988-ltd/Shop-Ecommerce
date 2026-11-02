@@ -25,6 +25,7 @@ public static class ShippingModuleExtensions
         // Repositories
         services.AddScoped<IShippingRepository, ShippingRepository>();
         services.AddScoped<IShippingMethodRepository, ShippingMethodRepository>();
+        services.AddScoped<IShipmentTrackingEventRepository, ShipmentTrackingEventRepository>();
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, ShippingUnitOfWork>();

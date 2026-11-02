@@ -1,8 +1,4 @@
 ﻿using Ecommerce.Shipings.Modules.Domain.Entities;
-using Ecommerce.Shipings.Modules.Infrastructure.Database;
-using Ecommerce.Shippings.Modules.Domain.Repositories;
-using Ecommerce.Shippings.Modules.Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Shippings.Modules.Infrastructure.Repositories;
 

@@ -7,9 +7,10 @@ internal sealed class GetProductsEndpoint
     {
         app.MapGet("/products", async (
             ISender sender,
-            [AsParameters] GetProductsQuery query) =>
+            [AsParameters] GetProductsQuery query,
+            CancellationToken cancellationToken) =>
         {
-            var result = await sender.Send(query);
+            var result = await sender.Send(query, cancellationToken);
 
             if (result.IsFailure)
                 return Results.BadRequest(result.Error);

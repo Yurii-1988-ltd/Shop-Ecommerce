@@ -10,8 +10,9 @@ using Ecommerce.Localization.Modules.Presentation;
 using Ecommerce.API.Swagger;
 using Ecommerce.Promotions.Modules.Presentation.Promotions;
 using Ecommerce.Currency.Modules.Presentation.Currencies;
+using Ecommerce.Shippings.Modules.Presentation.ShippingMethod;
 
-internal class Program
+public class Program
 {
     private static async Task Main(string[] args)
     {
@@ -42,7 +43,8 @@ internal class Program
             .AddModule<NotificationModule>(builder.Configuration)
             .AddModule<LocalizationModule>(builder.Configuration)
             .AddModule<PromotionsModule>(builder.Configuration)
-            .AddModule<CurrencyModule>(builder.Configuration) ;
+            .AddModule<CurrencyModule>(builder.Configuration)
+            .AddModule<ShippingModule>(builder.Configuration);
 
 
           

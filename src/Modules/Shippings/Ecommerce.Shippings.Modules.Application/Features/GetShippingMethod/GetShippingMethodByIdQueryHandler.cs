@@ -22,8 +22,8 @@ internal sealed class GetShippingMethodByIdQueryHandler(
         if (shippingMethod is null)
             return ShippingErrors.ShippingMethodNotFound;
 
-        var response = shippingMethod.ToResponse();
+       
 
-        return response;
+        return shippingMethod.ToResponse();
     }
 }
