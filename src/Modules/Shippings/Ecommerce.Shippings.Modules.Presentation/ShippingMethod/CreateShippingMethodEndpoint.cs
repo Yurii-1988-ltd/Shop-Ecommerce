@@ -3,7 +3,7 @@
 
 namespace Ecommerce.Shippings.Modules.Presentation.ShippingMethod;
 
-public sealed class CreateShippingMethodEndpoint
+internal sealed class CreateShippingMethodEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

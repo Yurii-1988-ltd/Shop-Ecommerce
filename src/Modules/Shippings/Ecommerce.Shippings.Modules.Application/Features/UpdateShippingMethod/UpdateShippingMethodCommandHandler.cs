@@ -1,9 +1,8 @@
 ﻿using Ecommerce.Application.CQRS;
 using Ecommerce.Domain.Domain;
 using Ecommerce.Domain.ValueObjects;
-using Ecommerce.Shipings.Modules.Domain.Errors;
 using Ecommerce.Shippings.Modules.Application.Abstractions;
-
+using Ecommerce.Shippings.Modules.Domain.Errors;
 using Ecommerce.Shippings.Modules.Domain.Repositories;
 
 namespace Ecommerce.Shippings.Modules.Application.Features.UpdateShippingMethod;

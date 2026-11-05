@@ -10,7 +10,7 @@ using Ecommerce.Localization.Modules.Presentation;
 using Ecommerce.API.Swagger;
 using Ecommerce.Promotions.Modules.Presentation.Promotions;
 using Ecommerce.Currency.Modules.Presentation.Currencies;
-using Ecommerce.Shippings.Modules.Presentation.ShippingMethod;
+using Ecommerce.Shippings.Modules.Presentation;
 
 public class Program
 {

@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Shipings.Modules.Domain.Entities;
+using Ecommerce.Shippings.Modules.Domain.Entities;
 
 
 namespace Ecommerce.Shippings.Modules.Domain.Repositories;

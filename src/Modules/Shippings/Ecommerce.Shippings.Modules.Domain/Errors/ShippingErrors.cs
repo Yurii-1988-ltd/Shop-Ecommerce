@@ -1,7 +1,7 @@
 ﻿
 using Ecommerce.Domain.Domain;
 
-namespace Ecommerce.Shipings.Modules.Domain.Errors;
+namespace Ecommerce.Shippings.Modules.Domain.Errors;
 
 public static class ShippingErrors
 {
@@ -85,5 +85,11 @@ public static class ShippingErrors
 
     public static Error ShippingMethodNotFound =>
         new("Shipping.MethodNotFound", "Shipping method not found", ErrorType.Validation);
+    public static readonly Error ShippingMethodInUse = new(
+        "ShippingMethod.InUse",
+        "Shipping method cannot be deleted because it is used by existing shipments.",ErrorType.Conflict);
+    public static Error ShippingNotFound(Guid orderId)
+    =>new ("Shipping.MotFound", $" shipping  method with identifier '{orderId}' was not found ", ErrorType.NotFound);
+
 
 }

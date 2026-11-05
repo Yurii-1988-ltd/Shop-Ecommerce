@@ -2,8 +2,8 @@
 using Ecommerce.Domain.Domain;
 using Ecommerce.Shippings.Modules.Application.Dto;
 using Ecommerce.Shippings.Modules.Domain.Repositories;
-using Ecommerce.Shipings.Modules.Domain.Errors;
 using Ecommerce.Shippings.Modules.Application.Mappings;
+using Ecommerce.Shippings.Modules.Domain.Errors;
 
 namespace Ecommerce.Shippings.Modules.Application.Features.GetShippingMethod;
 

@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Domain.Domain;
 using Ecommerce.Domain.ValueObjects;
-using Ecommerce.Shipings.Modules.Domain.Errors;
+using Ecommerce.Shippings.Modules.Domain.Errors;
 
 namespace Ecommerce.Shippings.Modules.Domain.Entities;
 

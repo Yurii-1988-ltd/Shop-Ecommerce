@@ -1,8 +1,6 @@
 ﻿
 using Ecommerce.Shippings.Modules.Domain.Entities;
-using Ecommerce.Shippings.Modules.Domain.Repositories;
-using Ecommerce.Shippings.Modules.Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Ecommerce.Shippings.Modules.Infrastructure.Repositories;
 
@@ -44,6 +42,9 @@ public sealed class ShippingMethodRepository(ShippingContext context) : IShippin
     {
         await context.ShippingMethods.AddAsync(shippingMethod, cancellationToken);
     }
+
+    public async Task<bool> IsUsedAsync(Guid shippingMethodId, CancellationToken cancellationToken = default)
+        => await context.Shippings.AnyAsync(x => x.ShippingMethodId == shippingMethodId, cancellationToken);
 
     public void Update(ShippingMethod shippingMethod)
     {

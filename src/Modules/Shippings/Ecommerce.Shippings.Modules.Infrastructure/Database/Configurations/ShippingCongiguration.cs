@@ -1,9 +1,8 @@
 ﻿using Ecommerce.Domain.ValueObjects;
-using Ecommerce.Shipings.Modules.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using Ecommerce.Shippings.Modules.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Shipings.Modules.Infrastructure.Database.Configurations;
+namespace Ecommerce.Shippings.Modules.Infrastructure.Database.Configurations;
 
 internal sealed class ShippingConfiguration : IEntityTypeConfiguration<Shipping>
 {
@@ -40,10 +39,7 @@ internal sealed class ShippingConfiguration : IEntityTypeConfiguration<Shipping>
         });
 
 
-        builder.Property(x => x.Currency)
-            .HasColumnName("Currency")
-            .HasMaxLength(3)
-            .IsRequired();
+
 
         builder.Property(x => x.Status)
             .HasConversion<string>()

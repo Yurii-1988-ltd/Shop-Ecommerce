@@ -23,6 +23,7 @@ public interface IShippingMethodRepository
     Task AddAsync(
         ShippingMethod shippingMethod,
         CancellationToken cancellationToken = default);
+    Task<bool> IsUsedAsync(Guid ShippingMethodId, CancellationToken cancellationToken = default);
 
     void Update(ShippingMethod shippingMethod);
 

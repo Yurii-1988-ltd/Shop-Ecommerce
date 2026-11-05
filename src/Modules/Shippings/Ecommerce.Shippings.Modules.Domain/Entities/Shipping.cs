@@ -1,10 +1,9 @@
-﻿
-using Ecommerce.Domain.Domain;
+﻿using Ecommerce.Domain.Domain;
 using Ecommerce.Domain.ValueObjects;
 using Ecommerce.Shipings.Modules.Domain.Enums;
-using Ecommerce.Shipings.Modules.Domain.Errors;
+using Ecommerce.Shippings.Modules.Domain.Errors;
 
-namespace Ecommerce.Shipings.Modules.Domain.Entities;
+namespace Ecommerce.Shippings.Modules.Domain.Entities;
 
 public sealed class Shipping : Entity
 {
@@ -12,7 +11,7 @@ public sealed class Shipping : Entity
     public Guid ShippingMethodId { get; private set; }
     public string ShippingMethodName { get; private set; } = string.Empty;
     public Money ShippingCost { get; private set; }
-    public string Currency { get; private set; } = string.Empty;
+
     public ShippingStatus Status { get; private set; }
 
     public string RecipientName { get; private set; } = string.Empty;
@@ -78,7 +77,6 @@ public sealed class Shipping : Entity
         Guid shippingMethodId,
         string shippingMethodName,
         Money shippingCost,
-        string currency,
         string recipientName,
         string recipientPhone,
         string country,
@@ -104,8 +102,6 @@ public sealed class Shipping : Entity
         if (shippingCost is null)
             return ShippingErrors.InvalidPrice;
 
-        if (string.IsNullOrWhiteSpace(currency))
-            return ShippingErrors.CurrencyIsRequired;
 
         if (string.IsNullOrWhiteSpace(recipientName))
             return ShippingErrors.RecipientNameIsRequired;
