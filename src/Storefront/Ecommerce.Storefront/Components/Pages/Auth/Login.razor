@@ -1,0 +1,101 @@
+﻿@page "/auth/login"
+
+<PageTitle>Sign in</PageTitle>
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <a href="/" class="login-brand">
+            <span class="brand-logo">E</span>
+            <span>Ecommerce</span>
+        </a>
+
+
+        <div class="login-header">
+
+            <h1>Welcome back</h1>
+
+            <p>
+                Sign in to continue shopping.
+            </p>
+
+        </div>
+
+        <form method="post"
+              action="/login"
+              class="login-form">
+            <AntiforgeryToken />
+
+      
+
+            <AntiforgeryToken />
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input id="email"
+                       name="Email"
+                       type="email"
+                       autocomplete="email"
+                       placeholder="you@example.com"
+                       required />
+
+            </div>
+
+
+            <div class="form-group">
+
+                <div class="password-label">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <a href="/forgot-password">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+                <input id="password"
+                       name="Password"
+                       type="password"
+                       autocomplete="current-password"
+                       placeholder="Enter your password"
+                       required />
+
+            </div>
+
+
+            <button type="submit"
+                    class="login-button">
+
+                Sign in
+
+            </button>
+
+        </form>
+
+
+        <div class="login-divider">
+            <span>or</span>
+        </div>
+
+
+        <div class="register-link">
+
+            Don't have an account?
+
+            <a href="/auth/register">
+                Create account
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

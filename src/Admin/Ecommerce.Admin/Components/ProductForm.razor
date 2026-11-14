@@ -1,0 +1,95 @@
+﻿
+
+<EditForm Model="Model" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
+
+    <MudGrid>
+
+        <MudItem xs="12">
+
+            <MudTextField @bind-Value="Model.Name"
+            For="@(() => Model.Name)"
+            Label="Name"
+            Required="true" />
+
+        </MudItem>
+
+        <MudItem xs="12">
+
+            <MudTextField @bind-Value="Model.Description"
+            For="@(() => Model.Description)"
+            Label="Description"
+            Lines="4" />
+
+        </MudItem>
+
+        <MudItem xs="6">
+
+            <MudTextField @bind-Value="Model.Sku"
+            For="@(() => Model.Sku)"
+            Label="SKU"
+            Required="true" />
+
+        </MudItem>
+
+        <MudItem xs="3">
+
+            <MudNumericField @bind-Value="Model.Price"
+            For="@(() => Model.Price)"
+            Label="Price"
+            Required="true"
+            Min="0"
+            Format="0.00"
+            Immediate="true"/>
+
+
+        </MudItem>
+
+        <MudItem xs="3">
+
+            <MudTextField @bind-Value="Model.Currency"
+            For="@(() => Model.Currency)"
+            Label="Currency" />
+
+        </MudItem>
+
+    </MudGrid>
+
+    <MudStack Row="true"
+    Justify="Justify.FlexEnd"
+    AlignItems="AlignItems.Center"
+    Class="mt-4">
+
+        <MudButton Variant="Variant.Text"
+        Href="/products">
+
+            Cancel
+
+        </MudButton>
+
+        <MudButton ButtonType="ButtonType.Submit"
+        Color="Color.Primary"
+        Variant="Variant.Filled">
+
+            Save
+
+        </MudButton>
+
+    </MudStack>
+
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public ProductFormModel Model { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ProductFormModel> OnSubmit { get; set; }
+
+    private async Task Submit()
+    {
+        await OnSubmit.InvokeAsync(Model);
+    }
+
+}

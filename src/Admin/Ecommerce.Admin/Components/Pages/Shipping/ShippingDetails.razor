@@ -1,0 +1,353 @@
+﻿@page "/shippings/{Id:guid}"
+
+@using Ecommerce.Admin.ApiClients.Shippings
+@using Ecommerce.Admin.ApiClients.Shippings.Models
+
+@inject IShippingApiClient ShippingApiClient
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageHeader Title="Shipping Details" Subtitle="View shipment information" />
+
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else if (_shipping is null)
+{
+    <MudAlert Severity="Severity.Warning">
+        Shipping not found.
+    </MudAlert>
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h6" Class="mb-3">Shipment Information</MudText>
+
+                <MudText><b>Order ID:</b> @_shipping.OrderId</MudText>
+                <MudText><b>Shipping Method:</b> @_shipping.ShippingMethodName</MudText>
+                <MudText><b>Shipping Cost:</b> @_shipping.ShippingCost.ToString("N2") @_shipping.Currency</MudText>
+                <MudText><b>Status:</b> @_shipping.Status</MudText>
+                <MudText><b>Tracking Number:</b> @(_shipping.TrackingNumber ?? "—")</MudText>
+                <MudText><b>Created:</b> @_shipping.CreatedAtUtc.ToLocalTime().ToString("g")</MudText>
+                <MudText><b>Shipped:</b> @FormatDate(_shipping.ShippedAtUtc)</MudText>
+                <MudText><b>Delivered:</b> @FormatDate(_shipping.DeliveredAtUtc)</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h6" Class="mb-3">Recipient Details</MudText>
+
+                <MudText><b>Name:</b> @_shipping.RecipientName</MudText>
+                <MudText><b>Phone:</b> @_shipping.RecipientPhone</MudText>
+                <MudText><b>Country:</b> @_shipping.Country</MudText>
+                <MudText><b>City:</b> @_shipping.City</MudText>
+                <MudText><b>Street:</b> @(_shipping.Street ?? "—")</MudText>
+                <MudText><b>Building:</b> @(_shipping.Building ?? "—")</MudText>
+                <MudText><b>Postal Code:</b> @(_shipping.PostalCode ?? "—")</MudText>
+                <MudText><b>Delivery Point:</b> @(_shipping.DeliveryPoint ?? "—")</MudText>
+            </MudPaper>
+        </MudItem>
+
+        @if (!string.IsNullOrWhiteSpace(_shipping.Notes))
+        {
+            <MudItem xs="12">
+                <MudPaper Class="pa-4">
+                    <MudText Typo="Typo.h6" Class="mb-2">Notes</MudText>
+                    <MudText>@_shipping.Notes</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+    <MudPaper Class="pa-4 mt-4">
+        <MudText Typo="Typo.h6" Class="mb-3">
+            Shipping Actions
+        </MudText>
+
+        <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+
+            @if (_shipping.Status == "Pending")
+            {
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Disabled="_actionLoading"
+                           OnClick="StartProcessing">
+                    Start Processing
+                </MudButton>
+            }
+
+            @if (_shipping.Status == "Processing")
+            {
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Disabled="_actionLoading"
+                           OnClick="MarkReadyForShipment">
+                    Ready for Shipment
+                </MudButton>
+            }
+
+            @if (_shipping.Status == "ReadyForShipment")
+            {
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Disabled="_actionLoading"
+                           OnClick="MarkShipped">
+                    Ship
+                </MudButton>
+            }
+
+            @if (_shipping.Status == "Shipped")
+            {
+                <MudButton Color="Color.Info"
+                           Variant="Variant.Filled"
+                           Disabled="_actionLoading"
+                           OnClick="MarkInTransit">
+                    Mark In Transit
+                </MudButton>
+            }
+
+            @if (_shipping.Status == "InTransit")
+            {
+                <MudButton Color="Color.Info"
+                           Variant="Variant.Filled"
+                           Disabled="_actionLoading"
+                           OnClick="MarkOutForDelivery">
+                    Out for Delivery
+                </MudButton>
+            }
+
+            @if (_shipping.Status is "Shipped" or "InTransit" or "OutForDelivery")
+            {
+                <MudButton Color="Color.Success"
+                           Variant="Variant.Filled"
+                           Disabled="_actionLoading"
+                           OnClick="MarkDelivered">
+                    Mark Delivered
+                </MudButton>
+
+                <MudButton Color="Color.Error"
+                           Variant="Variant.Outlined"
+                           Disabled="_actionLoading"
+                           OnClick="MarkFailed">
+                    Mark Failed
+                </MudButton>
+            }
+
+            @if (_shipping.Status is "Failed" or "Delivered" or "InTransit" or "OutForDelivery")
+            {
+                <MudButton Color="Color.Warning"
+                           Variant="Variant.Outlined"
+                           Disabled="_actionLoading"
+                           OnClick="MarkReturned">
+                    Return
+                </MudButton>
+            }
+
+            @if (_shipping.Status is "Pending" or "Processing" or "ReadyForShipment")
+            {
+                <MudButton Color="Color.Error"
+                           Variant="Variant.Outlined"
+                           Disabled="_actionLoading"
+                           OnClick="CancelShipping">
+                    Cancel Shipping
+                </MudButton>
+            }
+
+        </MudStack>
+
+        @if (_actionLoading)
+        {
+            <MudProgressLinear Indeterminate="true" Class="mt-3" />
+        }
+    </MudPaper>
+    <MudPaper Class="pa-4 mt-4">
+        <MudText Typo="Typo.h6" Class="mb-4">
+            Tracking History
+        </MudText>
+
+        @if (_trackingEvents.Count == 0)
+        {
+            <MudText Color="Color.Secondary">
+                No tracking events available.
+            </MudText>
+        }
+        else
+        {
+            <MudTimeline TimelinePosition="TimelinePosition.Start">
+                @foreach (var trackingEvent in _trackingEvents)
+                {
+                    <MudTimelineItem Color="@GetStatusColor(trackingEvent.Status)">
+                        <ItemContent>
+                            <MudText Typo="Typo.subtitle2">
+                                @trackingEvent.Status
+                            </MudText>
+
+                            <MudText Typo="Typo.body2">
+                                @trackingEvent.Description
+                            </MudText>
+
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                @trackingEvent.OccurredAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                            </MudText>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        }
+    </MudPaper>
+}
+
+<MudButton Class="mt-4"
+           Variant="Variant.Outlined"
+           StartIcon="@Icons.Material.Filled.ArrowBack"
+           Href="/shippings">
+    Back to Shippings
+</MudButton>
+
+
+@code{
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ShippingResponse? _shipping;
+    private List<ShipmentTrackingEventResponse> _trackingEvents = [];
+
+    private bool _loading = true;
+    private bool _actionLoading;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadShippingAsync();
+    }
+
+    private async Task LoadShippingAsync()
+    {
+        _loading = true;
+        _shipping = null;
+        _trackingEvents = [];
+
+        try
+        {
+            _shipping = await ShippingApiClient.GetByIdAsync(Id);
+
+            if (_shipping is not null)
+                await LoadTrackingEvents();
+        }
+        catch (HttpRequestException)
+        {
+            _shipping = null;
+            _trackingEvents = [];
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task LoadTrackingEvents()
+    {
+        _trackingEvents =
+            await ShippingApiClient.GetTrackingEventsAsync(Id) ?? [];
+    }
+
+    private async Task ExecuteAction(
+     Func<Guid, Task> action,
+     string successMessage)
+    {
+        if (_actionLoading)
+            return;
+
+        _actionLoading = true;
+
+        try
+        {
+            await action(Id);
+
+            Snackbar.Add(successMessage, Severity.Success);
+
+            await LoadShippingAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add(
+                $"Failed to update shipping: {ex.Message}",
+                Severity.Error);
+        }
+        finally
+        {
+            _actionLoading = false;
+        }
+    }
+
+    private Task StartProcessing()
+      => ExecuteAction(
+          id => ShippingApiClient.StartProcessingAsync(id),
+          "Shipping processing started.");
+
+    private Task MarkReadyForShipment()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkAsReadyForShipmentAsync(id),
+            "Shipping is ready for shipment.");
+
+    private Task MarkShipped()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkAsShippedAsync(id),
+            "Shipping marked as shipped.");
+
+    private Task MarkInTransit()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkInTransitAsync(id),
+            "Shipping is in transit.");
+
+    private Task MarkOutForDelivery()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkOutForDeliveryAsync(id),
+            "Shipping is out for delivery.");
+
+    private Task MarkDelivered()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkAsDeliveredAsync(id),
+            "Shipping marked as delivered.");
+
+    private Task MarkFailed()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkAsFailedAsync(id),
+            "Shipping marked as failed.");
+
+    private Task MarkReturned()
+        => ExecuteAction(
+            id => ShippingApiClient.MarkAsReturnedAsync(id),
+            "Shipping marked as returned.");
+
+    private async Task CancelShipping()
+    {
+        bool? confirmed = await DialogService.ShowMessageBoxAsync(
+            "Cancel shipping",
+            "Are you sure you want to cancel this shipping?",
+            yesText: "Cancel shipping",
+            cancelText: "Back");
+
+        if (confirmed != true)
+            return;
+
+        await ExecuteAction(
+            id => ShippingApiClient.CancelAsync(id),
+            "Shipping cancelled.");
+    }
+
+    private static string FormatDate(DateTime? date)
+        => date?.ToLocalTime().ToString("g") ?? "—";
+
+    private static Color GetStatusColor(string status) => status switch
+    {
+        "Delivered" => Color.Success,
+        "Failed" or "Cancelled" => Color.Error,
+        "Returned" => Color.Warning,
+        "Shipped" or "InTransit" or "OutForDelivery" => Color.Info,
+        "Processing" or "ReadyForShipment" => Color.Secondary,
+        _ => Color.Primary
+    };
+}

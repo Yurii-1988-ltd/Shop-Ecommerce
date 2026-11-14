@@ -1,0 +1,10 @@
+﻿global using Ecommerce.Application.CQRS;
+global using Ecommerce.Domain.Domain;
+global using Ecommerce.Domain.ValueObjects;
+global using Ecommerce.Shippings.Modules.Application.Abstractions;
+global using Ecommerce.Shippings.Modules.Domain.Errors;
+global using Ecommerce.Shippings.Modules.Domain.Repositories;
+global using Ecommerce.Shippings.Modules.Application.Dto;
+global using Ecommerce.Shippings.Modules.Domain.Entities;
+global using Ecommerce.Shippings.Modules.Application.Dto.Extensions;
+global using Ecommerce.Shippings.Modules.Application.Mappings;

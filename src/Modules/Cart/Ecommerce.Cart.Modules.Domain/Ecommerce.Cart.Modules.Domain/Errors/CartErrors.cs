@@ -1,0 +1,59 @@
+﻿
+
+using Ecommerce.Domain.Domain;
+
+namespace Ecommerce.Cart.Modules.Domain.Errors;
+
+public sealed class CartErrors
+{
+    public static Error InvalidQuantity =>
+        new Error("Invalid.Quantity", "Quantity is invalid", ErrorType.Validation);
+    public static Error CartIsEmpty =>
+        new Error("Cart.Empty", "Cart is empty", ErrorType.Validation);
+    public static Error ProductAlreadyExists
+        => new Error("Product.Already.Exist", "Product already exist", ErrorType.Validation);
+    public static Error InvalidCustomerId
+        = new Error("Invalid.CustomerId", "Customer Id is invalid", ErrorType.Validation);
+    public static Error InvalidGuestId
+       = new Error("Invalid.GuestId", "Guest Id is invalid", ErrorType.Validation);
+    public static Error AlreadyExists(Guid id)
+        => new Error($"Already.Exists", "Customer with {id} already exist", ErrorType.Validation);
+    public static Error NotFound(Guid id)
+    =>new Error($"Cart.NotFound", "Cart with id {id}", ErrorType.Validation);
+    public static Error OwnerRequired
+        => new Error("Owner.Required", "Cart owner is required", ErrorType.Validation);
+    public static Error OwnerConflict =>
+    new(
+        "Cart.OwnerConflict",
+        "CustomerId and GuestId cannot be specified together.",ErrorType.Conflict);
+    public static Error ProductInventoryNotFound =>
+        new Error("Product.Inventory.NotFound", "Product inventory not found", ErrorType.Validation);
+    public static Error ProductInventoryNotEnough =>
+        new Error("Product.Inventory.NotEnough", "Product inventory not enough", ErrorType.Validation);
+    public static Error InvalidDiscount =>
+    new(
+        "Cart.InvalidDiscount",
+        "The discount is invalid.",
+        ErrorType.Validation);
+    public static Error InvalidCouponCode =>
+        new("Cart.InvalidCouponCode",
+        "The coupon code is invalid.",
+        ErrorType.Validation);
+    public static Error CustomerCartRequired =>
+    new(
+        "Cart.CustomerRequired",
+        "Customer cart is required.",
+        ErrorType.Validation);
+
+    public static Error GuestCartRequired =>
+        new(
+            "Cart.GuestRequired",
+            "Guest cart is required.",
+            ErrorType.Validation);
+    public static Error CustomerAlreadyExists(Guid id)
+    =>new Error(
+        $"Already.Exists",
+        "Customer with {id} already exist",
+        ErrorType.Validation);
+
+}

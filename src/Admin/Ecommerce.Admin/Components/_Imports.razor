@@ -1,0 +1,70 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using BlazorSortable
+@using Ecommerce.Admin
+@using Ecommerce.Admin.ApiClients.Brands.Api
+@using Ecommerce.Admin.ApiClients.Brands.Models
+@using Ecommerce.Admin.ApiClients.Carts
+@using Ecommerce.Admin.ApiClients.Carts.Contracts;
+@using Ecommerce.Admin.ApiClients.Catalog
+@using Ecommerce.Admin.ApiClients.Catalog.Models
+@using Ecommerce.Admin.ApiClients.Categories
+@using Ecommerce.Admin.ApiClients.Identity.Api
+@using Ecommerce.Admin.ApiClients.Images
+@using Ecommerce.Admin.ApiClients.Images.Models
+@using Ecommerce.Admin.ApiClients.Inventories.Api
+@using Ecommerce.Admin.ApiClients.Orders.Enums
+@using Ecommerce.Admin.ApiClients.Roles.Api
+@using Ecommerce.Admin.ApiClients.Users.Api
+@using Ecommerce.Admin.ApiClients.Users.Responses
+@using Ecommerce.Admin.Components
+@using Ecommerce.Admin.Components.Pages.Carts.Dialogs;
+@using Ecommerce.Admin.Components.Pages.Orders.Components;
+@using Ecommerce.Admin.Components.Pages.Users.Components
+@using Ecommerce.Admin.Components.Shared
+@using Ecommerce.Admin.Contracts
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Sections
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using MudBlazor
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using ApiClients.Identity.Contracts
+@using System.ComponentModel.DataAnnotations
+@using Ecommerce.Admin.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@using Ecommerce.Admin.ApiClients.Users.Contracts
+@using Ecommerce.Admin.ApiClients.Users.Models
+@using Ecommerce.Admin.ApiClients.Catalog.Contracts;
+
+
+
+
+@using Microsoft.AspNetCore.Authorization
+
+
+
+
+
+
+
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+@inject IRoleApiClient RoleApi;
+@inject ICatalogApiClient CatalogApi
+@inject  ICartApiClient CartApi
+@inject IOrderApiClient OrderApi
+@inject IInventoryApiClient InventoryApi
+@inject IUserApiClient UserApi
+@inject IBrandApiClient BrandApi
+@inject IIdentityApiClient IdentityApi
+@inject IImageApiClient ImageApi 
+@inject ISnackbar Snackbar
+@inject IJSRuntime jS
+
+@inject AuthenticationService AuthenticationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
