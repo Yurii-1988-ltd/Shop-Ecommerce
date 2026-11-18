@@ -1,0 +1,138 @@
+@using MudBlazor
+
+<MudPaper Class="sales-overview" Elevation="0">
+
+    <div class="sales-header">
+        <div>
+            <MudText Typo="Typo.h6" Class="sales-title">
+                Sales Overview
+            </MudText>
+            <MudText Typo="Typo.body2" Class="sales-subtitle">
+                Track your store performance
+            </MudText>
+        </div>
+
+        <MudSelect T="string"
+                   Value="_selectedPeriod"
+                   ValueChanged="OnPeriodChanged"
+                   Variant="Variant.Outlined"
+                   Margin="Margin.Dense"
+                   Dense="true"
+                   Class="sales-period-select">
+            <MudSelectItem Value="@("7 days")">Last 7 days</MudSelectItem>
+            <MudSelectItem Value="@("30 days")">Last 30 days</MudSelectItem>
+            <MudSelectItem Value="@("12 months")">Last 12 months</MudSelectItem>
+        </MudSelect>
+    </div>
+
+    <div class="sales-summary">
+        <div>
+            <MudText Typo="Typo.caption" Class="sales-label">
+                TOTAL REVENUE
+            </MudText>
+
+            <MudText Typo="Typo.h4" Class="sales-total">
+                @_revenue
+            </MudText>
+        </div>
+
+        <div class="sales-growth">
+            <MudIcon Icon="@Icons.Material.Filled.TrendingUp"
+                     Size="Size.Small" />
+            <span>+12.8%</span>
+            <MudText Typo="Typo.caption">vs previous period</MudText>
+        </div>
+    </div>
+
+    <div class="sales-chart">
+        <svg viewBox="0 0 700 230"
+             preserveAspectRatio="none"
+             role="img"
+             aria-label="Sales revenue chart">
+
+            @foreach (var y in new[] { 40, 90, 140, 190 })
+            {
+                <line x1="0" y1="@y"
+                      x2="700" y2="@y"
+                      class="chart-grid-line" />
+            }
+
+            <defs>
+                <linearGradient id="salesGradient"
+                                x1="0" y1="0"
+                                x2="0" y2="1">
+                    <stop offset="0%"
+                          stop-color="#171717"
+                          stop-opacity=".16" />
+                    <stop offset="100%"
+                          stop-color="#171717"
+                          stop-opacity="0" />
+                </linearGradient>
+            </defs>
+
+            <path d="@AreaPath"
+                  fill="url(#salesGradient)" />
+
+            <path d="@LinePath"
+                  class="sales-line" />
+
+            @foreach (var point in ChartPoints)
+            {
+                <circle cx="@point.X"
+                        cy="@point.Y"
+                        r="4"
+                        class="sales-point" />
+            }
+        </svg>
+    </div>
+
+    <div class="sales-chart-labels">
+        @foreach (var label in ChartLabels)
+        {
+            <MudText Typo="Typo.caption">@label</MudText>
+        }
+    </div>
+
+</MudPaper>
+
+@code {
+    private string _selectedPeriod = "7 days";
+
+    private string _revenue = "$12,580";
+
+    private record ChartPoint(double X, double Y);
+
+    private readonly List<ChartPoint> ChartPoints =
+    [
+        new(0, 155),
+        new(100, 125),
+        new(200, 145),
+        new(300, 85),
+        new(400, 110),
+        new(500, 55),
+        new(600, 75),
+        new(700, 30)
+    ];
+
+    private readonly string[] ChartLabels =
+    [
+        "Mon", "Tue", "Wed", "Thu",
+        "Fri", "Sat", "Sun"
+    ];
+
+    private string LinePath =>
+        "M " + string.Join(" L ",
+            ChartPoints.Select(p => $"{p.X},{p.Y}"));
+
+    private string AreaPath =>
+        $"{LinePath} L 700,220 L 0,220 Z";
+
+    private Task OnPeriodChanged(string period)
+    {
+        _selectedPeriod = period;
+
+        // TODO: Load actual sales data for selected period.
+
+        return Task.CompletedTask;
+    }
+}

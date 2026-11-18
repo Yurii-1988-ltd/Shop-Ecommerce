@@ -1,0 +1,133 @@
+﻿@page "/"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+
+<PageTitle>Dashboard | Ecommerce Admin</PageTitle>
+
+<div class="dashboard-page">
+
+    @* Page Header *@
+    <div class="dashboard-header">
+        <div class="dashboard-heading">
+            <MudText Typo="Typo.h4" Class="dashboard-title">
+                Overview
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="dashboard-subtitle">
+                Here's what's happening with your store today.
+            </MudText>
+        </div>
+
+        <div class="dashboard-header-meta">
+            <MudIcon Icon="@Icons.Material.Outlined.CalendarToday"
+                     Size="Size.Small" />
+
+            <MudText Typo="Typo.body2">
+                Store overview
+            </MudText>
+        </div>
+    </div>
+
+    @* KPI Statistics *@
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+            <MudText Typo="Typo.subtitle2" Class="dashboard-section-title">
+                PERFORMANCE
+            </MudText>
+        </div>
+
+        <MudGrid Spacing="3">
+
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardStatCard CssClass="products-card"
+                                   Icon="@Icons.Material.Outlined.Inventory2"
+                                   Title="Products"
+                                   Value="125"
+                                   Growth="+12" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardStatCard CssClass="customers-card"
+                                   Icon="@Icons.Material.Outlined.People"
+                                   Title="Customers"
+                                   Value="510"
+                                   Growth="+21" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardStatCard CssClass="orders-card"
+                                   Icon="@Icons.Material.Outlined.ShoppingCart"
+                                   Title="Orders"
+                                   Value="43"
+                                   Growth="+8" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardStatCard CssClass="revenue-card"
+                                   Icon="@Icons.Material.Outlined.Payments"
+                                   Title="Revenue"
+                                   Value="$12.5K"
+                                   Growth="+15" />
+            </MudItem>
+
+        </MudGrid>
+
+    </section>
+
+    @* Sales and Inventory *@
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+            <MudText Typo="Typo.subtitle2" Class="dashboard-section-title">
+                BUSINESS ACTIVITY
+            </MudText>
+        </div>
+
+        <MudGrid Spacing="3" Class="dashboard-content-grid">
+
+            <MudItem xs="12" lg="8">
+                <div class="dashboard-panel dashboard-sales-panel">
+                    <SalesOverview />
+                </div>
+            </MudItem>
+
+            <MudItem xs="12" lg="4">
+                <div class="dashboard-panel dashboard-stock-panel">
+                    <LowStockProducts />
+                </div>
+            </MudItem>
+
+        </MudGrid>
+
+    </section>
+
+    @* Orders and Carts *@
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+            <MudText Typo="Typo.subtitle2" Class="dashboard-section-title">
+                RECENT ACTIVITY
+            </MudText>
+        </div>
+
+        <MudGrid Spacing="3" Class="dashboard-content-grid">
+
+            <MudItem xs="12" lg="8">
+                <div class="dashboard-panel dashboard-orders-panel">
+                    <RecentOrders />
+                </div>
+            </MudItem>
+
+            <MudItem xs="12" lg="4">
+                <div class="dashboard-panel dashboard-carts-panel">
+                    <ActiveCarts />
+                </div>
+            </MudItem>
+
+        </MudGrid>
+
+    </section>
+
+</div>

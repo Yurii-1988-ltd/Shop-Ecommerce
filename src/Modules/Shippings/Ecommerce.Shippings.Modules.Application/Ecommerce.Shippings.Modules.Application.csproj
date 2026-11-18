@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MassTransit.Abstractions" />
+		<PackageReference Include="MassTransit.RabbitMQ" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\BuildingBlocks\Ecommerce.Application\Ecommerce.Application.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Shared\Ecommerce.Shared.Contracts\Ecommerce.Shared.Contracts.csproj" />
+		<ProjectReference Include="..\Ecommerce.Shippings.Modules.Domain\Ecommerce.Shippings.Modules.Domain.csproj" />
+	</ItemGroup>
+
+</Project>

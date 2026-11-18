@@ -1,0 +1,206 @@
+﻿
+@page "/inventories"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+
+@using Microsoft.AspNetCore.Authorization
+@using Ecommerce.Admin.ApiClients.Inventories.Responses
+
+<PageTitle>Inventories</PageTitle>
+
+<PageHeader Title="Inventories"
+            Subtitle="Manage your inventories">
+    <Actions>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Href="/inventories/create"
+                   Class="inventory-add-button">
+            Add Inventory
+        </MudButton>
+
+      <MudBlazor.MudMenu Icon="@Icons.Material.Filled.FileDownload"
+                   Label="Export"
+                   Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   Class="inventory-export-menu">
+
+            <MudMenuItem OnClick="ExportExcel">
+                <MudIcon Icon="@Icons.Material.Outlined.TableView"
+                         Class="me-2" />
+                Excel
+            </MudMenuItem>
+
+            <MudMenuItem OnClick="ExportPdf">
+                <MudIcon Icon="@Icons.Material.Outlined.PictureAsPdf"
+                         Class="me-2" />
+                PDF
+            </MudMenuItem>
+
+        </MudBlazor.MudMenu>
+    </Actions>
+</PageHeader>
+
+<MudPaper Class="inventory-card" Elevation="0">
+
+    @* Header *@
+    <div class="inventory-card-header">
+        <div class="inventory-heading">
+            <MudText Typo="Typo.h6" Class="inventory-card-title">
+                Inventory overview
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="inventory-card-subtitle">
+                Monitor stock levels and manage reservations
+            </MudText>
+        </div>
+
+        <div class="inventory-count">
+            <MudIcon Icon="@Icons.Material.Outlined.Inventory2" />
+            <span>@_inventories.Count items</span>
+        </div>
+    </div>
+
+    @* Loading *@
+    @if (_isLoading)
+    {
+        <div class="inventory-loading">
+            <MudProgressCircular Indeterminate="true"
+                                 Color="Color.Primary"
+                                 Size="Size.Medium" />
+        </div>
+    }
+    @* Empty state *@
+    else if (_inventories.Count == 0)
+    {
+        <div class="inventory-empty">
+            <MudIcon Icon="@Icons.Material.Outlined.Inventory2"
+                     Size="Size.Large" />
+
+            <MudText Typo="Typo.body1" Class="inventory-empty-title">
+                No inventory records
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="inventory-empty-subtitle">
+                Add an inventory record to start managing stock.
+            </MudText>
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Href="/inventories/create">
+                Add Inventory
+            </MudButton>
+        </div>
+    }
+    @* Inventory table *@
+    else
+    {
+        <MudTable T="InventoryReportItemResponse"
+                  Items="_inventories"
+                  Hover="true"
+                  Dense="true"
+                  Elevation="0"
+                  Class="inventory-table">
+
+            <HeaderContent>
+                <MudTh>SKU</MudTh>
+                <MudTh align="right">On Hand</MudTh>
+                <MudTh align="right">Reserved</MudTh>
+                <MudTh align="right">Available</MudTh>
+                <MudTh align="right">Minimum</MudTh>
+                <MudTh align="right">Actions</MudTh>
+            </HeaderContent>
+
+            <RowTemplate Context="inventory">
+
+                @* SKU *@
+                <MudTd DataLabel="SKU">
+                    <span class="inventory-sku">
+                        @inventory.SKU
+                    </span>
+                </MudTd>
+
+                @* On Hand *@
+                <MudTd DataLabel="On Hand" align="right">
+                    <span class="inventory-quantity">
+                        @inventory.OnHandQuantity
+                    </span>
+                </MudTd>
+
+                @* Reserved *@
+                <MudTd DataLabel="Reserved" align="right">
+                    <MudChip T="int"
+                             Size="Size.Small"
+                             Color="Color.Warning"
+                             Variant="Variant.Outlined"
+                             Class="inventory-reserved-chip">
+                        @inventory.ReservedQuantity
+                    </MudChip>
+                </MudTd>
+
+                @* Available *@
+                <MudTd DataLabel="Available" align="right">
+                    <div class="inventory-available">
+                        <InventoryStatusChip
+                            Available="@inventory.AvailableQuantity"
+                            Minimum="@inventory.MinimumQuantity" />
+                    </div>
+                </MudTd>
+
+                @* Minimum *@
+                <MudTd DataLabel="Minimum" align="right">
+                    <span class="inventory-minimum">
+                        @inventory.MinimumQuantity
+                    </span>
+                </MudTd>
+
+                @* Actions *@
+                <MudTd DataLabel="Actions" align="right">
+                    <div class="inventory-actions">
+
+                        <MudBlazor.MudMenu Icon="@Icons.Material.Filled.MoreVert"
+                                           Size="Size.Small"
+                                           Color="Color.Default"
+                                           AnchorOrigin="Origin.BottomRight"
+                                           TransformOrigin="Origin.TopRight"
+                                           Dense="true">
+
+                            <MudMenuItem OnClick="@(() => Replenish(inventory))">
+                                <MudIcon Icon="@Icons.Material.Outlined.Add" Class="me-2" />
+                                Replenish
+                            </MudMenuItem>
+
+                            <MudMenuItem OnClick="@(() => Deduct(inventory))">
+                                <MudIcon Icon="@Icons.Material.Outlined.Remove" Class="me-2" />
+                                Deduct
+                            </MudMenuItem>
+
+                            <MudDivider />
+
+                            <MudMenuItem OnClick="@(() => Reserve(inventory))">
+                                <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="me-2" />
+                                Reserve
+                            </MudMenuItem>
+
+                            <MudMenuItem OnClick="@(() => CancelReservation(inventory))">
+                                <MudIcon Icon="@Icons.Material.Outlined.LockOpen" Class="me-2" />
+                                Cancel Reservation
+                            </MudMenuItem>
+
+                            <MudMenuItem OnClick="@(() => CommitReservation(inventory))">
+                                <MudIcon Icon="@Icons.Material.Outlined.CheckCircleOutline" Class="me-2" />
+                                Commit Reservation
+                            </MudMenuItem>
+
+                        </MudBlazor.MudMenu>
+
+                    </div>
+                </MudTd>
+
+            </RowTemplate>
+
+        </MudTable>
+    }
+
+</MudPaper>

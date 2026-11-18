@@ -1,0 +1,263 @@
+﻿@page "/shippings"
+
+@using Ecommerce.Admin.ApiClients.Shippings
+@using Ecommerce.Admin.ApiClients.Shippings.Api
+@using Ecommerce.Admin.ApiClients.Shippings.Models
+
+@inject IShippingApiClient ShippingApiClient
+@inject NavigationManager Navigation
+
+<PageTitle>Shippings | Ecommerce Admin</PageTitle>
+
+<div class="shippings-page">
+    <PageHeader Title="Shippings"
+                Subtitle="Manage customer shipments" />
+
+    <MudPaper Class="shippings-panel" Elevation="0">
+        <div class="shippings-toolbar">
+            <div class="shippings-filters">
+                <MudTextField T="string"
+                              @bind-Value="_search"
+                              Placeholder="Search by tracking number or recipient..."
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Outlined.Search"
+                              Immediate="true"
+                              DebounceInterval="400"
+                              OnDebounceIntervalElapsed="OnSearchChanged"
+                              Class="shipping-search" />
+
+                <MudSelect T="string"
+                           Value="_selectedStatus"
+                           ValueChanged="OnStatusChanged"
+                           Label="Status"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           Clearable="true"
+                           Class="shipping-status-filter">
+                    @foreach (var status in _statuses)
+                    {
+                        <MudSelectItem T="string" Value="@status">
+                            @status
+                        </MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Default"
+                       StartIcon="@Icons.Material.Outlined.Refresh"
+                       OnClick="LoadShippings"
+                       Disabled="_loading"
+                       Class="shipping-refresh-button">
+                Refresh
+            </MudButton>
+        </div>
+
+        <div class="shippings-table-wrapper">
+            <MudTable T="ShippingResponse"
+                      Items="_shippings"
+                      Loading="_loading"
+                      Hover="true"
+                      Dense="true"
+                      Striped="false"
+                      Class="shippings-table">
+
+                <HeaderContent>
+                    <MudTh>Order</MudTh>
+                    <MudTh>Recipient</MudTh>
+                    <MudTh>City</MudTh>
+                    <MudTh>Shipping method</MudTh>
+                    <MudTh>Tracking number</MudTh>
+                    <MudTh>Status</MudTh>
+                    <MudTh>Created</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+
+                <RowTemplate>
+                    <MudTd DataLabel="Order">
+                        <span class="shipping-order-id">
+                            @context.OrderId
+                        </span>
+                    </MudTd>
+
+                    <MudTd DataLabel="Recipient">
+                        <span class="shipping-recipient">
+                            @context.RecipientName
+                        </span>
+                    </MudTd>
+
+                    <MudTd DataLabel="City">
+                        @context.City
+                    </MudTd>
+
+                    <MudTd DataLabel="Shipping method">
+                        @context.ShippingMethodName
+                    </MudTd>
+
+                    <MudTd DataLabel="Tracking number">
+                        <span class="shipping-tracking-number">
+                            @(string.IsNullOrWhiteSpace(context.TrackingNumber)
+                                ? "—"
+                                : context.TrackingNumber)
+                        </span>
+                    </MudTd>
+
+                    <MudTd DataLabel="Status">
+                        <MudChip T="string"
+                                 Size="Size.Small"
+                                 Variant="Variant.Outlined"
+                                 Color="@GetStatusColor(context.Status)"
+                                 Class="shipping-status-chip">
+                            @context.Status
+                        </MudChip>
+                    </MudTd>
+
+                    <MudTd DataLabel="Created">
+                        <span class="shipping-date">
+                            @context.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                        </span>
+                    </MudTd>
+
+                    <MudTd Class="shipping-actions-cell">
+                        <MudTooltip Text="View shipment details">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Visibility"
+                                           Size="Size.Small"
+                                           Color="Color.Default"
+                                           OnClick="@(() => OpenDetails(context.Id))"
+                                           ariaLabel="View shipment details" />
+                        </MudTooltip>
+                    </MudTd>
+                </RowTemplate>
+
+                <NoRecordsContent>
+                    <div class="shippings-empty-state">
+                        <MudIcon Icon="@Icons.Material.Outlined.LocalShipping"
+                                 Size="Size.Large" />
+                        <MudText Typo="Typo.subtitle2">
+                            No shipments found
+                        </MudText>
+                        <MudText Typo="Typo.body2">
+                            Try changing your search or status filter.
+                        </MudText>
+                    </div>
+                </NoRecordsContent>
+            </MudTable>
+        </div>
+
+        <div class="shippings-footer">
+            <MudText Typo="Typo.body2" Class="shippings-total">
+                Total: <strong>@_totalCount</strong> shipments
+            </MudText>
+
+            <MudPagination Count="_totalPages"
+                           Selected="_page"
+                           SelectedChanged="OnPageChanged"
+                           ShowFirstButton="true"
+                           ShowLastButton="true"
+                           Size="Size.Small"
+                           Class="shippings-pagination" />
+        </div>
+    </MudPaper>
+</div>
+
+@code {
+    private List<ShippingResponse> _shippings = [];
+    private bool _loading;
+    private string? _search;
+    private string? _selectedStatus;
+
+    private int _page = 1;
+    private int _pageSize = 10;
+    private int _totalCount;
+
+    private int _totalPages =>
+        Math.Max(1, (int)Math.Ceiling((double)_totalCount / _pageSize));
+
+    private readonly string[] _statuses =
+    [
+        "Pending",
+        "Processing",
+        "ReadyForShipment",
+        "Shipped",
+        "InTransit",
+        "OutForDelivery",
+        "Delivered",
+        "Failed",
+        "Returned",
+        "Cancelled"
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadShippings();
+    }
+
+    private async Task LoadShippings()
+    {
+        _loading = true;
+
+        try
+        {
+            var result = await ShippingApiClient.GetAllAsync(
+                _page,
+                _pageSize,
+                _selectedStatus,
+                _search);
+
+            _shippings = result?.Items.ToList() ?? [];
+            _totalCount = result?.TotalCount ?? 0;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task OnSearchChanged(string value)
+    {
+        _search = value;
+        _page = 1;
+
+        await LoadShippings();
+    }
+
+    private async Task OnStatusChanged(string? value)
+    {
+        _selectedStatus = value;
+        _page = 1;
+
+        await LoadShippings();
+    }
+
+    private async Task OnPageChanged(int page)
+    {
+        _page = page;
+        await LoadShippings();
+    }
+
+    private static Color GetStatusColor(string status) => status switch
+    {
+        "Delivered" => Color.Success,
+
+        "Shipped" or
+        "InTransit" or
+        "OutForDelivery" => Color.Info,
+
+        "Failed" or
+        "Cancelled" => Color.Error,
+
+        "Returned" => Color.Warning,
+
+        "Processing" or
+        "ReadyForShipment" => Color.Secondary,
+
+        _ => Color.Default
+    };
+
+    private void OpenDetails(Guid id)
+    {
+        Navigation.NavigateTo($"/shippings/{id}");
+    }
+}

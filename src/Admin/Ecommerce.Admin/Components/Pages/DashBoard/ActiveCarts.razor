@@ -1,0 +1,93 @@
+﻿@using Ecommerce.Admin.DashBoard.Models
+
+<MudPaper Class="active-carts-panel" Elevation="0">
+
+    <div class="carts-header">
+        <div>
+            <MudText Typo="Typo.h6" Class="carts-title">
+                Active Carts
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="carts-subtitle">
+                Customers currently shopping
+            </MudText>
+        </div>
+
+        <MudChip T="string"
+                 Size="Size.Small"
+                 Variant="Variant.Outlined"
+                 Class="carts-count">
+            @Carts.Count carts
+        </MudChip>
+    </div>
+
+    @if (Carts.Count == 0)
+    {
+        <div class="carts-empty">
+            <MudIcon Icon="@Icons.Material.Outlined.ShoppingCart"
+                     Size="Size.Large" />
+
+            <MudText Typo="Typo.body2">
+                No active carts
+            </MudText>
+        </div>
+    }
+    else
+    {
+        <MudTable T="ActiveCartDto"
+                  Items="Carts"
+                  Dense="true"
+                  Hover="true"
+                  Elevation="0"
+                  Class="active-carts-table">
+
+            <HeaderContent>
+                <MudTh>Customer</MudTh>
+                <MudTh align="center">Items</MudTh>
+                <MudTh align="right">Total Amount</MudTh>
+                <MudTh>Last Updated</MudTh>
+            </HeaderContent>
+
+            <RowTemplate>
+                <MudTd DataLabel="Customer">
+                    <div class="cart-customer">
+                        <div class="cart-avatar">
+                            <MudIcon Icon="@Icons.Material.Outlined.Person"
+                                     Size="Size.Small" />
+                        </div>
+
+                        <span class="cart-customer-name">
+                            @context.CustomerName
+                        </span>
+                    </div>
+                </MudTd>
+
+                <MudTd DataLabel="Items" align="center">
+                    <span class="cart-items-count">
+                        @context.TotalQuantity
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Total Amount" align="right">
+                    <span class="cart-total">
+                        @context.TotalAmount.ToString("N2") @context.Currency
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Last Updated">
+                    <span class="cart-updated">
+                        @context.UpdatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                    </span>
+                </MudTd>
+            </RowTemplate>
+
+        </MudTable>
+    }
+
+</MudPaper>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<ActiveCartDto> Carts { get; set; }
+        = Array.Empty<ActiveCartDto>();
+}

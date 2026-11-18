@@ -1,0 +1,56 @@
+﻿
+<DetailCard Title="User Information">
+    <MudGrid Spacing="3">
+        <MudItem xs="12" sm="6">
+            <div class="user-info-field">
+                <MudText Typo="Typo.caption" Class="user-info-label">
+                    First Name
+                </MudText>
+                <MudText Typo="Typo.body1" Class="user-info-value">
+                    @DisplayValue(User.FirstName)
+                </MudText>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12" sm="6">
+            <div class="user-info-field">
+                <MudText Typo="Typo.caption" Class="user-info-label">
+                    Last Name
+                </MudText>
+                <MudText Typo="Typo.body1" Class="user-info-value">
+                    @DisplayValue(User.LastName)
+                </MudText>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12">
+            <div class="user-info-field">
+                <MudText Typo="Typo.caption" Class="user-info-label">
+                    Email Address
+                </MudText>
+                <MudText Typo="Typo.body1" Class="user-info-value">
+                    @DisplayValue(User.Email)
+                </MudText>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12">
+            <div class="user-info-field">
+                <MudText Typo="Typo.caption" Class="user-info-label">
+                    Created At
+                </MudText>
+                <MudText Typo="Typo.body1" Class="user-info-value">
+                    @User.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                </MudText>
+            </div>
+        </MudItem>
+    </MudGrid>
+</DetailCard>
+
+@code {
+    [Parameter, EditorRequired]
+    public UserResponse User { get; set; } = default!;
+
+    private static string DisplayValue(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? "—" : value;
+}

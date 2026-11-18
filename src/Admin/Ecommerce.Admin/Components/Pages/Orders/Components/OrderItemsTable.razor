@@ -1,0 +1,193 @@
+﻿@using Ecommerce.Admin.ApiClients.Orders.Contracts
+@using Ecommerce.Admin.ApiClients.Orders.Models
+
+<MudPaper Elevation="0" Class="order-items-card">
+
+    @* Header *@
+    <div class="order-items-header">
+        <MudStack Row="true"
+                  Justify="Justify.SpaceBetween"
+                  AlignItems="AlignItems.Center"
+                  Spacing="2">
+
+            <MudStack Spacing="1">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.ShoppingBag"
+                             Class="order-items-header-icon" />
+
+                    <MudText Typo="Typo.h6" Class="order-items-title">
+                        Order Items
+                    </MudText>
+                </MudStack>
+
+                <MudText Typo="Typo.caption" Class="order-items-subtitle">
+                    Products included in this order
+                </MudText>
+            </MudStack>
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Disabled="@ReadOnly"
+                       OnClick="OnAddItem"
+                       Class="order-add-button">
+                Add Product
+            </MudButton>
+
+        </MudStack>
+    </div>
+
+    @* Table *@
+    <div class="order-items-table-wrapper">
+
+        <MudTable T="OrderItemResponse"
+                  Items="Items"
+                  Dense="true"
+                  Hover="true"
+                  Striped="false"
+                  Class="order-items-table">
+
+            <HeaderContent>
+                <MudTh>Product</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh align="right">Price</MudTh>
+                <MudTh align="center">Quantity</MudTh>
+                <MudTh align="right">Total</MudTh>
+                <MudTh align="center" Class="actions-column"></MudTh>
+            </HeaderContent>
+
+            <RowTemplate>
+
+                <MudTd DataLabel="Product">
+                    <MudText Typo="Typo.body2" Class="order-product-name">
+                        @context.ProductName
+                    </MudText>
+                </MudTd>
+
+                <MudTd DataLabel="SKU">
+                    <MudText Typo="Typo.caption" Class="order-product-sku">
+                        @context.SKU
+                    </MudText>
+                </MudTd>
+
+                <MudTd DataLabel="Price" align="right">
+                    <MudText Typo="Typo.body2" Class="order-item-price">
+                        @($"{context.Amount:N2} {context.Currency}")
+                    </MudText>
+                </MudTd>
+
+                <MudTd DataLabel="Quantity" align="center">
+
+                    <div class="quantity-control">
+
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove"
+                                       Size="Size.Small"
+                                       Color="Color.Default"
+                                       Disabled="@ReadOnly"
+                                       OnClick="@(() => DecreaseQuantity(context))"
+                                       Class="quantity-button" />
+
+                        <MudText Typo="Typo.body2" Class="quantity-value">
+                            @context.Quantity
+                        </MudText>
+
+                        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                       Size="Size.Small"
+                                       Color="Color.Default"
+                                       Disabled="@ReadOnly"
+                                       OnClick="@(() => IncreaseQuantity(context))"
+                                       Class="quantity-button" />
+
+                    </div>
+
+                </MudTd>
+
+                <MudTd DataLabel="Total" align="right">
+                    <MudText Typo="Typo.body2" Class="order-item-total">
+                        @($"{context.TotalPrice:N2} {context.Currency}")
+                    </MudText>
+                </MudTd>
+
+                <MudTd DataLabel="Actions"
+                       align="center"
+                       Class="actions-column">
+
+                    <MudIconButton Icon="@Icons.Material.Filled.DeleteOutline"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   Disabled="@ReadOnly"
+                                   OnClick="@(() => OnRemoveItem.InvokeAsync(context.Id))"
+                                   Class="order-remove-button" />
+
+                </MudTd>
+
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <div class="order-items-empty">
+                    <MudIcon Icon="@Icons.Material.Filled.ShoppingBag"
+                             Class="order-items-empty-icon" />
+
+                    <MudText Typo="Typo.body2" Class="order-items-empty-title">
+                        No products in this order
+                    </MudText>
+
+                    <MudText Typo="Typo.caption" Class="order-items-empty-subtitle">
+                        Add products to get started.
+                    </MudText>
+                </div>
+            </NoRecordsContent>
+
+        </MudTable>
+
+    </div>
+
+    @if (ReadOnly)
+    {
+        <div class="order-items-readonly">
+            <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Small" />
+            <MudText Typo="Typo.caption">
+                Order items are read-only.
+
+            </MudText>
+        </div>
+    }
+
+</MudPaper>
+
+@code {
+    [Parameter]
+    public IEnumerable<OrderItemResponse> Items { get; set; }
+        = Enumerable.Empty<OrderItemResponse>();
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback OnAddItem { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnRemoveItem { get; set; }
+
+    [Parameter]
+    public EventCallback<(Guid OrderItemId, ChangeOrderItemQuantityRequest Request)> OnQuantityChanged { get; set; }
+
+    private Task IncreaseQuantity(OrderItemResponse item)
+    {
+        return OnQuantityChanged.InvokeAsync((
+            item.Id,
+            new ChangeOrderItemQuantityRequest(item.Quantity + 1)));
+    }
+
+    private Task DecreaseQuantity(OrderItemResponse item)
+    {
+        if (item.Quantity <= 1)
+        {
+            return OnRemoveItem.InvokeAsync(item.Id);
+        }
+
+        return OnQuantityChanged.InvokeAsync((
+            item.Id,
+            new ChangeOrderItemQuantityRequest(item.Quantity - 1)));
+    }
+}

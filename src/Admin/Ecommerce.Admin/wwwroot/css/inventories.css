@@ -1,0 +1,234 @@
+﻿
+.inventory-card {
+    width: 100%;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    overflow: hidden;
+}
+
+/* Header */
+
+.inventory-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.inventory-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.inventory-card-title {
+    color: var(--admin-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.inventory-card-subtitle {
+    margin-top: 4px;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.inventory-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+    .inventory-count ::deep .mud-icon-root {
+        color: var(--admin-muted);
+        font-size: 17px;
+    }
+
+/* Header actions */
+
+.inventory-add-button {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--admin-radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.inventory-export-menu {
+    border-radius: var(--admin-radius-sm);
+    font-size: 13px;
+    text-transform: none;
+}
+
+/* Table */
+
+.inventory-table {
+    background: transparent;
+}
+
+::deep .inventory-table .mud-table-container {
+    overflow-x: auto;
+}
+
+::deep .inventory-table table {
+    min-width: 760px;
+}
+
+::deep .inventory-table .mud-table-head {
+    background: #fafafa;
+}
+
+    ::deep .inventory-table .mud-table-head .mud-table-cell {
+        padding: 13px 20px;
+        color: var(--admin-muted);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--admin-border);
+    }
+
+::deep .inventory-table .mud-table-body .mud-table-cell {
+    padding: 14px 20px;
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+::deep .inventory-table .mud-table-body tr:last-child .mud-table-cell {
+    border-bottom: none;
+}
+
+::deep .inventory-table .mud-table-body tr:hover {
+    background: var(--admin-surface-hover);
+}
+
+/* Quantities */
+
+.inventory-sku {
+    color: var(--admin-text);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.inventory-quantity {
+    color: var(--admin-text);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.inventory-minimum {
+    color: var(--admin-text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.inventory-reserved-chip {
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.inventory-available {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Row actions */
+
+.inventory-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+    .inventory-actions ::deep .mud-icon-button {
+        width: 34px;
+        height: 34px;
+        color: var(--admin-text-secondary);
+        border-radius: var(--admin-radius-sm);
+    }
+
+        .inventory-actions ::deep .mud-icon-button:hover {
+            color: var(--admin-text);
+            background: var(--admin-surface-hover);
+        }
+
+/* Empty state */
+
+.inventory-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 280px;
+    padding: 40px 20px;
+    color: var(--admin-muted);
+    text-align: center;
+}
+
+    .inventory-empty > ::deep .mud-icon-root {
+        font-size: 38px;
+        opacity: .65;
+    }
+
+.inventory-empty-title {
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.inventory-empty-subtitle {
+    max-width: 320px;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.inventory-empty ::deep .mud-button {
+    margin-top: 8px;
+    text-transform: none;
+    border-radius: var(--admin-radius-sm);
+}
+
+/* Loading */
+
+.inventory-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 220px;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+    .inventory-card-header {
+        padding: 16px;
+    }
+
+    ::deep .inventory-table .mud-table-head .mud-table-cell,
+    ::deep .inventory-table .mud-table-body .mud-table-cell {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .inventory-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .inventory-count {
+        display: none;
+    }
+}

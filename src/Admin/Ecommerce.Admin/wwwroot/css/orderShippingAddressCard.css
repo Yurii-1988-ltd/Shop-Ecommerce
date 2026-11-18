@@ -1,0 +1,80 @@
+﻿
+.order-shipping-card {
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: none;
+}
+
+/* Header */
+
+.order-shipping-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.order-shipping-icon {
+    color: var(--admin-text-secondary);
+    font-size: 19px;
+}
+
+.order-shipping-title {
+    color: var(--admin-text);
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.2px;
+}
+
+/* Content */
+
+.order-shipping-content {
+    padding: 22px;
+}
+
+.order-address-place-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--admin-text-secondary);
+    font-size: 18px;
+}
+
+.order-address-text {
+    color: var(--admin-text);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+/* Empty state */
+
+.order-address-empty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 35px;
+}
+
+.order-address-empty-icon {
+    color: var(--admin-muted);
+    font-size: 19px;
+}
+
+.order-address-empty-text {
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .order-shipping-header {
+        padding: 16px 18px;
+    }
+
+    .order-shipping-content {
+        padding: 18px;
+    }
+}

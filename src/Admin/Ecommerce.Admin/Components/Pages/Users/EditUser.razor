@@ -1,0 +1,217 @@
+﻿@page "/users/{Id:guid}/edit"
+
+<PageTitle>Edit User</PageTitle>
+
+@if (_loadingUser)
+{
+    <div class="edit-user-loading">
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Primary"
+                             Size="Size.Large" />
+        <MudText Typo="Typo.body2" Class="edit-user-loading-text">
+            Loading user information...
+        </MudText>
+    </div>
+}
+else if (_user is not null)
+{
+    <PageHeader Title="Edit User"
+                Subtitle="Update user profile information">
+        <Actions>
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       StartIcon="@Icons.Material.Outlined.ArrowBack"
+                       OnClick="GoBack"
+                       Class="edit-user-back-button">
+                Back
+            </MudButton>
+        </Actions>
+    </PageHeader>
+
+    <MudPaper Elevation="0" Class="edit-user-card">
+        <div class="edit-user-card-header">
+            <div>
+                <MudText Typo="Typo.subtitle1" Class="edit-user-card-title">
+                    Personal information
+                </MudText>
+                <MudText Typo="Typo.body2" Class="edit-user-card-subtitle">
+                    Edit the user's basic account details
+                </MudText>
+            </div>
+            <MudIcon Icon="@Icons.Material.Outlined.Person"
+                     Class="edit-user-card-icon" />
+        </div>
+
+        <MudDivider />
+
+        <div class="edit-user-card-content">
+            <EditForm Model="_model"
+                      OnValidSubmit="UpdateUserAsync">
+                <DataAnnotationsValidator />
+
+                <MudGrid Spacing="3">
+                    <MudItem xs="12">
+                        <MudTextField T="string"
+                                      Label="Email"
+                                      Value="_user.Email"
+                                      Variant="Variant.Outlined"
+                                      Disabled="true"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Outlined.Email"
+                                      Class="edit-user-field" />
+                        <MudText Typo="Typo.caption" Class="edit-user-hint">
+                            Email address cannot be changed.
+                        </MudText>
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string"
+                                      Label="First Name"
+                                      @bind-Value="_model.FirstName"
+                                      For="@(() => _model.FirstName)"
+                                      Variant="Variant.Outlined"
+                                      Required="true"
+                                      Immediate="true"
+                                      Class="edit-user-field" />
+                    </MudItem>
+
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string"
+                                      Label="Last Name"
+                                      @bind-Value="_model.LastName"
+                                      For="@(() => _model.LastName)"
+                                      Variant="Variant.Outlined"
+                                      Required="true"
+                                      Immediate="true"
+                                      Class="edit-user-field" />
+                    </MudItem>
+
+                    @if (!string.IsNullOrWhiteSpace(_error))
+                    {
+                        <MudItem xs="12">
+                            <MudAlert Severity="Severity.Error"
+                                      Variant="Variant.Outlined"
+                                      Class="edit-user-error">
+                                @_error
+                            </MudAlert>
+                        </MudItem>
+                    }
+                </MudGrid>
+
+                <MudDivider Class="edit-user-divider" />
+
+                <div class="edit-user-footer">
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Default"
+                               OnClick="GoBack"
+                               Disabled="_saving"
+                               Class="edit-user-cancel-button">
+                        Cancel
+                    </MudButton>
+
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="_saving"
+                               StartIcon="@( _saving ? null : Icons.Material.Outlined.Save )"
+                               Class="edit-user-save-button">
+                        @if (_saving)
+                        {
+                            <MudProgressCircular Size="Size.Small"
+                                                 Indeterminate="true"
+                                                 Class="mr-2" />
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Save changes</span>
+                        }
+                    </MudButton>
+                </div>
+            </EditForm>
+        </div>
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private UserResponse? _user;
+
+    private readonly EditUserModel _model = new();
+
+    private bool _loadingUser = true;
+    private bool _saving;
+    private string? _error;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loadingUser = true;
+        _error = null;
+
+        try
+        {
+            _user = await UserApi.GetAsync(Id);
+
+            if (_user is null)
+            {
+                Navigation.NavigateTo("/users");
+                return;
+            }
+
+            _model.FirstName = _user.FirstName;
+            _model.LastName = _user.LastName;
+        }
+        catch (HttpRequestException)
+        {
+            _error = "Failed to load user information.";
+        }
+        finally
+        {
+            _loadingUser = false;
+        }
+    }
+
+    private async Task UpdateUserAsync()
+    {
+        if (_saving)
+            return;
+
+        _error = null;
+        _saving = true;
+
+        try
+        {
+            var request = new UpdateUserRequest(
+                _model.FirstName,
+                _model.LastName);
+
+            await UserApi.UpdateAsync(Id, request);
+
+            Navigation.NavigateTo($"/users/{Id}");
+        }
+        catch (HttpRequestException)
+        {
+            _error = "Failed to update user. Please try again.";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo($"/users/{Id}");
+    }
+
+    private sealed class EditUserModel
+    {
+        [Required]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        public string LastName { get; set; } = string.Empty;
+    }
+}

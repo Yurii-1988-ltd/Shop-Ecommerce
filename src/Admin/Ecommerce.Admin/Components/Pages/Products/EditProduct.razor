@@ -1,0 +1,123 @@
+﻿@page "/products/edit/{Id:guid}"
+
+@using Ecommerce.Admin.Components.Pages.Images
+
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Product</PageTitle>
+
+<PageHeader Title="Edit Product"
+            Subtitle="Update product information">
+
+    <Actions>
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Filled.ArrowBack"
+                   Href="/products"
+                   Class="edit-back-button">
+            Back to products
+        </MudButton>
+    </Actions>
+
+</PageHeader>
+
+@if (_model is null)
+{
+    <div class="edit-loading">
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Primary"
+                             Size="Size.Medium" />
+    </div>
+}
+else
+{
+    <MudGrid Spacing="3" Class="edit-product-layout">
+
+        <MudItem xs="12" md="8">
+            <MudPaper Elevation="0" Class="edit-product-card">
+
+                <div class="edit-card-header">
+                    <MudText Typo="Typo.h6" Class="edit-card-title">
+                        Product information
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="edit-card-subtitle">
+                        Update the basic details and pricing of your product.
+                    </MudText>
+                </div>
+
+                <div class="edit-card-content">
+                    <ProductForm Model="_model"
+                                 OnSubmit="UpdateProduct" />
+                </div>
+
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <MudPaper Elevation="0" Class="edit-product-card">
+
+                <div class="edit-card-header">
+                    <MudText Typo="Typo.h6" Class="edit-card-title">
+                        Product images
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="edit-card-subtitle">
+                        Manage product photos.
+                    </MudText>
+                </div>
+
+                <div class="edit-card-content">
+                    <ProductImages ProductId="@Id" />
+                </div>
+
+            </MudPaper>
+        </MudItem>
+
+    </MudGrid>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ProductFormModel? _model;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _model = null;
+
+        var product = await CatalogApi.GetAsync(Id);
+
+        if (product is null)
+        {
+            Navigation.NavigateTo("/products");
+            return;
+        }
+
+        _model = new ProductFormModel
+        {
+            Name = product.Name,
+            Description = product.Description,
+            Sku = product.Sku,
+            Price = product.Price,
+            Currency = product.Currency
+        };
+    }
+
+    private async Task UpdateProduct(ProductFormModel model)
+    {
+        var request = new UpdateProductRequest
+        {
+            Name = model.Name,
+            Description = model.Description ?? string.Empty,
+            Sku = model.Sku,
+            Price = model.Price,
+            Currency = model.Currency
+        };
+
+        await CatalogApi.UpdateAsync(Id, request);
+
+        Navigation.NavigateTo("/products");
+    }
+}

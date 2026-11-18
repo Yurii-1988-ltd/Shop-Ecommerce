@@ -1,0 +1,143 @@
+﻿@page "/categories"
+
+@using Ecommerce.Admin.ApiClients.Categories
+@using Ecommerce.Admin.ApiClients.Categories.Models
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+@attribute [Authorize(Roles = "Admin")]
+
+@inject ICategoryApiClient Api
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageHeader Title="Categories"
+            Subtitle="Manage your category catalog">
+
+    <Actions>
+        <MudButton variant="Variant.Filled"
+                   color="Color.Primary"
+                   start-icon="@Icons.Material.Filled.Add"
+                   href="/categories/create">
+            Add Category
+        </MudButton>
+    </Actions>
+
+</PageHeader>
+
+<SearchToolbar Placeholder="Search category..."
+               OnRefresh="LoadCategories" />
+
+<MudPaper class="entity-card" elevation="2">
+
+    <MudTable class="entity-table"
+              Items="_categories"
+              Hover="true"
+              Dense="true"
+              Striped="true">
+
+        <HeaderContent>
+            <MudTh>Category Name</MudTh>
+
+            <MudTh style="width:140px;" align="@Align.Right">
+                Status
+            </MudTh>
+
+            <MudTh align="@Align.Right">
+                Actions
+            </MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd class="product-column">
+                <MudStack Spacing="0">
+                    <MudLink class="product-name"
+                             href="@($"/categories/{context.Id}")">
+                        @context.Name
+                    </MudLink>
+                </MudStack>
+            </MudTd>
+
+            <MudTd>
+                <StatusChip IsActive="@context.IsActive" />
+            </MudTd>
+
+            <MudTd align="@Align.Right">
+                <EntityActions OnDetails="@(() => Details(context.Id))"
+                               OnEdit="@(() => Edit(context.Id))"
+                               OnDelete="@(() => Delete(context))" />
+            </MudTd>
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <EmptyState Title="No categories"
+                        Description="Create your first category."
+                        ActionText="Add category"
+                        ActionHref="/categories/create" />
+        </NoRecordsContent>
+
+    </MudTable>
+
+</MudPaper>
+
+@code {
+    private readonly List<CategoryListItemResponse> _categories = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        var result = await Api.GetAllAsync(1, 20);
+
+        _categories.Clear();
+
+        if (result?.Items is not null)
+        {
+            _categories.AddRange(result.Items);
+        }
+    }
+
+    private void Details(Guid id)
+    {
+        Navigation.NavigateTo($"/categories/{id}");
+    }
+
+    private void Edit(Guid id)
+    {
+        Navigation.NavigateTo($"/categories/edit/{id}");
+    }
+
+    private async Task Delete(CategoryListItemResponse category)
+    {
+        var parameters = new DialogParameters
+        {
+            {
+                nameof(ConfirmationDialog.Title),
+                "Delete category"
+            },
+            {
+                nameof(ConfirmationDialog.Message),
+                $"Are you sure you want to delete '{category.Name}'?\n\nThis action cannot be undone."
+            }
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmationDialog>(
+            "Delete category",
+            parameters);
+
+        var result = await dialog.Result;
+
+        if (result is null || result.Canceled)
+        {
+            return;
+        }
+
+        await Api.DeleteAsync(category.Id);
+
+        await LoadCategories();
+    }
+}

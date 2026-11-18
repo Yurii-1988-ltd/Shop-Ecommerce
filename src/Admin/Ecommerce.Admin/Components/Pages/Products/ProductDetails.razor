@@ -1,0 +1,258 @@
+﻿@page "/products/{Id:guid}"
+
+@using Ecommerce.Admin.ApiClients.Catalog.Models
+@using MudBlazor
+
+@inject ICatalogApiClient Api
+@inject NavigationManager Navigation
+
+<PageTitle>Product Details</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="product-details-loading">
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Primary"
+                             Size="Size.Large" />
+
+        <MudText Typo="Typo.body2" Color="Color.Secondary">
+            Loading product...
+        </MudText>
+    </div>
+}
+else if (_product is not null)
+{
+    <PageHeader Title="@_product.Name"
+                Subtitle="View product information">
+
+        <Actions>
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       StartIcon="@Icons.Material.Outlined.ArrowBack"
+                       Href="/products">
+                Back
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Outlined.Edit"
+                       Href="@($"/products/edit/{Id}")"
+                       Class="product-details-edit">
+                Edit Product
+            </MudButton>
+        </Actions>
+    </PageHeader>
+
+    <div class="product-details-content">
+
+        <MudPaper Class="product-details-card" Elevation="0">
+
+            <div class="product-details-card-header">
+                <div>
+                    <MudText Typo="Typo.h6" Class="details-card-title">
+                        Product information
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="details-card-subtitle">
+                        Basic product information and description
+                    </MudText>
+                </div>
+            </div>
+
+            <MudDivider />
+
+            <div class="product-information">
+                <div class="product-information-main">
+                    <MudText Typo="Typo.h5" Class="product-details-name">
+                        @_product.Name
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="product-details-sku">
+                        SKU: @_product.Sku
+                    </MudText>
+                </div>
+
+                <div class="product-description">
+                    <MudText Typo="Typo.subtitle2" Class="details-label">
+                        Description
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="product-description-text">
+                        @(string.IsNullOrWhiteSpace(_product.Description)
+                            ? "No description available."
+                            : _product.Description)
+                    </MudText>
+                </div>
+            </div>
+
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="details-grid">
+
+            <MudItem xs="12" md="6">
+                <MudPaper Class="product-details-card metric-card" Elevation="0">
+                    <div class="metric-card-header">
+                        <div class="metric-icon">
+                            <MudIcon Icon="@Icons.Material.Outlined.Payments"
+                                     Size="Size.Medium" />
+                        </div>
+
+                        <MudText Typo="Typo.subtitle2" Class="details-label">
+                            Pricing
+                        </MudText>
+                    </div>
+
+                    <div class="metric-card-content">
+                        <ProductPrice Price="@_product.Price"
+                                      Currency="@_product.Currency"
+                                      Typo="Typo.h4" />
+                        <MudText Typo="Typo.caption" Class="metric-description">
+                            Current product price
+                        </MudText>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudPaper Class="product-details-card metric-card" Elevation="0">
+                    <div class="metric-card-header">
+                        <div class="metric-icon">
+                            <MudIcon Icon="@Icons.Material.Outlined.Inventory2"
+                                     Size="Size.Medium" />
+                        </div>
+
+                        <MudText Typo="Typo.subtitle2" Class="details-label">
+                            Inventory
+                        </MudText>
+                    </div>
+
+                    <div class="metric-card-content">
+                        <MudChip T="string"
+                                 Variant="Variant.Outlined"
+                                 Color="@GetInventoryColor()"
+                                 Class="inventory-chip">
+                            @GetInventoryText()
+                        </MudChip>
+
+                        <MudText Typo="Typo.caption" Class="metric-description">
+                            Available stock quantity
+                        </MudText>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudPaper Class="product-details-card metric-card" Elevation="0">
+                    <div class="metric-card-header">
+                        <div class="metric-icon">
+                            <MudIcon Icon="@Icons.Material.Outlined.ToggleOn"
+                                     Size="Size.Medium" />
+                        </div>
+
+                        <MudText Typo="Typo.subtitle2" Class="details-label">
+                            Status
+                        </MudText>
+                    </div>
+
+                    <div class="metric-card-content">
+                        <MudChip T="string"
+                                 Variant="Variant.Outlined"
+                                 Color="@(_product.IsActive ? Color.Success : Color.Default)">
+                            @(_product.IsActive ? "Active" : "Archived")
+                        </MudChip>
+
+                        <MudText Typo="Typo.caption" Class="metric-description">
+                            Product availability status
+                        </MudText>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudPaper Class="product-details-card metric-card" Elevation="0">
+                    <div class="metric-card-header">
+                        <div class="metric-icon">
+                            <MudIcon Icon="@Icons.Material.Outlined.History"
+                                     Size="Size.Medium" />
+                        </div>
+
+                        <MudText Typo="Typo.subtitle2" Class="details-label">
+                            History
+                        </MudText>
+                    </div>
+
+                    <div class="history-content">
+                        <div class="history-item">
+                            <MudText Typo="Typo.caption" Class="details-label">
+                                Created
+                            </MudText>
+
+                            <MudText Typo="Typo.body2" Class="history-value">
+                                @_product.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                            </MudText>
+                        </div>
+
+                        <div class="history-item">
+                            <MudText Typo="Typo.caption" Class="details-label">
+                                Last updated
+                            </MudText>
+
+                            <MudText Typo="Typo.body2" Class="history-value">
+                                @(_product.UpdatedAtUtc?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "-")
+                            </MudText>
+                        </div>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+        </MudGrid>
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ProductResponse? _product;
+    private bool _isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isLoading = true;
+
+        try
+        {
+            _product = await Api.GetAsync(Id);
+
+            if (_product is null)
+            {
+                Navigation.NavigateTo("/products");
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private string GetInventoryText()
+    {
+        return _product!.StockQuantity switch
+        {
+            0 => "Out of stock",
+            <= 5 => $"Low stock ({_product.StockQuantity})",
+            _ => $"{_product.StockQuantity} in stock"
+        };
+    }
+
+    private Color GetInventoryColor()
+    {
+        return _product!.StockQuantity switch
+        {
+            0 => Color.Error,
+            <= 5 => Color.Warning,
+            _ => Color.Success
+        };
+    }
+}

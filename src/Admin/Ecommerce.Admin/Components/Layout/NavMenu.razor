@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<MudDrawer Variant="DrawerVariant.Persistent"
+           Elevation="0"
+           Width="260px"
+           Open="@_drawerOpen"
+           Class="premium-drawer">
+
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+
+            <div class="sidebar-content">
+
+                @* Brand *@
+                <div class="sidebar-header">
+                    <div class="brand-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.Storefront"
+                                 Size="Size.Medium" />
+                    </div>
+
+                    <div class="brand-content">
+                        <MudText Class="brand-name">commerce</MudText>
+                        <MudText Class="brand-caption">ADMIN WORKSPACE</MudText>
+                    </div>
+                </div>
+
+                @* Main navigation *@
+                <MudNavMenu Class="premium-nav-menu">
+
+                    <MudText Class="nav-section-label">
+                        WORKSPACE
+                    </MudText>
+
+                    <MudNavLink Href="/"
+                                Match="NavLinkMatch.All"
+                                Icon="@Icons.Material.Outlined.Dashboard">
+                        Overview
+                    </MudNavLink>
+
+                    <MudText Class="nav-section-label nav-section-spaced">
+                        COMMERCE
+                    </MudText>
+
+                    <MudNavGroup Title="Catalog"
+                                 Icon="@Icons.Material.Outlined.Inventory2"
+                                 Expanded="true">
+
+                        <MudNavLink Href="/products"
+                                    Icon="@Icons.Material.Outlined.Inventory">
+                            Products
+                        </MudNavLink>
+
+                        <MudNavLink Href="/categories"
+                                    Icon="@Icons.Material.Outlined.Category">
+                            Categories
+                        </MudNavLink>
+
+                        <MudNavLink Href="/brands"
+                                    Icon="@Icons.Material.Outlined.Sell">
+                            Brands
+                        </MudNavLink>
+
+                    </MudNavGroup>
+
+                    <MudNavLink Href="/orders"
+                                Icon="@Icons.Material.Outlined.ReceiptLong">
+                        Orders
+                    </MudNavLink>
+
+                    <MudNavLink Href="/carts"
+                                Icon="@Icons.Material.Outlined.ShoppingCart">
+                        Shopping carts
+                    </MudNavLink>
+
+                    <MudText Class="nav-section-label nav-section-spaced">
+                        OPERATIONS
+                    </MudText>
+
+                    <MudNavLink Href="/inventories"
+                                Icon="@Icons.Material.Outlined.Warehouse">
+                        Inventory
+                    </MudNavLink>
+
+                    <MudNavLink Href="/shippings"
+                                Match="NavLinkMatch.Prefix"
+                                Icon="@Icons.Material.Outlined.LocalShipping">
+                        Shipping
+                    </MudNavLink>
+
+                    <MudText Class="nav-section-label nav-section-spaced">
+                        MANAGEMENT
+                    </MudText>
+
+                    <MudNavLink Href="/users"
+                                Icon="@Icons.Material.Outlined.People">
+                        Users
+                    </MudNavLink>
+
+                    <MudNavLink Href="/settings"
+                                Icon="@Icons.Material.Outlined.Settings">
+                        Settings
+                    </MudNavLink>
+
+                </MudNavMenu>
+
+                <div class="sidebar-bottom">
+                    <div class="workspace-status">
+                        <span class="status-indicator"></span>
+                        <span>All systems operational</span>
+                    </div>
+
+                    <MudText Class="sidebar-version">
+                        Ecommerce Admin · v1.0
+                    </MudText>
+                </div>
+
+            </div>
+
+        </Authorized>
+    </AuthorizeView>
+
+</MudDrawer>
+
+@code {
+    private bool _drawerOpen = true;
+}

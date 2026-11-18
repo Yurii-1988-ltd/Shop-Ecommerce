@@ -1,0 +1,62 @@
+﻿
+.order-actions-card {
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: none;
+}
+
+.order-actions-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.order-actions-title {
+    color: var(--admin-text);
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.2px;
+}
+
+.order-actions-subtitle {
+    margin-top: 5px;
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.order-actions-content {
+    padding: 20px 22px;
+}
+
+    .order-actions-content ::deep .mud-button-root {
+        min-height: 40px;
+        border-radius: var(--admin-radius-md);
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: none;
+        box-shadow: none;
+    }
+
+    .order-actions-content ::deep .mud-button-filled-primary {
+        background: var(--admin-accent);
+        color: #fff;
+    }
+
+        .order-actions-content ::deep .mud-button-filled-primary:hover {
+            background: #333;
+            box-shadow: none;
+        }
+
+    .order-actions-content ::deep .mud-button-outlined {
+        border-color: var(--admin-border-strong);
+    }
+
+        .order-actions-content ::deep .mud-button-outlined:hover {
+            background: var(--admin-surface-hover);
+        }
+
+.order-actions-divider {
+    margin: 6px 0;
+}

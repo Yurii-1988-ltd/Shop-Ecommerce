@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor
+
+<EditForm Model="@Model" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
+
+    <MudStack Spacing="3" Class="brand-form">
+
+        <div class="brand-form-field">
+            <MudText Typo="Typo.body2" Class="brand-form-label">
+                Brand name
+            </MudText>
+
+            <MudTextField T="string"
+                          @bind-Value="Model.Name"
+                          Placeholder="Enter brand name"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          FullWidth="true"
+                          Required="true"
+                          RequiredError="Brand name is required"
+                          For="@(() => Model.Name)" />
+
+            <ValidationMessage For="@(() => Model.Name)" />
+        </div>
+
+        <div class="brand-form-field">
+            <MudText Typo="Typo.body2" Class="brand-form-label">
+                Description
+                <MudText Typo="Typo.caption"
+                         Class="optional-label">
+                    Optional
+                </MudText>
+            </MudText>
+
+            <MudTextField T="string"
+                          @bind-Value="Model.Description"
+                          Placeholder="Enter brand description..."
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          FullWidth="true"
+                          Lines="3"
+                          autoGrow="false" />
+
+            <MudText Typo="Typo.caption" Class="field-hint">
+                Provide a short description of this brand.
+            </MudText>
+        </div>
+
+        <MudDivider Class="brand-form-divider" />
+
+        <MudStack Row="true"
+                  Justify="Justify.FlexEnd"
+                  AlignItems="AlignItems.Center">
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Outlined.Save"
+                       Class="brand-save-button">
+                Save Brand
+            </MudButton>
+
+        </MudStack>
+
+    </MudStack>
+</EditForm>
+
+@code {
+    [Parameter]
+    public BrandFormModel Model { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<BrandFormModel> OnSubmit { get; set; }
+
+    private Task Submit()
+        => OnSubmit.InvokeAsync(Model);
+}

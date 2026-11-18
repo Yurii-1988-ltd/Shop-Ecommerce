@@ -1,0 +1,239 @@
+﻿@page "/users/create"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Create User</PageTitle>
+
+<PageHeader Title="Create User"
+            Subtitle="Create a new user account">
+    <Actions>
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Outlined.ArrowBack"
+                   OnClick="GoBack"
+                   Class="create-user-back">
+            Back
+        </MudButton>
+    </Actions>
+</PageHeader>
+
+<MudPaper Class="create-user-card" Elevation="0">
+
+    <div class="create-user-card-header">
+        <div>
+            <MudText Typo="Typo.h6" Class="create-user-card-title">
+                User Information
+            </MudText>
+            <MudText Typo="Typo.body2" Class="create-user-card-subtitle">
+                Enter the details for the new account
+            </MudText>
+        </div>
+    </div>
+
+    <div class="create-user-content">
+
+        @if (!string.IsNullOrWhiteSpace(_error))
+        {
+            <MudAlert Severity="Severity.Error"
+                      Variant="Variant.Outlined"
+                      Class="create-user-alert">
+                @_error
+            </MudAlert>
+        }
+
+        <EditForm Model="_model"
+                  OnValidSubmit="CreateUserAsync">
+
+            <DataAnnotationsValidator />
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" sm="6">
+                    <div class="create-user-field">
+                        <MudText Typo="Typo.body2" Class="create-user-label">
+                            First Name
+                        </MudText>
+
+                        <MudTextField T="string"
+                                      @bind-Value="_model.FirstName"
+                                      Placeholder="Enter first name"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      FullWidth="true"
+                                      Required="true"
+                                      For="@(() => _model.FirstName)"
+                                      Class="create-user-input" />
+
+                        <ValidationMessage For="@(() => _model.FirstName)" />
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <div class="create-user-field">
+                        <MudText Typo="Typo.body2" Class="create-user-label">
+                            Last Name
+                        </MudText>
+
+                        <MudTextField T="string"
+                                      @bind-Value="_model.LastName"
+                                      Placeholder="Enter last name"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      FullWidth="true"
+                                      Required="true"
+                                      For="@(() => _model.LastName)"
+                                      Class="create-user-input" />
+
+                        <ValidationMessage For="@(() => _model.LastName)" />
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12">
+                    <div class="create-user-field">
+                        <MudText Typo="Typo.body2" Class="create-user-label">
+                            Email Address
+                        </MudText>
+
+                        <MudTextField T="string"
+                                      @bind-Value="_model.Email"
+                                      Placeholder="user@example.com"
+                                      InputType="InputType.Email"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      FullWidth="true"
+                                      Required="true"
+                                      For="@(() => _model.Email)"
+                                      Class="create-user-input" />
+
+                        <ValidationMessage For="@(() => _model.Email)" />
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <div class="create-user-field">
+                        <MudText Typo="Typo.body2" Class="create-user-label">
+                            Password
+                        </MudText>
+
+                        <MudTextField T="string"
+                                      @bind-Value="_model.Password"
+                                      Placeholder="Enter password"
+                                      InputType="InputType.Password"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      FullWidth="true"
+                                      Required="true"
+                                      For="@(() => _model.Password)"
+                                      Class="create-user-input" />
+
+                        <ValidationMessage For="@(() => _model.Password)" />
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <div class="create-user-field">
+                        <MudText Typo="Typo.body2" Class="create-user-label">
+                            Confirm Password
+                        </MudText>
+
+                        <MudTextField T="string"
+                                      @bind-Value="_model.ConfirmPassword"
+                                      Placeholder="Confirm password"
+                                      InputType="InputType.Password"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      FullWidth="true"
+                                      Required="true"
+                                      For="@(() => _model.ConfirmPassword)"
+                                      Class="create-user-input" />
+
+                        <ValidationMessage For="@(() => _model.ConfirmPassword)" />
+                    </div>
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="create-user-divider" />
+
+            <div class="create-user-footer">
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Default"
+                           Disabled="_isLoading"
+                           OnClick="GoBack"
+                           Class="create-user-cancel">
+                    Cancel
+                </MudButton>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="_isLoading"
+                           StartIcon="@Icons.Material.Outlined.PersonAdd"
+                           Class="create-user-submit">
+
+                    @if (_isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small"
+                                             Indeterminate="true"
+                                             Class="mr-2" />
+                        <span>Creating...</span>
+                    }
+                    else
+                    {
+                        <span>Create User</span>
+                    }
+
+                </MudButton>
+
+            </div>
+
+        </EditForm>
+    </div>
+</MudPaper>
+
+@code {
+    private bool _isLoading;
+    private string? _error;
+
+    private readonly CreateUserModel _model = new();
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/users");
+    }
+
+    private async Task CreateUserAsync()
+    {
+        _error = null;
+        _isLoading = true;
+
+        try
+        {
+            var request = new UserRequest(
+                _model.Email,
+                _model.FirstName,
+                _model.LastName,
+                _model.Password);
+
+            var userId = await UserApi.CreateAsync(request);
+
+            Navigation.NavigateTo($"/users/{userId}");
+        }
+        catch (HttpRequestException ex)
+        {
+            _error = $"Failed to create user: {ex.Message}";
+        }
+        catch (Exception)
+        {
+            _error = "An unexpected error occurred while creating the user.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

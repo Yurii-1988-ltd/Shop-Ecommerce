@@ -1,0 +1,127 @@
+﻿
+.edit-user-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 320px;
+}
+
+.edit-user-loading-text {
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.edit-user-card {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    background: var(--admin-surface);
+}
+
+.edit-user-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 24px;
+}
+
+.edit-user-card-title {
+    color: var(--admin-text);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.edit-user-card-subtitle {
+    margin-top: 4px;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.edit-user-card-icon {
+    color: var(--admin-muted);
+    font-size: 22px;
+}
+
+.edit-user-card-content {
+    padding: 24px;
+}
+
+.edit-user-field {
+    width: 100%;
+}
+
+.edit-user-hint {
+    display: block;
+    margin-top: 5px;
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+.edit-user-error {
+    border-radius: var(--admin-radius-md);
+    font-size: 13px;
+}
+
+.edit-user-divider {
+    margin-top: 28px;
+    margin-bottom: 20px;
+}
+
+.edit-user-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-user-back-button,
+.edit-user-cancel-button,
+.edit-user-save-button {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--admin-radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.edit-user-back-button,
+.edit-user-cancel-button {
+    color: var(--admin-text-secondary);
+}
+
+    .edit-user-back-button:hover,
+    .edit-user-cancel-button:hover {
+        color: var(--admin-text);
+        background: var(--admin-surface-hover);
+    }
+
+.edit-user-save-button {
+    min-width: 130px;
+    background: var(--admin-accent);
+    color: #fff;
+}
+
+    .edit-user-save-button:hover {
+        background: #333;
+    }
+
+@media (max-width: 600px) {
+    .edit-user-card-header {
+        padding: 18px;
+    }
+
+    .edit-user-card-content {
+        padding: 18px;
+    }
+
+    .edit-user-footer {
+        flex-wrap: wrap;
+    }
+
+    .edit-user-save-button {
+        flex: 1;
+    }
+}

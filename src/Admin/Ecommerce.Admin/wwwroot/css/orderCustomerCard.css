@@ -1,0 +1,60 @@
+﻿
+.customer-card {
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: none;
+}
+
+.customer-card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.customer-header-icon {
+    color: var(--admin-text-secondary);
+    font-size: 19px;
+}
+
+.customer-card-title {
+    color: var(--admin-text);
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.2px;
+}
+
+.customer-card-content {
+    padding: 22px;
+}
+
+.customer-avatar {
+    width: 48px;
+    height: 48px;
+    background: #f1f1f1;
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text);
+    font-size: 17px;
+    font-weight: 650;
+}
+
+.customer-info {
+    min-width: 0;
+}
+
+.customer-name {
+    color: var(--admin-text);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.customer-number {
+    width: fit-content;
+    height: 23px;
+    color: var(--admin-text-secondary);
+    border-color: var(--admin-border-strong);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}

@@ -1,0 +1,46 @@
+﻿
+<MudPaper Elevation="0" Class="order-actions-card">
+    <div class="order-actions-header">
+        <MudText Typo="Typo.h6" Class="order-actions-title">
+            Order actions
+        </MudText>
+        <MudText Typo="Typo.body2" Class="order-actions-subtitle">
+            Manage order processing and status.
+        </MudText>
+    </div>
+
+    <MudStack Spacing="2" Class="order-actions-content">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   FullWidth="true"
+                   StartIcon="@Icons.Material.Filled.Check"
+                   OnClick="OnSubmit">
+            Submit Order
+        </MudButton>
+
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   FullWidth="true"
+                   StartIcon="@Icons.Material.Filled.Edit"
+                   OnClick="OnChangeStatus">
+            Change Status
+        </MudButton>
+
+        <MudDivider Class="order-actions-divider" />
+
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Error"
+                   FullWidth="true"
+                   StartIcon="@Icons.Material.Filled.Warning"
+                   OnClick="OnForceChangeStatus">
+            Force Change Status
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] public OrderResponse Order { get; set; } = default!;
+    [Parameter] public EventCallback OnSubmit { get; set; }
+    [Parameter] public EventCallback OnChangeStatus { get; set; }
+    [Parameter] public EventCallback OnForceChangeStatus { get; set; }
+}

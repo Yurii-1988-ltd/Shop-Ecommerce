@@ -1,0 +1,141 @@
+﻿
+.create-user-card {
+    width: 100%;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    overflow: hidden;
+}
+
+/* Card header */
+
+.create-user-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.create-user-card-title {
+    color: var(--admin-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.create-user-card-subtitle {
+    margin-top: 4px;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+/* Content */
+
+.create-user-content {
+    padding: 24px;
+}
+
+.create-user-alert {
+    margin-bottom: 24px;
+    border-radius: var(--admin-radius-md);
+    font-size: 13px;
+}
+
+/* Form fields */
+
+.create-user-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.create-user-label {
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.create-user-input {
+    width: 100%;
+}
+
+::deep .create-user-input .mud-input-control {
+    margin-top: 0;
+}
+
+::deep .create-user-input .mud-input-outlined {
+    border-radius: var(--admin-radius-sm);
+    font-size: 13px;
+}
+
+::deep .create-user-input input {
+    font-size: 13px;
+}
+
+::deep .create-user-input .mud-input-outlined-border {
+    border-color: var(--admin-border-strong);
+}
+
+::deep .create-user-input .mud-input-control:hover .mud-input-outlined-border {
+    border-color: var(--admin-text-secondary);
+}
+
+::deep .create-user-input .mud-input-control.mud-input-focused .mud-input-outlined-border {
+    border-color: var(--admin-accent);
+    border-width: 1px;
+}
+
+::deep .create-user-field .validation-message {
+    color: var(--admin-danger);
+    font-size: 11px;
+}
+
+/* Divider */
+
+.create-user-divider {
+    margin: 28px 0 20px;
+    background: var(--admin-border);
+}
+
+/* Footer actions */
+
+.create-user-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.create-user-cancel,
+.create-user-submit {
+    min-height: 36px;
+    padding: 0 16px;
+    border-radius: var(--admin-radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.create-user-back {
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+    text-transform: none;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .create-user-content {
+        padding: 18px 16px;
+    }
+
+    .create-user-card-header {
+        padding: 16px;
+    }
+
+    .create-user-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+        .create-user-footer ::deep .mud-button {
+            width: 100%;
+        }
+}

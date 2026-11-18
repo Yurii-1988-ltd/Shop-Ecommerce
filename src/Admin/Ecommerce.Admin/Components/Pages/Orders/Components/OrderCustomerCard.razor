@@ -1,0 +1,59 @@
+﻿
+<MudPaper Elevation="0" Class="customer-card">
+
+    <div class="customer-card-header">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Filled.Person"
+                     Class="customer-header-icon" />
+
+            <MudText Typo="Typo.h6" Class="customer-card-title">
+                Customer
+            </MudText>
+        </MudStack>
+    </div>
+
+    <div class="customer-card-content">
+        <MudStack Row="true"
+                  Spacing="3"
+                  AlignItems="AlignItems.Center">
+
+            <MudAvatar Color="Color.Default"
+                       Size="Size.Large"
+                       Class="customer-avatar">
+                @(string.IsNullOrWhiteSpace(CustomerName)
+                    ? "?"
+                    : CustomerName.Trim()[..1].ToUpperInvariant())
+            </MudAvatar>
+
+            <MudStack Spacing="1" Class="customer-info">
+                <MudText Typo="Typo.subtitle1"
+                         Class="customer-name">
+                    @CustomerName
+                </MudText>
+
+                <MudChip T="string"
+                         Size="Size.Small"
+                         Variant="Variant.Outlined"
+                         Class="customer-number">
+                    @GetCustomerNumber(CustomerId)
+                </MudChip>
+            </MudStack>
+
+        </MudStack>
+    </div>
+
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public string CustomerName { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public Guid CustomerId { get; set; }
+
+    private static string GetCustomerNumber(Guid id)
+    {
+        var value = id.ToString("N").ToUpperInvariant();
+        return $"CUS-{value[..4]}-{value[4..8]}";
+    }
+}

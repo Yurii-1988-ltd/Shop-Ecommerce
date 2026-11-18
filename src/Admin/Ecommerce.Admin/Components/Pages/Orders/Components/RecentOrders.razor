@@ -1,0 +1,100 @@
+﻿@using Ecommerce.Admin.Components.Orders.Models
+
+<MudPaper Class="recent-orders-panel" Elevation="0">
+    <div class="orders-header">
+        <div class="orders-heading">
+            <MudText Typo="Typo.h6" Class="orders-title">
+                Последние заказы
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="orders-subtitle">
+                Недавно оформленные заказы
+            </MudText>
+        </div>
+
+        <MudButton Href="/orders"
+                   Variant="Variant.Text"
+                   Color="Color.Default"
+                   EndIcon="@Icons.Material.Outlined.ArrowForward"
+                   Class="orders-view-all">
+            Все заказы
+        </MudButton>
+    </div>
+
+    @if (Orders is null || !Orders.Any())
+    {
+        <div class="orders-empty">
+            <MudIcon Icon="@Icons.Material.Outlined.ReceiptLong"
+                     Size="Size.Large" />
+
+            <MudText Typo="Typo.body2">
+                Заказы отсутствуют
+            </MudText>
+        </div>
+    }
+    else
+    {
+        <MudTable T="RecentOrderDto"
+                  Items="Orders"
+                  Dense="true"
+                  Hover="true"
+                  Elevation="0"
+                  Class="recent-orders-table">
+
+            <HeaderContent>
+                <MudTh>Order Number</MudTh>
+                <MudTh>Date</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh align="right">Amount</MudTh>
+            </HeaderContent>
+
+            <RowTemplate>
+                <MudTd DataLabel="Order Number">
+                    <span class="order-number">
+                        #@context.OrderNumber
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Date">
+                    <span class="order-date">
+                        @context.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy")
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Status">
+                    <span class="order-status @GetStatusClass(context.Status)">
+                        <span class="order-status-dot"></span>
+                        @context.Status
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Amount" align="right">
+                    <span class="order-amount">
+                        @context.TotalAmount
+                    </span>
+                </MudTd>
+            </RowTemplate>
+
+        </MudTable>
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public IEnumerable<RecentOrderDto> Orders { get; set; }
+        = Enumerable.Empty<RecentOrderDto>();
+
+    private static string GetStatusClass(object? status)
+    {
+        var normalized = status?.ToString()?.Trim().ToLowerInvariant();
+
+        return normalized switch
+        {
+            "completed" or "delivered" or "paid" => "status-success",
+            "pending" or "processing" => "status-warning",
+            "cancelled" or "canceled" or "failed" => "status-danger",
+            "shipped" or "intransit" => "status-info",
+            _ => "status-default"
+        };
+    }
+}

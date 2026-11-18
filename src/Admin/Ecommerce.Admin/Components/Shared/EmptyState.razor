@@ -1,0 +1,47 @@
+﻿
+<MudPaper Class="empty-state" Elevation="0">
+    <MudStack AlignItems="AlignItems.Center"
+              Justify="Justify.Center"
+              Spacing="2">
+
+        <MudIcon Icon="@Icons.Material.Outlined.Inventory2"
+                 Size="Size.Large"
+                 Color="Color.Default"
+                 Class="empty-state-icon" />
+
+        <MudText Typo="Typo.h6" Class="empty-state-title">
+            @Title
+        </MudText>
+
+        <MudText Typo="Typo.body2"
+                 Color="Color.Secondary"
+                 Class="empty-state-description">
+            @Description
+        </MudText>
+
+        @if (!string.IsNullOrWhiteSpace(ActionText))
+        {
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Href="@ActionHref">
+                @ActionText
+            </MudButton>
+        }
+
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "No data";
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? ActionText { get; set; }
+
+    [Parameter]
+    public string? ActionHref { get; set; }
+}

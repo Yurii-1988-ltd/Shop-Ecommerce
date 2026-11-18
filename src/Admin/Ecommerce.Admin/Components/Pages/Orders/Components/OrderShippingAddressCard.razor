@@ -1,0 +1,57 @@
+﻿
+<MudPaper Elevation="0" Class="order-shipping-card">
+
+    <div class="order-shipping-header">
+        <MudStack Row="true"
+                  AlignItems="AlignItems.Center"
+                  Spacing="2">
+
+            <MudIcon Icon="@Icons.Material.Filled.LocationOn"
+                     Class="order-shipping-icon" />
+
+            <MudText Typo="Typo.h6" Class="order-shipping-title">
+                Delivery Address
+            </MudText>
+
+        </MudStack>
+    </div>
+
+    <div class="order-shipping-content">
+
+        @if (!string.IsNullOrWhiteSpace(Address))
+        {
+            <MudStack Row="true"
+                      AlignItems="AlignItems.Start"
+                      Spacing="2">
+
+                <MudIcon Icon="@Icons.Material.Filled.Place"
+                         Class="order-address-place-icon" />
+
+                <MudText Typo="Typo.body2" Class="order-address-text">
+                    @Address
+                </MudText>
+
+            </MudStack>
+        }
+        else
+        {
+            <div class="order-address-empty">
+
+                <MudIcon Icon="@Icons.Material.Filled.LocationOff"
+                         Class="order-address-empty-icon" />
+
+                <MudText Typo="Typo.body2" Class="order-address-empty-text">
+                    Delivery address not specified
+                </MudText>
+
+            </div>
+        }
+
+    </div>
+
+</MudPaper>
+
+@code {
+    [Parameter]
+    public string? Address { get; set; }
+}

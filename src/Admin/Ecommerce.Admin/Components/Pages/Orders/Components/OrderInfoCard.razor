@@ -1,0 +1,129 @@
+
+<MudPaper Elevation="0" Class="order-info-card">
+
+    @* Header *@
+    <div class="order-info-header">
+        <MudStack Row="true"
+                  Justify="Justify.SpaceBetween"
+                  AlignItems="AlignItems.Center"
+                  Spacing="2">
+
+            <MudStack Spacing="1">
+                <MudText Typo="Typo.h5" Class="order-number">
+                    @GetOrderNumber(Order.Id)
+                </MudText>
+
+                <MudText Typo="Typo.caption" Class="order-created">
+                    Created @Order.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                </MudText>
+            </MudStack>
+
+            <MudChip T="OrderStatus"
+                     Size="Size.Medium"
+                     Variant="Variant.Filled"
+                     Color="@GetStatusColor(Order.Status)"
+                     Class="order-status-chip">
+                @Order.Status
+            </MudChip>
+
+        </MudStack>
+    </div>
+
+    @* Order details *@
+    <div class="order-info-content">
+
+        <MudGrid Spacing="3">
+
+            <MudItem xs="6">
+                <div class="order-info-field">
+                    <MudText Typo="Typo.caption" Class="order-info-label">
+                        Status
+                    </MudText>
+
+                    <MudChip T="OrderStatus"
+                             Size="Size.Small"
+                             Variant="Variant.Outlined"
+                             Color="@GetStatusColor(Order.Status)">
+                        @Order.Status
+                    </MudChip>
+                </div>
+            </MudItem>
+
+            <MudItem xs="6">
+                <div class="order-info-field">
+                    <MudText Typo="Typo.caption" Class="order-info-label">
+                        Created
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="order-info-value">
+                        @Order.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                    </MudText>
+                </div>
+            </MudItem>
+
+            <MudItem xs="6">
+                <div class="order-info-field">
+                    <MudText Typo="Typo.caption" Class="order-info-label">
+                        Currency
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="order-info-value">
+                        @Order.Currency
+                    </MudText>
+                </div>
+            </MudItem>
+
+            <MudItem xs="6">
+                <div class="order-info-field">
+                    <MudText Typo="Typo.caption" Class="order-info-label">
+                        Items
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="order-info-value">
+                        @Order.TotalQuantity
+                    </MudText>
+                </div>
+            </MudItem>
+
+        </MudGrid>
+
+        <MudDivider Class="order-info-divider" />
+
+        @* Total *@
+        <div class="order-total-section">
+            <MudText Typo="Typo.caption" Class="order-info-label">
+                Total amount
+            </MudText>
+
+            <MudText Typo="Typo.h4" Class="order-total-amount">
+                @Order.TotalAmount.ToString("N2") @Order.Currency
+            </MudText>
+        </div>
+
+    </div>
+
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public OrderResponse Order { get; set; } = default!;
+
+    private Color GetStatusColor(OrderStatus status) => status switch
+    {
+        OrderStatus.Draft => Color.Default,
+        OrderStatus.Pending => Color.Info,
+        OrderStatus.Paid => Color.Success,
+        OrderStatus.Processing => Color.Warning,
+        OrderStatus.Shipped => Color.Secondary,
+        OrderStatus.Delivered => Color.Success,
+        OrderStatus.Cancelled => Color.Error,
+        OrderStatus.Refunded => Color.Dark,
+        _ => Color.Default
+    };
+
+    private static string GetOrderNumber(Guid id)
+    {
+        var value = id.ToString("N").ToUpperInvariant();
+        return $"ORD-{value[..4]}-{value[4..8]}";
+    }
+}

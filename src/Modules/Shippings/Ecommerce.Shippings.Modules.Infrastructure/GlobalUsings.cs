@@ -1,0 +1,10 @@
+﻿global using Ecommerce.Shippings.Modules.Application.Abstractions;
+global using Ecommerce.Shippings.Modules.Application.Features.CreateShippingMethod;
+global using Ecommerce.Shippings.Modules.Domain.Repositories;
+global using Ecommerce.Shippings.Modules.Infrastructure.Abstractions;
+global using Ecommerce.Shippings.Modules.Infrastructure.Database;
+global using Ecommerce.Shippings.Modules.Infrastructure.Repositories;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;

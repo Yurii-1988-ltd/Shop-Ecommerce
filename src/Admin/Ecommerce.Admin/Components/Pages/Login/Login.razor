@@ -1,0 +1,97 @@
+﻿@page "/login"
+
+@using MudBlazor
+
+@layout LoginLayout
+
+<PageTitle>Admin Login</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="login-container">
+
+    <MudPaper Class="login-card" Elevation="0">
+
+        <div class="login-brand">
+            <div class="login-logo">
+                <MudIcon Icon="@Icons.Material.Outlined.Storefront"
+                         Size="Size.Large" />
+            </div>
+
+            <MudText Typo="Typo.h5" Class="login-title">
+                Welcome back
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="login-subtitle">
+                Sign in to your administration panel
+            </MudText>
+        </div>
+
+        <form method="post"
+              action="/account/login"
+              data-enhance="false">
+
+            <AntiforgeryToken />
+
+            <div class="login-field">
+                <MudText Typo="Typo.body2" Class="login-label">
+                    Email address
+                </MudText>
+
+                <MudTextField T="string"
+                              Placeholder="admin@example.com"
+                              InputType="InputType.Email"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              FullWidth="true"
+                              name="email"
+                              Required="true"
+                              RequiredError="Email is required"
+                              Class="login-input" />
+            </div>
+
+            <div class="login-field">
+                <MudText Typo="Typo.body2" Class="login-label">
+                    Password
+                </MudText>
+
+                <MudTextField T="string"
+                              Placeholder="Enter your password"
+                              InputType="InputType.Password"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              FullWidth="true"
+                              name="password"
+                              Required="true"
+                              RequiredError="Password is required"
+                              Class="login-input" />
+            </div>
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       Size="Size.Large"
+                       Class="login-submit">
+                Sign in
+                <MudIcon Icon="@Icons.Material.Outlined.ArrowForward"
+                         Size="Size.Small"
+                         Class="ml-2" />
+            </MudButton>
+
+        </form>
+
+        <div class="login-footer">
+            <MudIcon Icon="@Icons.Material.Outlined.Lock"
+                     Size="Size.Small" />
+
+            <MudText Typo="Typo.caption">
+                Secure administrator access
+            </MudText>
+        </div>
+
+    </MudPaper>
+
+    <MudText Typo="Typo.caption" Class="login-copyright">
+        © @DateTime.Now.Year Ecommerce Admin
+    </MudText>
+
+</MudContainer>

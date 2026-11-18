@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentEmail.Core" />
+		<PackageReference Include="FluentEmail.Liquid" />
+		<PackageReference Include="FluentEmail.Smtp" />
+		<PackageReference Include="MailKit" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
+
+		<PackageReference Include="Npgsql.DependencyInjection" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+
+		<PackageReference Include="Fluid.Core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\BuildingBlocks\Ecommerce.Infrastructure\Ecommerce.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Shared\Ecommerce.Shared.Contracts\Ecommerce.Shared.Contracts.csproj" />
+		<ProjectReference Include="..\Ecommerce.Notification.Modules.Application\Ecommerce.Notification.Modules.Application.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Templates\Emails\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Templates\Emails\**\*.liquid" />
+	</ItemGroup>
+
+</Project>

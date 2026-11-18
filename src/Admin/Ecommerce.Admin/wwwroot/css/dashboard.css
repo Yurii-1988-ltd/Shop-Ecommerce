@@ -1,0 +1,141 @@
+﻿
+/* =========================================
+   DASHBOARD PAGE
+========================================= */
+
+.dashboard-page {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.dashboard-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.dashboard-title {
+    color: var(--admin-text);
+    font-size: 29px;
+    font-weight: 650;
+    letter-spacing: -1.1px;
+    line-height: 1.2;
+}
+
+.dashboard-subtitle {
+    color: #737373;
+    font-size: 13px;
+}
+
+.dashboard-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 13px;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    color: #737373;
+    font-size: 12px;
+}
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dashboard-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dashboard-section-title {
+    color: var(--admin-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+/* =========================================
+   DASHBOARD COMPONENTS
+========================================= */
+
+.dashboard-content-grid {
+    align-items: stretch;
+}
+
+.dashboard-panel {
+    height: 100%;
+    min-width: 0;
+    background: transparent;
+}
+
+.dashboard-sales-panel,
+.dashboard-stock-panel {
+    min-height: 360px;
+}
+
+.dashboard-orders-panel,
+.dashboard-carts-panel {
+    min-height: 320px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 960px) {
+    .dashboard-page {
+        gap: 26px;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-page {
+        gap: 22px;
+    }
+
+    .dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-bottom: 18px;
+    }
+
+    .dashboard-title {
+        font-size: 25px;
+    }
+
+    .dashboard-header-meta {
+        padding: 8px 11px;
+    }
+
+    .dashboard-sales-panel,
+    .dashboard-stock-panel,
+    .dashboard-orders-panel,
+    .dashboard-carts-panel {
+        min-height: auto;
+    }
+}

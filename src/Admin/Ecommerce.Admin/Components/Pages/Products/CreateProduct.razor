@@ -1,0 +1,49 @@
+﻿@page "/products/create"
+
+@using Ecommerce.Admin.ApiClients.Catalog.Contracts
+
+<PageTitle>Create Product</PageTitle>
+
+<PageHeader Title="Create Product"
+            Subtitle="Add a new product to your catalog" />
+
+<MudPaper Class="product-create-card" Elevation="0">
+
+    <div class="product-create-header">
+        <MudText Typo="Typo.h6" Class="product-create-title">
+            Product information
+        </MudText>
+
+        <MudText Typo="Typo.body2" Class="product-create-subtitle">
+            Enter the details of the product you want to add.
+        </MudText>
+    </div>
+
+    <MudDivider />
+
+    <div class="product-create-content">
+        <ProductForm Model="Model"
+                     OnSubmit="AddProduct" />
+    </div>
+
+</MudPaper>
+
+@code {
+    private ProductFormModel Model { get; set; } = new();
+
+    private async Task AddProduct(ProductFormModel model)
+    {
+        var request = new CreateProductRequest
+        {
+            Name = model.Name,
+            Description = model.Description ?? string.Empty,
+            Sku = model.Sku,
+            Price = model.Price,
+            Currency = model.Currency
+        };
+
+        await CatalogApi.CreateAsync(request);
+
+        Navigation.NavigateTo("/products");
+    }
+}

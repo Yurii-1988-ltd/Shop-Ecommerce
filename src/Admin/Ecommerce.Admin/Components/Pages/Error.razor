@@ -1,0 +1,105 @@
+﻿@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Error</PageTitle>
+
+<div class="error-page">
+    <MudPaper Elevation="0" Class="error-card">
+        <div class="error-icon-wrapper">
+            <MudIcon Icon="@Icons.Material.Outlined.ErrorOutline"
+                     Class="error-icon" />
+        </div>
+
+        <MudText Typo="Typo.overline" Class="error-code">
+            APPLICATION ERROR
+        </MudText>
+
+        <MudText Typo="Typo.h4" Class="error-title">
+            Something went wrong
+        </MudText>
+
+        <MudText Typo="Typo.body2" Class="error-description">
+            An unexpected error occurred while processing your request.
+            Please try again later.
+        </MudText>
+
+        @if (ShowRequestId)
+        {
+            <div class="error-request">
+                <MudText Typo="Typo.caption" Class="error-request-label">
+                    Request ID
+                </MudText>
+
+                <div class="error-request-value">
+                    <MudText Typo="Typo.body2">@RequestId</MudText>
+                    <MudIconButton Icon="@Icons.Material.Outlined.ContentCopy"
+                                   Size="Size.Small"
+                                   Color="Color.Default"
+                                   OnClick="CopyRequestId"
+                                   title="Copy request ID" />
+                </div>
+            </div>
+        }
+
+        <div class="error-actions">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Outlined.Refresh"
+                       Href="/"
+                       Class="error-home-button">
+                Back to dashboard
+            </MudButton>
+        </div>
+
+        <MudDivider Class="error-divider" />
+
+        <MudExpansionPanels Elevation="0" Class="error-details">
+            <MudExpansionPanel Text="Development information"
+                               Icon="@Icons.Material.Outlined.Code">
+                <MudAlert Severity="Severity.Warning"
+                          Variant="Variant.Outlined"
+                          Dense="true">
+                    Development Mode should not be enabled in deployed
+                    applications because it can expose sensitive exception
+                    information.
+                </MudAlert>
+
+                <MudText Typo="Typo.body2" Class="error-development-text">
+                    For local debugging, set the
+                    <strong>ASPNETCORE_ENVIRONMENT</strong> environment
+                    variable to <strong>Development</strong> and restart
+                    the application.
+                </MudText>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudPaper>
+
+    <MudText Typo="Typo.caption" Class="error-footer">
+        Ecommerce Admin
+    </MudText>
+</div>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
+    private string? RequestId { get; set; }
+
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized()
+    {
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+    }
+
+    private async Task CopyRequestId()
+    {
+        if (!string.IsNullOrWhiteSpace(RequestId))
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", RequestId);
+        }
+    }
+}

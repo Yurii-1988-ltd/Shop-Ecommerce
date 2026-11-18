@@ -1,0 +1,39 @@
+﻿
+<MudPaper Class="@($"dashboard-card {CssClass}")" Elevation="0">
+    <div class="stat-card-header">
+        <div class="stat-icon-wrapper">
+            <MudIcon Icon="@Icon" Size="Size.Medium" />
+        </div>
+
+        <div class="stat-growth @(Growth >= 0 ? "positive" : "negative")">
+            <MudIcon Icon="@(Growth >= 0
+                             ? Icons.Material.Filled.TrendingUp
+                             : Icons.Material.Filled.TrendingDown)"
+                     Size="Size.Small" />
+
+            <span>@(Growth >= 0 ? "+" : "")@Growth%</span>
+        </div>
+    </div>
+
+    <div class="stat-card-content">
+        <MudText Typo="Typo.h4" Class="stat-value">
+            @Value
+        </MudText>
+
+        <MudText Typo="Typo.body2" Class="stat-title">
+            @Title
+        </MudText>
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    [Parameter] public string Value { get; set; } = string.Empty;
+
+    [Parameter] public decimal Growth { get; set; }
+
+    [Parameter] public string Icon { get; set; } = string.Empty;
+
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+}

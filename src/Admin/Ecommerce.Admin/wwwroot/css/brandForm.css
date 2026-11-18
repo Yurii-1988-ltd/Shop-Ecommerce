@@ -1,0 +1,70 @@
+﻿.brand-form {
+    width: 100%;
+}
+
+.brand-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.brand-form-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.optional-label {
+    color: var(--admin-muted);
+    font-weight: 400;
+}
+
+.brand-form ::deep .mud-input-outlined {
+    border-radius: var(--admin-radius-md);
+}
+
+.brand-form ::deep .mud-input-outlined-border {
+    border-color: var(--admin-border-strong);
+}
+
+.brand-form ::deep .mud-input-control:hover .mud-input-outlined-border {
+    border-color: var(--admin-text-secondary);
+}
+
+.brand-form ::deep .mud-input-control {
+    margin-top: 0;
+}
+
+.field-hint {
+    color: var(--admin-muted);
+    font-size: 11px;
+}
+
+.brand-form-divider {
+    margin-top: 8px;
+    margin-bottom: 4px;
+    border-color: var(--admin-border);
+}
+
+.brand-save-button {
+    min-width: 130px;
+    height: 40px;
+    border-radius: var(--admin-radius-md);
+    background: var(--admin-accent);
+    color: white;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: none;
+}
+
+    .brand-save-button:hover {
+        background: #333333;
+        box-shadow: none;
+    }
+
+.brand-form ::deep .validation-message {
+    color: var(--admin-danger);
+    font-size: 12px;
+}

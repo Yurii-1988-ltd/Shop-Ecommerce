@@ -1,0 +1,68 @@
+﻿
+<MudPaper Elevation="0" Class="order-summary-card">
+
+    <div class="order-summary-header">
+        <MudStack Row="true"
+                  AlignItems="AlignItems.Center"
+                  Spacing="2">
+
+            <MudIcon Icon="@Icons.Material.Filled.Receipt"
+                     Class="order-summary-icon" />
+
+            <MudText Typo="Typo.h6" Class="order-summary-title">
+                Order Summary
+            </MudText>
+
+        </MudStack>
+    </div>
+
+    <div class="order-summary-content">
+
+        <div class="order-summary-row">
+            <MudText Typo="Typo.body2" Class="order-summary-label">
+                Total items
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="order-summary-value">
+                @TotalQuantity
+            </MudText>
+        </div>
+
+        <div class="order-summary-row">
+            <MudText Typo="Typo.body2" Class="order-summary-label">
+                Currency
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="order-summary-value">
+                @Currency
+            </MudText>
+        </div>
+
+        <MudDivider Class="order-summary-divider" />
+
+        <div class="order-summary-total">
+
+            <MudText Typo="Typo.body2" Class="order-summary-label">
+                Total amount
+            </MudText>
+
+            <MudText Typo="Typo.h4" Class="order-summary-amount">
+                @TotalAmount.ToString("N2") @Currency
+            </MudText>
+
+        </div>
+
+    </div>
+
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int TotalQuantity { get; set; }
+
+    [Parameter]
+    public string Currency { get; set; } = string.Empty;
+
+    [Parameter]
+    public decimal TotalAmount { get; set; }
+}

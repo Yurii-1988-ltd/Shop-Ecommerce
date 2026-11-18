@@ -1,0 +1,136 @@
+﻿
+.low-stock-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 360px;
+    padding: 22px;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+}
+
+.stock-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.stock-title {
+    color: #171717;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -.3px;
+}
+
+.stock-subtitle {
+    margin-top: 4px;
+    color: #a3a3a3;
+    font-size: 12px;
+}
+
+.stock-count {
+    color: #737373;
+    border-color: #eaeaea;
+    font-size: 11px;
+}
+
+.stock-list {
+    margin-top: 22px;
+}
+
+.stock-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 0;
+}
+
+.stock-product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.stock-product-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    color: #737373;
+    background: #f5f5f5;
+    border: 1px solid #eee;
+    border-radius: 9px;
+}
+
+.stock-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.stock-product-name {
+    color: #262626;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stock-product-description {
+    color: #a3a3a3;
+    font-size: 11px;
+}
+
+.stock-quantity {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+    .stock-quantity.critical {
+        color: #dc2626;
+    }
+
+.stock-quantity-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stock-quantity-label {
+    color: #a3a3a3;
+    font-size: 11px;
+}
+
+.stock-divider {
+    border-color: #eeeeee;
+}
+
+.stock-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #eeeeee;
+}
+
+.stock-action {
+    padding: 5px 0;
+    color: #404040;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+    .stock-action:hover {
+        color: #171717;
+        background: transparent;
+    }
+
+@media (max-width: 600px) {
+    .low-stock-panel {
+        padding: 16px;
+    }
+}

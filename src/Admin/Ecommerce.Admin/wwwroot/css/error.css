@@ -1,0 +1,140 @@
+﻿
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 32px 16px;
+}
+
+.error-card {
+    width: 100%;
+    max-width: 540px;
+    padding: 36px;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    background: var(--admin-surface);
+    text-align: center;
+}
+
+.error-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 22px;
+    border-radius: 18px;
+    background: #fef2f2;
+}
+
+.error-icon {
+    color: var(--admin-danger);
+    font-size: 32px;
+}
+
+.error-code {
+    color: var(--admin-danger);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.error-title {
+    margin-top: 8px;
+    color: var(--admin-text);
+    font-size: 25px;
+    font-weight: 650;
+    letter-spacing: -0.6px;
+}
+
+.error-description {
+    max-width: 380px;
+    margin: 12px auto 0;
+    color: var(--admin-text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.error-request {
+    margin-top: 26px;
+    padding: 14px 16px;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-md);
+    background: var(--admin-bg);
+    text-align: left;
+}
+
+.error-request-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--admin-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.error-request-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--admin-text);
+    overflow-wrap: anywhere;
+}
+
+.error-actions {
+    margin-top: 26px;
+}
+
+.error-home-button {
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: var(--admin-radius-sm);
+    background: var(--admin-accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+    .error-home-button:hover {
+        background: #333;
+    }
+
+.error-divider {
+    margin: 28px 0 12px;
+}
+
+.error-details {
+    text-align: left;
+}
+
+.error-development-text {
+    margin-top: 14px;
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.error-footer {
+    margin-top: 18px;
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .error-page {
+        padding: 20px 12px;
+    }
+
+    .error-card {
+        padding: 26px 20px;
+    }
+
+    .error-title {
+        font-size: 22px;
+    }
+}

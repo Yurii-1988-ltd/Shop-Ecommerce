@@ -1,0 +1,83 @@
+
+<MudPaper Class="low-stock-panel" Elevation="0">
+
+    <div class="stock-header">
+        <div>
+            <MudText Typo="Typo.h6" Class="stock-title">
+                Low Stock Products
+            </MudText>
+            <MudText Typo="Typo.body2" Class="stock-subtitle">
+                Products that need your attention
+            </MudText>
+        </div>
+
+        <MudChip T="string"
+                 Size="Size.Small"
+                 Variant="Variant.Outlined"
+                 Class="stock-count">
+            2 items
+        </MudChip>
+    </div>
+
+    <div class="stock-list">
+
+        <div class="stock-item">
+            <div class="stock-product-info">
+                <div class="stock-product-icon">
+                    <MudIcon Icon="@Icons.Material.Outlined.Inventory2"
+                             Size="Size.Medium" />
+                </div>
+
+                <div class="stock-product-details">
+                    <MudText Class="stock-product-name">
+                        Product A
+                    </MudText>
+                    <MudText Class="stock-product-description">
+                        Critical stock level
+                    </MudText>
+                </div>
+            </div>
+
+            <div class="stock-quantity critical">
+                <span class="stock-quantity-value">2</span>
+                <span class="stock-quantity-label">left</span>
+            </div>
+        </div>
+
+        <MudDivider Class="stock-divider" />
+
+        <div class="stock-item">
+            <div class="stock-product-info">
+                <div class="stock-product-icon">
+                    <MudIcon Icon="@Icons.Material.Outlined.Inventory2"
+                             Size="Size.Medium" />
+                </div>
+
+                <div class="stock-product-details">
+                    <MudText Class="stock-product-name">
+                        Product B
+                    </MudText>
+                    <MudText Class="stock-product-description">
+                        Almost out of stock
+                    </MudText>
+                </div>
+            </div>
+
+            <div class="stock-quantity critical">
+                <span class="stock-quantity-value">1</span>
+                <span class="stock-quantity-label">left</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="stock-footer">
+        <MudButton Href="/inventories"
+                   Variant="Variant.Text"
+                   EndIcon="@Icons.Material.Outlined.ArrowForward"
+                   Class="stock-action">
+            Manage inventory
+        </MudButton>
+    </div>
+
+</MudPaper>

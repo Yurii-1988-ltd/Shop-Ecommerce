@@ -1,0 +1,50 @@
+﻿
+
+using Ecommerce.Cart.Modules.Application.Features.AddCartItem;
+
+
+namespace Ecommerce.Cart.Modules.Presentation.Carts;
+
+internal sealed class AddCartItemEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/carts/items", async (
+            Guid? customerId,
+            Guid? guestId,
+
+            AddCartItemRequest request,
+            ISender sender,
+            CancellationToken cancellationToken) =>
+        {
+            var command = new AddCartItemCommand(
+              customerId,
+              guestId,
+               request.ProductId,
+               request.Name,
+               request.Sku,
+               request.Price,
+               request.Currency,
+               request.Quantity
+               );
+
+            var result = await sender.Send(command, cancellationToken);
+
+            return result.IsSuccess
+                ? Results.NoContent()
+                : Results.BadRequest(result.Error);
+        })
+        .WithTags(Tags.Carts)
+        .WithName("AddCartItem")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status409Conflict);
+    }
+}
+internal sealed record AddCartItemRequest(
+    Guid ProductId,
+    string Name,
+    string Sku,
+    decimal Price,
+    string Currency,
+    int Quantity);

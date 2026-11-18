@@ -1,0 +1,117 @@
+﻿.login-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 36px;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: var(--admin-shadow-md);
+}
+
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 20px;
+    color: white;
+    background: var(--admin-accent);
+    border-radius: var(--admin-radius-md);
+}
+
+.login-title {
+    color: var(--admin-text);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+    margin-top: 8px;
+    color: var(--admin-text-secondary);
+}
+
+.login-field {
+    margin-bottom: 20px;
+}
+
+.login-label {
+    margin-bottom: 8px;
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.login-input ::deep .mud-input-control {
+    margin-top: 0;
+}
+
+.login-input ::deep .mud-input-outlined {
+    border-radius: var(--admin-radius-md);
+}
+
+.login-input ::deep .mud-input-outlined-border {
+    border-color: var(--admin-border-strong);
+}
+
+.login-input ::deep .mud-input-control:hover .mud-input-outlined-border {
+    border-color: var(--admin-text-secondary);
+}
+
+.login-submit {
+    height: 46px;
+    margin-top: 8px;
+    border-radius: var(--admin-radius-md);
+    background: var(--admin-accent);
+    color: white;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: none;
+}
+
+    .login-submit:hover {
+        background: #333333;
+        box-shadow: none;
+    }
+
+.login-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 28px;
+    color: var(--admin-muted);
+}
+
+.login-copyright {
+    margin-top: 24px;
+    color: var(--admin-muted);
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px;
+    }
+
+    .login-card {
+        padding: 26px 22px;
+    }
+}

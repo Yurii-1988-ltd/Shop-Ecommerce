@@ -1,0 +1,44 @@
+﻿
+.product-create-card {
+    max-width: 900px;
+    margin-top: 24px;
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: none;
+}
+
+.product-create-header {
+    padding: 24px 28px;
+}
+
+.product-create-title {
+    color: var(--admin-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.product-create-subtitle {
+    margin-top: 5px;
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+}
+
+.product-create-card ::deep .mud-divider {
+    border-color: var(--admin-border);
+}
+
+.product-create-content {
+    padding: 28px;
+}
+
+@media (max-width: 600px) {
+    .product-create-header {
+        padding: 20px;
+    }
+
+    .product-create-content {
+        padding: 20px;
+    }
+}

@@ -1,0 +1,198 @@
+﻿@page "/users"
+
+@using Ecommerce.Admin.ApiClients.Users.Responses
+@using MudBlazor
+
+@inject IUserApiClient UserApi
+
+<PageTitle>Users</PageTitle>
+
+<PageHeader Title="Users"
+            Subtitle="Manage user accounts">
+    <Actions>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Outlined.PersonAdd"
+                   Href="/users/create"
+                   Class="users-add-button">
+            Create User
+        </MudButton>
+    </Actions>
+</PageHeader>
+
+<MudPaper Class="users-card" Elevation="0">
+
+    <div class="users-card-header">
+        <div>
+            <MudText Typo="Typo.h6" Class="users-card-title">
+                All Users
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="users-card-subtitle">
+                Browse and manage registered accounts
+            </MudText>
+        </div>
+
+        <div class="users-card-icon">
+            <MudIcon Icon="@Icons.Material.Outlined.People" />
+        </div>
+    </div>
+
+    <div class="users-content">
+
+        <div class="users-toolbar">
+            <MudTextField T="string"
+                          @bind-Value="_search"
+                          Label="Search users"
+                          Placeholder="Name or email"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Outlined.Search"
+                          Immediate="true"
+                          DebounceInterval="400"
+                          OnDebounceIntervalElapsed="SearchAsync"
+                          Class="users-search"
+                          Clearable="true" />
+        </div>
+
+        <MudTable T="UserResponse"
+                  @ref="_table"
+                  ServerData="LoadUsersAsync"
+                  Hover="true"
+                  Dense="true"
+                  Elevation="0"
+                  Class="users-table">
+
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Created</MudTh>
+                <MudTh align="right">Actions</MudTh>
+            </HeaderContent>
+
+            <RowTemplate Context="user">
+
+                <MudTd DataLabel="Name">
+                    <div class="users-name">
+                        <div class="users-avatar">
+                            @GetInitials(user)
+                        </div>
+
+                        <span>
+                            @user.FirstName @user.LastName
+                        </span>
+                    </div>
+                </MudTd>
+
+                <MudTd DataLabel="Email">
+                    <span class="users-email">
+                        @user.Email
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Created">
+                    <span class="users-date">
+                        @user.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                    </span>
+                </MudTd>
+
+                <MudTd DataLabel="Actions" align="right">
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Default"
+                               EndIcon="@Icons.Material.Outlined.ArrowForward"
+                               Href="@($"/users/{user.Id}")"
+                               Class="users-details-button">
+                        Details
+                    </MudButton>
+                </MudTd>
+
+            </RowTemplate>
+
+            <NoRecordsContent>
+                <div class="users-empty">
+                    <MudIcon Icon="@Icons.Material.Outlined.PeopleOutline"
+                             Size="Size.Large" />
+
+                    <MudText Typo="Typo.body1" Class="users-empty-title">
+                        No users found
+                    </MudText>
+
+                    <MudText Typo="Typo.body2" Class="users-empty-subtitle">
+                        Try changing your search or create a new user.
+                    </MudText>
+
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Href="/users/create"
+                               StartIcon="@Icons.Material.Outlined.PersonAdd">
+                        Create User
+                    </MudButton>
+                </div>
+            </NoRecordsContent>
+
+            <LoadingContent>
+                <div class="users-loading">
+                    <MudProgressCircular Indeterminate="true"
+                                         Color="Color.Primary"
+                                         Size="Size.Medium" />
+                </div>
+            </LoadingContent>
+
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new[] { 10, 20, 50 }"
+                               RowsPerPageString="Rows per page"
+                               InfoFormat="{first_item}-{last_item} of {all_items}" />
+            </PagerContent>
+
+        </MudTable>
+
+    </div>
+</MudPaper>
+
+@code {
+    private string? _search;
+
+    private MudTable<UserResponse> _table = default!;
+
+    private async Task<TableData<UserResponse>> LoadUsersAsync(
+        TableState state,
+        CancellationToken cancellationToken)
+    {
+        var page = state.Page + 1;
+        var pageSize = state.PageSize;
+
+        var result = await UserApi.GetAllAsync(
+            page,
+            pageSize,
+            _search,
+            cancellationToken);
+
+        return new TableData<UserResponse>
+        {
+            Items = result?.Items ?? [],
+            TotalItems = result?.TotalCount ?? 0
+        };
+    }
+
+    private async Task SearchAsync(string value)
+    {
+        if (_table is not null)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    private static string GetInitials(UserResponse user)
+    {
+        var first = string.IsNullOrWhiteSpace(user.FirstName)
+            ? string.Empty
+            : user.FirstName[..1];
+
+        var last = string.IsNullOrWhiteSpace(user.LastName)
+            ? string.Empty
+            : user.LastName[..1];
+
+        return (first + last).ToUpperInvariant();
+    }
+}

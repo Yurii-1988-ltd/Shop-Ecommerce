@@ -1,0 +1,131 @@
+﻿@page "/products"
+
+@using Microsoft.AspNetCore.Authorization
+@using Ecommerce.Admin.ApiClients.Catalog.Models
+@using MudBlazor
+
+@attribute [Authorize(Roles = "Admin")]
+
+@inject IHttpClientFactory HttpClientFactory
+
+<PageHeader Title="Products"
+            Subtitle="Manage your product catalog">
+    <Actions>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Outlined.Add"
+                   Href="/products/create"
+                   Class="products-add-button">
+            Add Product
+        </MudButton>
+    </Actions>
+</PageHeader>
+
+<SearchToolbar Placeholder="Search products..."
+               SearchText="@_search"
+               SearchTextChanged="OnSearchChanged"
+               OnRefresh="Refresh" />
+
+<MudPaper Class="entity-card products-card" Elevation="0">
+
+    <MudTable T="ProductListItemResponse"
+              Class="entity-table products-table"
+              ServerData="LoadProductsAsync"
+              @ref="_table"
+              Hover="true"
+              Dense="true"
+              Striped="false">
+
+        <HeaderContent>
+            <MudTh Class="image-header" width="80px"></MudTh>
+            <MudTh>Product</MudTh>
+            <MudTh>Price</MudTh>
+            <MudTh>Inventory</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh align="right">Actions</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd Class="product-image-cell">
+                @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
+                {
+                    <MudAvatar Size="Size.Large"
+                               Class="product-avatar">
+                        <MudImage Src="@GetProductImageUrl(context.ImageUrl)"
+                                  Alt="@(context.Name ?? "Product")"
+                                  ObjectFit="ObjectFit.Cover" />
+                    </MudAvatar>
+                }
+                else
+                {
+                    <MudAvatar Size="Size.Large"
+                               Class="product-avatar product-avatar-empty">
+                        <MudIcon Icon="@Icons.Material.Outlined.Image"
+                                 Size="Size.Medium" />
+                    </MudAvatar>
+                }
+            </MudTd>
+
+            <MudTd Class="product-column">
+                <MudStack Spacing="1">
+                    <MudLink Class="product-name"
+                             Href="@($"/products/{context.Id}")">
+                        @context.Name
+                    </MudLink>
+
+                    <MudText Class="product-sku">
+                        SKU: @context.Sku
+                    </MudText>
+                </MudStack>
+            </MudTd>
+
+            <MudTd>
+                <ProductPrice Price="@context.Price"
+                              Currency="@context.Currency" />
+            </MudTd>
+
+            <MudTd>
+                <InventoryChip StockQuantity="@context.StockQuantity" />
+            </MudTd>
+
+            <MudTd>
+                <StatusChip IsActive="@context.IsActive" />
+            </MudTd>
+
+            <MudTd align="right">
+                <EntityActions OnDetails="@(() => Details(context.Id))"
+                               OnEdit="@(() => Edit(context.Id))"
+                               OnDelete="@(() => Delete(context))" />
+            </MudTd>
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <EmptyState Title="No products"
+                        Description="Create your first product."
+                        ActionText="Add Product"
+                        ActionHref="/products/create" />
+        </NoRecordsContent>
+
+        <LoadingContent>
+            <MudStack align="Center"
+                      Justify="Justify.Center"
+                      Class="products-loading"
+                      Spacing="2">
+                <MudProgressCircular Indeterminate="true"
+                                     Color="Color.Primary"
+                                     Size="Size.Medium" />
+
+                <MudText Typo="Typo.body2"
+                         Color="Color.Secondary">
+                    Loading products...
+                </MudText>
+            </MudStack>
+        </LoadingContent>
+
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+
+    </MudTable>
+
+</MudPaper>

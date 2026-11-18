@@ -1,0 +1,178 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* =========================================
+   ADMIN DESIGN SYSTEM
+========================================= */
+
+:root {
+    --admin-bg: #F8F9FA;
+    --admin-surface: #FFFFFF;
+    --admin-surface-hover: #F5F5F5;
+    --admin-text: #171717;
+    --admin-text-secondary: #737373;
+    --admin-muted: #A3A3A3;
+    --admin-border: #EAEAEA;
+    --admin-border-strong: #D4D4D4;
+    --admin-accent: #F59E0B;
+    --admin-success: #15803D;
+    --admin-warning: #D97706;
+    --admin-danger: #DC2626;
+    --admin-info: #2563EB;
+    --admin-radius-sm: 6px;
+    --admin-radius-md: 10px;
+    --admin-radius-lg: 14px;
+    --admin-shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --admin-shadow-md: 0 8px 24px rgba(0,0,0,.06);
+    --admin-font: 'Inter', sans-serif;
+}
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+html,
+body {
+    min-height: 100%;
+    font-family: var(--admin-font);
+    color: var(--admin-text);
+    background: var(--admin-bg);
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* =========================================
+   MUD BLAZOR BASE OVERRIDES
+========================================= */
+
+.mud-typography {
+    font-family: var(--admin-font);
+}
+
+.mud-paper {
+    color: var(--admin-text);
+}
+
+.mud-button-root {
+    font-family: var(--admin-font);
+    text-transform: none;
+    font-weight: 500;
+}
+
+/* =========================================
+   NAVIGATION BASE
+========================================= */
+
+.mud-navmenu {
+    padding-top: 8px;
+}
+
+.mud-nav-link {
+    min-height: 40px;
+    border-radius: 7px;
+    border-left: none;
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+    .mud-nav-link .mud-icon-root {
+        color: #737373;
+        font-size: 19px;
+    }
+
+    .mud-nav-link:hover {
+        background: var(--admin-surface-hover);
+        color: var(--admin-text);
+    }
+
+        .mud-nav-link:hover .mud-icon-root {
+            color: var(--admin-text);
+        }
+
+    .mud-nav-link.active {
+        background: #f1f1f1;
+        color: var(--admin-text);
+        font-weight: 600;
+    }
+
+        .mud-nav-link.active .mud-icon-root {
+            color: var(--admin-text);
+        }
+
+.mud-nav-group-header {
+    font-weight: 600;
+}
+
+/* =========================================
+   DASHBOARD CARDS
+========================================= */
+
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 155px;
+    padding: 20px;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: none;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--admin-border-strong);
+        box-shadow: var(--admin-shadow-md);
+    }
+
+/* No colored top borders in the premium design */
+.products-card,
+.orders-card,
+.customers-card,
+.revenue-card {
+    border-top: 1px solid var(--admin-border);
+}
+
+/* =========================================
+   HERO PRODUCT CARD
+========================================= */
+
+.hero__product-card {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 280px;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: var(--admin-shadow-md);
+    transition: transform .1s ease-out;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+    .dashboard-card {
+        min-height: 140px;
+        padding: 16px;
+    }
+
+    .hero__product-card {
+        width: 180px;
+        height: 230px;
+    }
+}

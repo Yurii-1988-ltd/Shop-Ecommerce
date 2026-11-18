@@ -1,0 +1,74 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+
+    <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
+    <link rel="stylesheet" href="@Assets["css/app.css"]" />
+    <link rel="stylesheet" href="@Assets["css/theme.css"]" />
+    <link rel="stylesheet" href="@Assets["css/layout.css"]" />
+    <link rel="stylesheet" href="@Assets["css/admin.css"]" />
+    <link rel="stylesheet" href="@Assets["css/dashboard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/dashboardStatCard.css"]" />
+    <link rel="stylesheet" href="@Assets["Ecommerce.Admin.styles.css"]" />
+    <link rel="stylesheet" href="@Assets["css/salesOverview.css"]" />
+    <link rel="stylesheet" href="@Assets["css/lowStockProducts.css"]" />
+    <link rel="stylesheet" href="@Assets["css/recentOrders.css"]" />
+    <link rel="stylesheet" href="@Assets["css/ActiveCarts.css"]" />
+    <link rel="stylesheet" href="@Assets["css/shippings.css"]" />
+    <link rel="stylesheet" href="@Assets["css/shippingDetails.css"]" />
+    <link rel="stylesheet" href="@Assets["css/products.css"]" />
+    <link rel="stylesheet" href="@Assets["css/login.css"]" />
+    <link rel="stylesheet" href="@Assets["css/brandForm.css"]" />
+    <link rel="stylesheet" href="@Assets["css/createProduct.css"]" />
+    <link rel="stylesheet" href="@Assets["css/productDetails.css"]" />
+    <link rel="stylesheet" href="@Assets["css/pageHeader.css"]" />
+    <link rel="stylesheet" href="@Assets["css/editProduct.css"]" />
+    <link rel="stylesheet" href="@Assets["css/orderActionsCard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/orderCustomerCard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/orderInfoCard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/orderItemsTable.css"]" />
+    <link rel="stylesheet" href="@Assets["css/orderShippingAddressCard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/orderSummaryCard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/recentOrders.css"]" />
+    <link rel="stylesheet" href="@Assets["css/inventories.css"]" />
+    <link rel="stylesheet" href="@Assets["css/userInformationCard.css"]" />
+    <link rel="stylesheet" href="@Assets["css/createUser.css"]" />
+    <link rel="stylesheet" href="@Assets["css/users.css"]" />
+    <link rel="stylesheet" href="@Assets["css/userDetails.css"]" />
+    <link rel="stylesheet" href="@Assets["css/editUser.css"]" />
+    <link rel="stylesheet" href="@Assets["css/error.css"]" />
+
+
+
+
+
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+
+    <link href="_content/BlazorSortable/blazor-sortable.css" rel="stylesheet" />
+    <link href="_content/BlazorSortable/blazor-sortable-highlights.css" rel="stylesheet" />
+
+    <ImportMap />
+
+    <HeadOutlet @rendermode="InteractiveServer" />
+</head>
+
+<body>
+    <CascadingAuthenticationState>
+        <Routes @rendermode="InteractiveServer" />
+    </CascadingAuthenticationState>
+
+    
+    <script src="js/download.js" ></script>
+
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+    <script src="_framework/blazor.web.js"></script>
+
+</body>
+
+</html>

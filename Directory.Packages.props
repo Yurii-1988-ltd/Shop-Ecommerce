@@ -1,0 +1,138 @@
+<Project>
+
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+
+	<!-- .NET Aspire -->
+	<ItemGroup Label="Aspire">
+		<PackageVersion Include="Aspire.Hosting" Version="13.6.5" />
+		<PackageVersion Include="Aspire.Hosting.MongoDB" Version="13.6.5" />
+		<PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.6.5" />
+		<PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.6.5" />
+		<PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.6.5" />
+	</ItemGroup>
+
+	<!-- Specifications -->
+	<ItemGroup Label="Specifications">
+		<PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="9.0.0" />
+	</ItemGroup>
+
+	<!-- Health Checks -->
+	<ItemGroup Label="Health Checks">
+		<PackageVersion Include="AspNetCore.HealthChecks.MongoDb" Version="9.0.0" />
+		<PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.4" />
+	</ItemGroup>
+
+	<!-- Blazor -->
+	<ItemGroup Label="Blazor">
+		<PackageVersion Include="Blazor.Storage" Version="5.0.0" />
+		<PackageVersion Include="BlazorSortable" Version="8.1.0" />
+		<PackageVersion Include="MudBlazor" Version="9.6.0" />
+	</ItemGroup>
+
+	<!-- Authentication -->
+	<ItemGroup Label="Authentication">
+		<PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.17" />
+	</ItemGroup>
+
+	<!-- ASP.NET Core -->
+	<ItemGroup Label="ASP.NET Core">
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.17" />
+	</ItemGroup>
+
+	<!-- Swagger -->
+	<ItemGroup Label="Swagger">
+		<PackageVersion Include="SwaggerDoc" Version="8.0.2" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+	</ItemGroup>
+
+	<!-- CQRS / MediatR -->
+	<ItemGroup Label="MediatR">
+		<PackageVersion Include="MediatR" Version="13.0.0" />
+	</ItemGroup>
+
+	<!-- Validation -->
+	<ItemGroup Label="Validation">
+		<PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+	</ItemGroup>
+
+	<!-- MongoDB -->
+	<ItemGroup Label="MongoDB">
+		<PackageVersion Include="MongoDB.Bson" Version="3.10.0" />
+		<PackageVersion Include="MongoDB.Driver" Version="3.10.0" />
+	</ItemGroup>
+
+	<!-- Excel / PDF -->
+	<ItemGroup Label="Export">
+		<PackageVersion Include="ClosedXML" Version="0.105.1" />
+		<PackageVersion Include="QuestPDF" Version="2026.7.2" />
+	</ItemGroup>
+
+	<!-- Microsoft Extensions -->
+	<ItemGroup Label="Microsoft Extensions">
+		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.14" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+		<PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.4" />
+		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.4" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
+		<PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.2" />
+	</ItemGroup>
+
+	<!-- Security -->
+	<ItemGroup Label="Security">
+		<PackageVersion Include="BCrypt.Net-Next" Version="4.2.0" />
+	</ItemGroup>
+
+	<!-- MassTransit -->
+	<ItemGroup Label="MassTransit">
+		<PackageVersion Include="MassTransit.RabbitMQ" Version="9.2.2" />
+		<PackageVersion Include="MassTransit.Abstractions" Version="9.2.2" />
+	</ItemGroup>
+
+	<!-- Entity Framework Core -->
+	<ItemGroup Label="Entity Framework Core">
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.14" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.14" />
+	</ItemGroup>
+
+	<!-- SQL Server -->
+	<ItemGroup Label="SQL Server">
+		<PackageVersion Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+	</ItemGroup>
+
+	<!-- PostgreSQL / Dapper -->
+	<ItemGroup Label="PostgreSQL / Dapper">
+		<PackageVersion Include="Dapper" Version="2.1.79" />
+		<PackageVersion Include="Npgsql" Version="9.0.4" />
+		<PackageVersion Include="Npgsql.DependencyInjection" Version="9.0.4" />
+		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+	</ItemGroup>
+
+	<!-- Email -->
+	<ItemGroup Label="Email">
+		<PackageVersion Include="FluentEmail.Core" Version="3.0.2" />
+		<PackageVersion Include="FluentEmail.Liquid" Version="3.0.2" />
+		<PackageVersion Include="FluentEmail.Smtp" Version="3.0.2" />
+		<PackageVersion Include="FluentEmail.Razor" Version="3.0.2" />
+		<PackageVersion Include="MailKit" Version="4.18.0" />
+		<PackageVersion Include="Fluid.Core" Version="2.13.1" />
+	</ItemGroup>
+
+	<!-- Testing -->
+	<ItemGroup Label="Testing">
+		<PackageVersion Include="coverlet.collector" Version="10.0.1" />
+		<PackageVersion Include="FluentAssertions" Version="8.0.1" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageVersion Include="Moq" Version="4.20.72" />
+		<PackageVersion Include="xunit" Version="2.9.3" />
+		<PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+	</ItemGroup>
+
+</Project>

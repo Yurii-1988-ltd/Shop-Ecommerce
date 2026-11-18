@@ -1,0 +1,194 @@
+﻿@page "/carts"
+
+@using Ecommerce.Admin.ApiClients.Carts
+@using Ecommerce.Admin.ApiClients.Carts.Contracts
+@using Ecommerce.Admin.ApiClients.Carts.Responses
+@using Ecommerce.Application.Pagination
+@using MudBlazor
+
+@inject ICartApiClient CartApi
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Carts</PageTitle>
+
+<PageHeader Title="Shopping Carts"
+            Subtitle="Manage customer shopping carts" />
+
+<MudPaper class="entity-card">
+    <MudStack Row="true"
+              Justify="Justify.SpaceBetween"
+              AlignItems="AlignItems.Center"
+              class="mb-4">
+
+        <MudText Typo="Typo.h6">
+            Customer Carts
+        </MudText>
+
+        <MudButton Href="/carts/create"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add">
+            Create Cart
+        </MudButton>
+
+    </MudStack>
+
+    <MudTable T="CartListResponse"
+              Items="_carts.Items"
+              Hover="true"
+              Dense="true"
+              Loading="_loading"
+              class="cart-table">
+
+        <HeaderContent>
+            <MudTh>Customer</MudTh>
+            <MudTh align="center">Items</MudTh>
+            <MudTh align="right">Total</MudTh>
+            <MudTh>Cart ID</MudTh>
+            <MudTh align="center">Actions</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Customer">
+                @if (context.CustomerId.HasValue)
+                {
+                    <MudText Typo="Typo.body2">
+                        @context.CustomerId
+                    </MudText>
+                }
+                else
+                {
+                    <MudChip T="string"
+                             Color="Color.Warning"
+                             Variant="Variant.Outlined"
+                             Size="Size.Small">
+                        Guest
+                    </MudChip>
+                }
+            </MudTd>
+
+            <MudTd DataLabel="Items" align="center">
+                @context.TotalItems
+            </MudTd>
+
+            <MudTd DataLabel="Total" align="right">
+                <MudChip T="string"
+                         Color="Color.Success"
+                         Variant="Variant.Filled">
+                    @($"{context.TotalAmount:N2} {context.Currency}")
+                </MudChip>
+            </MudTd>
+
+            <MudTd DataLabel="Cart ID">
+                <MudText Typo="Typo.caption">
+                    @context.Id
+                </MudText>
+            </MudTd>
+
+            <MudTd align="center">
+                <MudStack Row="true"
+                          Spacing="1"
+                          Justify="Justify.Center">
+
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               OnClick="@(() => OpenDetails(context.Id))">
+                        Details
+                    </MudButton>
+
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Error"
+                               Size="Size.Small"
+                               OnClick="@(() => RemoveCart(context.Id))">
+                        Delete
+                    </MudButton>
+
+                </MudStack>
+            </MudTd>
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <MudText>No carts found.</MudText>
+        </NoRecordsContent>
+
+    </MudTable>
+</MudPaper>
+
+@code {
+    private bool _loading;
+
+    private PagedResult<CartListResponse> _carts = new()
+    {
+        Items = [],
+        Page = 1,
+        PageSize = 10,
+        TotalCount = 0
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+
+        try
+        {
+            var result = await CartApi.GetAllAsync(1, 10);
+
+            if (result is not null)
+            {
+                _carts = result;
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add(
+                $"Failed to load carts: {ex.Message}",
+                Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void OpenDetails(Guid cartId)
+    {
+        if (cartId == Guid.Empty)
+        {
+            return;
+        }
+
+        Navigation.NavigateTo($"/carts/{cartId}");
+    }
+
+    private async Task RemoveCart(Guid cartId)
+    {
+        if (cartId == Guid.Empty)
+        {
+            return;
+        }
+
+        try
+        {
+            await CartApi.RemoveByIdAsync(cartId);
+
+            Snackbar.Add(
+                "Cart removed successfully.",
+                Severity.Success);
+
+            await LoadAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add(
+                $"Failed to remove cart: {ex.Message}",
+                Severity.Error);
+        }
+    }
+}

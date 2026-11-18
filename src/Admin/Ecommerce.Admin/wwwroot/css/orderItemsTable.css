@@ -1,0 +1,250 @@
+﻿
+.order-items-card {
+    width: 100%;
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: none;
+}
+
+/* Header */
+
+.order-items-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.order-items-header-icon {
+    color: var(--admin-text-secondary);
+    font-size: 19px;
+}
+
+.order-items-title {
+    color: var(--admin-text);
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.2px;
+}
+
+.order-items-subtitle {
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+}
+
+/* Add product */
+
+.order-add-button {
+    min-height: 38px;
+    padding: 0 15px;
+    border-radius: var(--admin-radius-md);
+    background: var(--admin-accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: none;
+}
+
+    .order-add-button:hover {
+        background: #333;
+        box-shadow: none;
+    }
+
+    .order-add-button:disabled {
+        opacity: .45;
+    }
+
+/* Table */
+
+.order-items-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.order-items-table {
+    background: transparent;
+}
+
+    .order-items-table ::deep table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .order-items-table ::deep thead th {
+        height: 46px;
+        padding: 0 16px;
+        background: #fafafa;
+        color: var(--admin-text-secondary);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: .045em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--admin-border);
+    }
+
+    .order-items-table ::deep tbody td {
+        height: 68px;
+        padding: 10px 16px;
+        color: var(--admin-text);
+        font-size: 12px;
+        border-bottom: 1px solid var(--admin-border);
+    }
+
+    .order-items-table ::deep tbody tr {
+        transition: background .15s ease;
+    }
+
+        .order-items-table ::deep tbody tr:hover {
+            background: var(--admin-surface-hover);
+        }
+
+        .order-items-table ::deep tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+/* Product */
+
+.order-product-name {
+    color: var(--admin-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.order-product-sku {
+    color: var(--admin-muted);
+    font-size: 11px;
+}
+
+.order-item-price {
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.order-item-total {
+    color: var(--admin-text);
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+/* Quantity */
+
+.quantity-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 32px;
+    padding: 2px 5px;
+    background: #fafafa;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-md);
+}
+
+.quantity-button {
+    width: 25px;
+    height: 25px;
+    color: var(--admin-text-secondary);
+}
+
+    .quantity-button:hover {
+        background: #ededed;
+    }
+
+.quantity-value {
+    min-width: 24px;
+    color: var(--admin-text);
+    font-size: 12px;
+    font-weight: 650;
+    text-align: center;
+}
+
+/* Actions */
+
+.order-items-table ::deep .actions-column {
+    width: 55px;
+}
+
+.order-remove-button {
+    color: var(--admin-muted);
+}
+
+    .order-remove-button:hover {
+        background: #fef2f2;
+        color: var(--admin-danger);
+    }
+
+/* Empty state */
+
+.order-items-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    gap: 8px;
+    padding: 24px;
+}
+
+.order-items-empty-icon {
+    color: var(--admin-muted);
+    font-size: 30px;
+}
+
+.order-items-empty-title {
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.order-items-empty-subtitle {
+    color: var(--admin-text-secondary);
+}
+
+/* Read only */
+
+.order-items-readonly {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    color: var(--admin-text-secondary);
+    background: #fafafa;
+    border-top: 1px solid var(--admin-border);
+}
+
+    .order-items-readonly ::deep .mud-icon-root {
+        font-size: 15px;
+    }
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .order-items-header {
+        padding: 16px;
+    }
+
+    .order-items-table {
+        min-width: 720px;
+    }
+
+    .order-items-readonly {
+        padding: 12px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .order-items-header {
+        align-items: flex-start;
+    }
+
+        .order-items-header ::deep .mud-stack-row {
+            flex-wrap: wrap;
+        }
+
+    .order-add-button {
+        min-height: 35px;
+    }
+}
