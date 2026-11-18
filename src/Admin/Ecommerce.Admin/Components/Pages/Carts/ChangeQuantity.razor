@@ -1,41 +1,117 @@
-﻿@page "/carts/{customerId:guid}/items/{productId:guid}/quantity"
+﻿@page "/carts/{CustomerId:guid}/items/{ProductId:guid}/quantity"
+
 @using Ecommerce.Admin.ApiClients.Carts.Contracts
 @using Ecommerce.Admin.ApiClients.Carts.Models
 
 @inject ICartApiClient CartApi
 @inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Change Quantity</PageTitle>
 
 <PageHeader Title="Change Quantity"
-            Subtitle="Update product quantity in cart" />
+            Subtitle="Update product quantity in cart">
 
-<ChangeQuantityForm
-    Model="Model"
-    OnSubmit="Save" />
+    <Actions>
+        <MudButton Href="/carts"
+                   Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Filled.ArrowBack">
+            Back to carts
+        </MudButton>
+    </Actions>
+</PageHeader>
 
-@code
-{
-    [Parameter] public Guid customerId { get; set; }
+<div class="change-quantity-container">
 
-    [Parameter] public Guid productId { get; set; }
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <MudAlert Severity="Severity.Error"
+                  Variant="Variant.Outlined"
+                  Class="change-quantity-error">
+            @_error
+        </MudAlert>
+    }
+
+    <MudPaper Elevation="0" Class="change-quantity-card">
+
+        <div class="change-quantity-header">
+            <div class="change-quantity-icon">
+                <MudIcon Icon="@Icons.Material.Filled.Inventory2"
+                         Size="Size.Medium" />
+            </div>
+
+            <div>
+                <MudText Typo="Typo.subtitle1"
+                         Class="change-quantity-title">
+                    Product quantity
+                </MudText>
+
+                <MudText Typo="Typo.body2"
+                         Class="change-quantity-subtitle">
+                    Specify the new quantity for this product
+                </MudText>
+            </div>
+        </div>
+
+        <div class="change-quantity-content">
+            <ChangeQuantityForm Model="Model"
+                                OnSubmit="Save" />
+        </div>
+
+    </MudPaper>
+
+</div>
+
+@code {
+    [Parameter]
+    public Guid CustomerId { get; set; }
+
+    [Parameter]
+    public Guid ProductId { get; set; }
 
     private ChangeQuantityFormModel Model = new();
 
-    protected override void OnInitialized()
+    private bool _saving;
+    private string? _error;
+
+    protected override void OnParametersSet()
     {
-        Model.CustomerId = customerId;
-        Model.ProductId = productId;
+        Model.CustomerId = CustomerId;
+        Model.ProductId = ProductId;
     }
 
     private async Task Save(ChangeQuantityFormModel model)
     {
-        await CartApi.ChangeQuantityAsync(
-            model.CustomerId,
-            model.ProductId,
-            new ChangeCartItemQuantityRequest(
+        if (_saving)
+            return;
+
+        _saving = true;
+        _error = null;
+
+        try
+        {
+            await CartApi.ChangeQuantityAsync(
                 model.CustomerId,
                 model.ProductId,
-                model.Quantity));
+                new ChangeCartItemQuantityRequest(
+                    model.CustomerId,
+                    model.ProductId,
+                    model.Quantity));
 
-        Navigation.NavigateTo($"/carts/{model.CustomerId}");
+            Snackbar.Add(
+                "Product quantity updated successfully.",
+                Severity.Success);
+
+            Navigation.NavigateTo("/carts");
+        }
+        catch (HttpRequestException ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _saving = false;
+        }
     }
 }

@@ -1,0 +1,252 @@
+﻿@page "/carts"
+
+@using Ecommerce.Admin.ApiClients.Carts
+@using Ecommerce.Admin.ApiClients.Carts.Contracts
+@using Ecommerce.Admin.ApiClients.Carts.Responses
+@using Ecommerce.Application.Pagination
+@using MudBlazor
+
+@inject ICartApiClient CartApi
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Shopping Carts</PageTitle>
+
+<PageHeader Title="Shopping Carts"
+            Subtitle="Manage customer shopping carts">
+    <Actions>
+        <MudButton Href="/carts/create"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Outlined.Add"
+                   Class="carts-create-button">
+            Create Cart
+        </MudButton>
+    </Actions>
+</PageHeader>
+
+<MudPaper Elevation="0" Class="carts-card">
+    <div class="carts-card-header">
+        <div>
+            <MudText Typo="Typo.subtitle1" Class="carts-card-title">
+                Customer carts
+            </MudText>
+            <MudText Typo="Typo.body2" Class="carts-card-subtitle">
+                Overview of active shopping carts
+            </MudText>
+        </div>
+
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Outlined.Refresh"
+                   OnClick="LoadAsync"
+                   Disabled="_loading"
+                   Class="carts-refresh-button">
+            Refresh
+        </MudButton>
+    </div>
+
+    <MudDivider />
+
+    <MudTable T="CartListResponse"
+              Items="_carts.Items"
+              Hover="true"
+              Dense="true"
+              Loading="_loading"
+              Class="carts-table">
+
+        <HeaderContent>
+            <MudTh>Customer</MudTh>
+            <MudTh align="center">Items</MudTh>
+            <MudTh align="right">Total</MudTh>
+            <MudTh>Cart ID</MudTh>
+            <MudTh align="right">Actions</MudTh>
+        </HeaderContent>
+
+        <RowTemplate Context="cart">
+            <MudTd DataLabel="Customer">
+                @if (cart.CustomerId.HasValue)
+                {
+                    <div class="carts-customer">
+                        <div class="carts-customer-avatar">
+                            <MudIcon Icon="@Icons.Material.Outlined.Person"
+                                     Size="Size.Small" />
+                        </div>
+                        <div class="carts-customer-info">
+                            <MudText Typo="Typo.body2" Class="carts-customer-name">
+                                Customer
+                            </MudText>
+                            <MudText Typo="Typo.caption" Class="carts-customer-id">
+                                @cart.CustomerId
+                            </MudText>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <MudChip T="string"
+                             Color="Color.Warning"
+                             Variant="Variant.Outlined"
+                             Size="Size.Small"
+                             Class="carts-guest-chip">
+                        Guest
+                    </MudChip>
+                }
+            </MudTd>
+
+            <MudTd DataLabel="Items" align="center">
+                <span class="carts-item-count">
+                    @cart.TotalItems
+                </span>
+            </MudTd>
+
+            <MudTd DataLabel="Total" align="right">
+                <span class="carts-total">
+                    @($"{cart.TotalAmount:N2} {cart.Currency}")
+                </span>
+            </MudTd>
+
+            <MudTd DataLabel="Cart ID">
+                <MudTooltip Text="@cart.Id.ToString()">
+                    <span class="carts-cart-id">
+                        @FormatCartId(cart.Id)
+                    </span>
+                </MudTooltip>
+            </MudTd>
+
+            <MudTd DataLabel="Actions" align="right">
+                <div class="carts-actions">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Visibility"
+                                   Color="Color.Default"
+                                   Size="Size.Small"
+                                   title="View details"
+                                   OnClick="@(() => OpenDetails(cart.Id))" />
+
+                    <MudIconButton Icon="@Icons.Material.Outlined.DeleteOutline"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   title="Delete cart"
+                                   Disabled="_loading"
+                                   OnClick="@(() => RemoveCart(cart.Id))" />
+                </div>
+            </MudTd>
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <div class="carts-empty">
+                <MudIcon Icon="@Icons.Material.Outlined.ShoppingCart"
+                         Class="carts-empty-icon" />
+
+                <MudText Typo="Typo.subtitle2" Class="carts-empty-title">
+                    No shopping carts found
+                </MudText>
+
+                <MudText Typo="Typo.body2" Class="carts-empty-description">
+                    There are currently no carts to display.
+                </MudText>
+            </div>
+        </NoRecordsContent>
+
+        <LoadingContent>
+            <div class="carts-loading">
+                <MudProgressCircular Indeterminate="true"
+                                     Color="Color.Primary" />
+                <MudText Typo="Typo.body2">
+                    Loading shopping carts...
+                </MudText>
+            </div>
+        </LoadingContent>
+    </MudTable>
+
+    <MudDivider />
+
+    <div class="carts-card-footer">
+        <MudText Typo="Typo.caption" Class="carts-count">
+            Total carts: <strong>@_carts.TotalCount</strong>
+        </MudText>
+    </div>
+</MudPaper>
+
+@code {
+    private bool _loading;
+
+    private PagedResult<CartListResponse> _carts = new()
+    {
+        Items = [],
+        Page = 1,
+        PageSize = 10,
+        TotalCount = 0
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        if (_loading)
+            return;
+
+        _loading = true;
+
+        try
+        {
+            var result = await CartApi.GetAllAsync(1, 10);
+
+            if (result is not null)
+            {
+                _carts = result;
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add(
+                $"Failed to load carts: {ex.Message}",
+                Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void OpenDetails(Guid cartId)
+    {
+        if (cartId == Guid.Empty)
+            return;
+
+        Navigation.NavigateTo($"/carts/{cartId}");
+    }
+
+    private async Task RemoveCart(Guid cartId)
+    {
+        if (cartId == Guid.Empty || _loading)
+            return;
+
+        try
+        {
+            await CartApi.RemoveByIdAsync(cartId);
+
+            Snackbar.Add(
+                "Cart removed successfully.",
+                Severity.Success);
+
+            await LoadAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add(
+                $"Failed to remove cart: {ex.Message}",
+                Severity.Error);
+        }
+    }
+
+    private static string FormatCartId(Guid id)
+    {
+        var value = id.ToString();
+        return value.Length > 13
+            ? $"{value[..8]}..."
+            : value;
+    }
+}

@@ -1,61 +1,94 @@
-﻿@inject IHttpClientFactory httpClientFactory
+﻿
+@inject IHttpClientFactory HttpClientFactory
 
-<MudCard Class="d-flex flex-column justify-space-between"
-         Style="height:320px;width:100%;">
+<MudCard Class="product-image-card" Elevation="0">
 
-    <MudCardHeader>
-        <MudIconButton Icon="@Icons.Material.Filled.DragIndicator"
-                       Class="drag-handle"
-                       Color="Color.Default" />
+    <MudCardHeader Class="product-image-header">
+        <CardHeaderContent>
+            <MudText Typo="Typo.caption" Class="product-image-label">
+                Product image
+            </MudText>
+        </CardHeaderContent>
+
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.DragIndicator"
+                           Class="drag-handle"
+                           Color="Color.Default"
+                           Size="Size.Small"
+                           title="Drag to reorder" />
+        </CardHeaderActions>
     </MudCardHeader>
 
-    <div class="d-flex align-center justify-center p-2"
-         style="height:180px;overflow:hidden;background:#f5f5f5;">
+    <div class="product-image-preview">
 
-        @if (Image is not null && !string.IsNullOrWhiteSpace(Image.Url))
+        @if (!string.IsNullOrWhiteSpace(ImageSrc))
         {
-            var relativeUri = Image.Url.TrimStart('/');
-            var httpClient = httpClientFactory.CreateClient("Catalog");
-            var baseUri = httpClient.BaseAddress?.ToString().TrimEnd('/') ?? "";
-            var fullSrc = $"{baseUri}/{relativeUri}";
-
-            <img src="@fullSrc"
-                 alt="@Image.AltText"
-                 style="max-width:100%;max-height:100%;object-fit:contain;" />
+            <img src="@ImageSrc"
+                 alt="@Image?.AltText"
+                 class="product-image" />
         }
         else
         {
-            <MudText>No image</MudText>
+            <div class="product-image-placeholder">
+                <MudIcon Icon="@Icons.Material.Outlined.Image"
+                         Size="Size.Large" />
+
+                <MudText Typo="Typo.body2">
+                    No image available
+                </MudText>
+            </div>
+        }
+
+        @if (Image?.IsPrimary == true)
+        {
+            <div class="product-image-primary-badge">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                         Size="Size.Small" />
+                Main image
+            </div>
         }
 
     </div>
 
-    <MudCardContent>
-        @if (Image?.IsPrimary == true)
+    <MudCardContent Class="product-image-content">
+
+        @if (Image is not null)
         {
-            <MudChip T="bool" Color="Color.Success">
-                Main
-            </MudChip>
+            <MudText Typo="Typo.caption"
+                     Class="product-image-alt"
+                     title="@Image.AltText">
+                @(string.IsNullOrWhiteSpace(Image.AltText)
+                    ? "No alternative text"
+                    : Image.AltText)
+            </MudText>
         }
+
     </MudCardContent>
 
-    <MudCardActions>
+    <MudCardActions Class="product-image-actions">
+
         <MudButton Color="Color.Primary"
-                   Disabled="@(Image == null || Image.IsPrimary)"
-                   OnClick="@(() => OnSetPrimary.InvokeAsync(Image!.Id))">
+                   Variant="Variant.Outlined"
+                   Size="Size.Small"
+                   FullWidth="true"
+                   Disabled="@(Image is null || Image.IsPrimary || _processing)"
+                   OnClick="SetPrimary">
             Set Main
         </MudButton>
 
-        <MudButton Color="Color.Error"
-                   OnClick="@(() => OnDelete.InvokeAsync(Image!.Id))">
-            Delete
-        </MudButton>
+        <MudIconButton Icon="@Icons.Material.Filled.DeleteOutline"
+                       Color="Color.Error"
+                       Variant="Variant.Outlined"
+                       Size="Size.Small"
+                       Disabled="@(Image is null || _processing)"
+                       title="Delete image"
+                       OnClick="DeleteImage" />
+
     </MudCardActions>
 
 </MudCard>
 
 @code {
-
     [Parameter]
     public Guid ProductId { get; set; }
 
@@ -67,6 +100,60 @@
 
     [Parameter]
     public EventCallback<Guid> OnSetPrimary { get; set; }
-  
 
+    private bool _processing;
+
+    private string? ImageSrc
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(Image?.Url))
+                return null;
+
+            var relativeUri = Image.Url.TrimStart('/');
+
+            var httpClient = HttpClientFactory.CreateClient("Catalog");
+
+            var baseUri = httpClient.BaseAddress?.ToString().TrimEnd('/');
+
+            if (string.IsNullOrWhiteSpace(baseUri))
+                return null;
+
+            return $"{baseUri}/{relativeUri}";
+        }
+    }
+
+    private async Task SetPrimary()
+    {
+        if (Image is null || Image.IsPrimary || _processing)
+            return;
+
+        _processing = true;
+
+        try
+        {
+            await OnSetPrimary.InvokeAsync(Image.Id);
+        }
+        finally
+        {
+            _processing = false;
+        }
+    }
+
+    private async Task DeleteImage()
+    {
+        if (Image is null || _processing)
+            return;
+
+        _processing = true;
+
+        try
+        {
+            await OnDelete.InvokeAsync(Image.Id);
+        }
+        finally
+        {
+            _processing = false;
+        }
+    }
 }

@@ -1,63 +1,158 @@
 ﻿@using Ecommerce.Admin.ApiClients.Carts.Models
-<EditForm Model="Model" OnInvalidSubmit="HandleSubmit">
+
+<EditForm Model="Model" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
 
-    <MudPaper Class="form-card">
+    <MudPaper Elevation="0" Class="cart-item-form-card">
 
-        <MudTextField T="Guid"
-                      Label="Customer Id"
-                      @bind-Value="Model.CustomerId" />
+        <div class="cart-item-form-header">
+            <MudText Typo="Typo.subtitle1" Class="cart-item-form-title">
+                Product information
+            </MudText>
 
-        <MudTextField T="Guid"
-                      Label="Product Id"
-                      @bind-Value="Model.ProductId" />
+            <MudText Typo="Typo.body2" Class="cart-item-form-subtitle">
+                Configure the product details and cart quantity
+            </MudText>
+        </div>
 
-        <MudTextField T="string"
-                      Label="Product Name"
-                      @bind-Value="Model.Name" />
-        <MudTextField T="string"
-                      Label="SKU"
-                      @bind-Value="Model.Sku" />
+        <div class="cart-item-form-content">
 
-        <MudNumericField T="decimal"
-                         Label="Price"
-                         @bind-Value="Model.Price" />
+            <MudText Typo="Typo.subtitle2" Class="cart-item-section-title">
+                Customer and product
+            </MudText>
 
-        <MudTextField T="string"
-                      Label="Currency"
-                      @bind-Value="Model.Currency" />
+            <MudGrid Spacing="3">
 
-        <MudNumericField T="int"
-                         Label="Quantity"
-                         @bind-Value="Model.Quantity" />
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="Guid"
+                                  Label="Customer ID"
+                                  @bind-Value="Model.CustomerId"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  ReadOnly="true"
+                                  FullWidth="true" />
+                </MudItem>
 
-        <MudStack Row="true"
-                  Justify="Justify.FlexEnd"
-                  Class="form-actions">
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="Guid"
+                                  Label="Product ID"
+                                  @bind-Value="Model.ProductId"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  ReadOnly="true"
+                                  FullWidth="true" />
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudTextField T="string"
+                                  Label="Product Name"
+                                  @bind-Value="Model.Name"
+                                  For="@(() => Model.Name)"
+                                  Placeholder="Enter product name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Required="true"
+                                  RequiredError="Product name is required."
+                                  FullWidth="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="string"
+                                  Label="SKU"
+                                  @bind-Value="Model.Sku"
+                                  For="@(() => Model.Sku)"
+                                  Placeholder="Enter SKU"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Required="true"
+                                  RequiredError="SKU is required."
+                                  FullWidth="true" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudDivider Class="cart-item-form-divider" />
+
+            <MudText Typo="Typo.subtitle2" Class="cart-item-section-title">
+                Pricing and quantity
+            </MudText>
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField T="decimal"
+                                     Label="Price"
+                                     @bind-Value="Model.Price"
+                                     For="@(() => Model.Price)"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Min="0"
+                                     Format="0.00"
+                                     Immediate="true"
+                                     Required="true"
+                                     RequiredError="Price is required."
+                                     FullWidth="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="string"
+                                  Label="Currency"
+                                  @bind-Value="Model.Currency"
+                                  For="@(() => Model.Currency)"
+                                  Placeholder="USD"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  FullWidth="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    <MudNumericField T="int"
+                                     Label="Quantity"
+                                     @bind-Value="Model.Quantity"
+                                     For="@(() => Model.Quantity)"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Min="1"
+                                     Immediate="true"
+                                     Required="true"
+                                     RequiredError="Quantity is required."
+                                     FullWidth="true" />
+                </MudItem>
+
+            </MudGrid>
+
+        </div>
+
+        <div class="cart-item-form-footer">
+
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       Href="/carts">
+                Cancel
+            </MudButton>
 
             <MudButton ButtonType="ButtonType.Submit"
                        Variant="Variant.Filled"
-                       Color="Color.Primary">
-                Save
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Save"
+                       Class="cart-item-form-save">
+                Save item
             </MudButton>
 
-        </MudStack>
+        </div>
 
     </MudPaper>
-
 </EditForm>
 
+@code {
+    [Parameter, EditorRequired]
+    public CartItemFormModel Model { get; set; } = default!;
 
-@code{
-    [Parameter,EditorRequired]
-    public CartItemFormModel Model { get; set; }
-    [Parameter,EditorRequired]
-
+    [Parameter, EditorRequired]
     public EventCallback<CartItemFormModel> OnSubmit { get; set; }
 
     private async Task HandleSubmit()
     {
         await OnSubmit.InvokeAsync(Model);
     }
-
 }

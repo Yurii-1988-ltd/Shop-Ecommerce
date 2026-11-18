@@ -1,0 +1,218 @@
+﻿
+.carts-card {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    background: var(--admin-surface);
+}
+
+.carts-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 24px;
+}
+
+.carts-card-title {
+    color: var(--admin-text);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.carts-card-subtitle {
+    margin-top: 4px;
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.carts-create-button,
+.carts-refresh-button {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--admin-radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.carts-create-button {
+    background: var(--admin-accent);
+    color: #fff;
+}
+
+    .carts-create-button:hover {
+        background: #D97706;
+    }
+
+.carts-refresh-button {
+    border-color: var(--admin-border-strong);
+    color: var(--admin-text-secondary);
+}
+
+    .carts-refresh-button:hover {
+        background: var(--admin-surface-hover);
+        color: var(--admin-text);
+    }
+
+.carts-table {
+    width: 100%;
+}
+
+.carts-customer {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 170px;
+}
+
+.carts-customer-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #F5F5F5;
+    color: var(--admin-text-secondary);
+}
+
+.carts-customer-name {
+    color: var(--admin-text);
+    font-weight: 500;
+}
+
+.carts-customer-id {
+    color: var(--admin-muted);
+    font-size: 11px;
+}
+
+.carts-guest-chip {
+    font-size: 11px;
+}
+
+.carts-item-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 7px;
+    background: var(--admin-bg);
+    color: var(--admin-text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.carts-total {
+    color: var(--admin-text);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.carts-cart-id {
+    color: var(--admin-text-secondary);
+    font-family: monospace;
+    font-size: 12px;
+    cursor: default;
+}
+
+.carts-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.carts-empty,
+.carts-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 220px;
+    padding: 24px;
+    text-align: center;
+}
+
+.carts-empty-icon {
+    color: var(--admin-muted);
+    font-size: 36px;
+}
+
+.carts-empty-title {
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.carts-empty-description,
+.carts-loading {
+    color: var(--admin-muted);
+    font-size: 13px;
+}
+
+.carts-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 14px 24px;
+}
+
+.carts-count {
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+    .carts-count strong {
+        color: var(--admin-text);
+        font-weight: 600;
+    }
+
+::deep .carts-table .mud-table-head {
+    background: var(--admin-bg);
+}
+
+    ::deep .carts-table .mud-table-head .mud-table-cell {
+        color: var(--admin-text-secondary);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        border-bottom: 1px solid var(--admin-border);
+    }
+
+::deep .carts-table .mud-table-cell {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+::deep .carts-table .mud-table-row:last-child .mud-table-cell {
+    border-bottom: none;
+}
+
+::deep .carts-table .mud-table-row:hover {
+    background: var(--admin-surface-hover);
+}
+
+@media (max-width: 600px) {
+    .carts-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+        .carts-card-header .carts-refresh-button {
+            align-self: flex-end;
+        }
+
+    .carts-card-footer {
+        padding: 14px 18px;
+    }
+
+    ::deep .carts-table .mud-table-cell {
+        padding: 10px;
+    }
+}

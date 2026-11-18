@@ -4,70 +4,92 @@
 <EditForm Model="@Model" OnValidSubmit="Submit">
     <DataAnnotationsValidator />
 
-    <MudStack Spacing="3" Class="brand-form">
+    <MudPaper Class="brand-form-card" Elevation="0">
 
-        <div class="brand-form-field">
-            <MudText Typo="Typo.body2" Class="brand-form-label">
-                Brand name
-            </MudText>
+        <MudStack Spacing="3" Class="brand-form">
 
-            <MudTextField T="string"
-                          @bind-Value="Model.Name"
-                          Placeholder="Enter brand name"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          FullWidth="true"
-                          Required="true"
-                          RequiredError="Brand name is required"
-                          For="@(() => Model.Name)" />
-
-            <ValidationMessage For="@(() => Model.Name)" />
-        </div>
-
-        <div class="brand-form-field">
-            <MudText Typo="Typo.body2" Class="brand-form-label">
-                Description
-                <MudText Typo="Typo.caption"
-                         Class="optional-label">
-                    Optional
+            <MudStack Spacing="1">
+                <MudText Typo="Typo.h6" Class="brand-form-title">
+                    Brand information
                 </MudText>
-            </MudText>
 
-            <MudTextField T="string"
-                          @bind-Value="Model.Description"
-                          Placeholder="Enter brand description..."
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          FullWidth="true"
-                          Lines="3"
-                          autoGrow="false" />
+                <MudText Typo="Typo.body2" Class="brand-form-subtitle">
+                    Add the brand name and provide an optional description.
+                </MudText>
+            </MudStack>
 
-            <MudText Typo="Typo.caption" Class="field-hint">
-                Provide a short description of this brand.
-            </MudText>
-        </div>
+            <MudDivider Class="brand-form-divider" />
 
-        <MudDivider Class="brand-form-divider" />
+            <div class="brand-form-field">
+                <MudText Typo="Typo.body2" Class="brand-form-label">
+                    Brand name
+                    <span class="required-mark">*</span>
+                </MudText>
 
-        <MudStack Row="true"
-                  Justify="Justify.FlexEnd"
-                  AlignItems="AlignItems.Center">
+                <MudTextField T="string"
+                              @bind-Value="Model.Name"
+                              Placeholder="Enter brand name"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              FullWidth="true"
+                              Required="true"
+                              RequiredError="Brand name is required"
+                              For="@(() => Model.Name)" />
 
-            <MudButton ButtonType="ButtonType.Submit"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Outlined.Save"
-                       Class="brand-save-button">
-                Save Brand
-            </MudButton>
+                <ValidationMessage For="@(() => Model.Name)" />
+            </div>
+
+            <div class="brand-form-field">
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="1">
+                    <MudText Typo="Typo.body2" Class="brand-form-label">
+                        Description
+                    </MudText>
+
+                    <MudText Typo="Typo.caption" Class="optional-label">
+                        Optional
+                    </MudText>
+                </MudStack>
+
+                <MudTextField T="string"
+                              @bind-Value="Model.Description"
+                              Placeholder="Enter brand description..."
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              FullWidth="true"
+                              Lines="3"
+                              autoGrow="false" />
+
+                <MudText Typo="Typo.caption" Class="field-hint">
+                    Provide a short description of this brand.
+                </MudText>
+            </div>
+
+            <MudDivider Class="brand-form-divider" />
+
+            <MudStack Row="true"
+                      Justify="Justify.FlexEnd"
+                      AlignItems="AlignItems.Center"
+                      Class="brand-form-actions">
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Outlined.Save"
+                           Class="brand-save-button">
+                    Save brand
+                </MudButton>
+
+            </MudStack>
 
         </MudStack>
 
-    </MudStack>
+    </MudPaper>
 </EditForm>
 
 @code {
-    [Parameter]
+    [Parameter, EditorRequired]
     public BrandFormModel Model { get; set; } = default!;
 
     [Parameter]

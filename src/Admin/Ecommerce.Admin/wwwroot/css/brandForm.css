@@ -1,5 +1,33 @@
-﻿.brand-form {
+﻿
+.brand-form-card {
     width: 100%;
+    max-width: 720px;
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: var(--admin-shadow-sm);
+}
+
+.brand-form {
+    padding: 24px;
+}
+
+.brand-form-title {
+    color: var(--admin-text);
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -.2px;
+}
+
+.brand-form-subtitle {
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.brand-form-divider {
+    border-color: var(--admin-border);
 }
 
 .brand-form-field {
@@ -9,32 +37,19 @@
 }
 
 .brand-form-label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
     color: var(--admin-text);
+    font-size: 12px;
     font-weight: 600;
+}
+
+.required-mark {
+    margin-left: 2px;
+    color: var(--admin-danger);
 }
 
 .optional-label {
     color: var(--admin-muted);
-    font-weight: 400;
-}
-
-.brand-form ::deep .mud-input-outlined {
-    border-radius: var(--admin-radius-md);
-}
-
-.brand-form ::deep .mud-input-outlined-border {
-    border-color: var(--admin-border-strong);
-}
-
-.brand-form ::deep .mud-input-control:hover .mud-input-outlined-border {
-    border-color: var(--admin-text-secondary);
-}
-
-.brand-form ::deep .mud-input-control {
-    margin-top: 0;
+    font-size: 11px;
 }
 
 .field-hint {
@@ -42,29 +57,51 @@
     font-size: 11px;
 }
 
-.brand-form-divider {
-    margin-top: 8px;
-    margin-bottom: 4px;
-    border-color: var(--admin-border);
+.brand-form-field ::deep .mud-input-control {
+    margin-top: 0;
+}
+
+.brand-form-field ::deep .mud-input-outlined {
+    border-radius: var(--admin-radius-md);
+}
+
+.brand-form-field ::deep .mud-input {
+    font-size: 13px;
+}
+
+.brand-form-field ::deep .mud-input-label {
+    font-size: 13px;
+}
+
+.brand-form-field ::deep .validation-message {
+    color: var(--admin-danger);
+    font-size: 11px;
+}
+
+.brand-form-actions {
+    padding-top: 2px;
 }
 
 .brand-save-button {
-    min-width: 130px;
-    height: 40px;
+    min-height: 38px;
+    padding: 0 18px;
     border-radius: var(--admin-radius-md);
-    background: var(--admin-accent);
-    color: white;
+    font-size: 12px;
     font-weight: 600;
     text-transform: none;
     box-shadow: none;
 }
 
-    .brand-save-button:hover {
-        background: #333333;
-        box-shadow: none;
+@media (max-width: 600px) {
+    .brand-form {
+        padding: 18px;
     }
 
-.brand-form ::deep .validation-message {
-    color: var(--admin-danger);
-    font-size: 12px;
+    .brand-form-actions {
+        width: 100%;
+    }
+
+    .brand-save-button {
+        width: 100%;
+    }
 }

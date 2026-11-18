@@ -1,0 +1,341 @@
+﻿@page "/carts/{CartId:guid}"
+
+<PageTitle>Shopping Cart</PageTitle>
+
+<PageHeader Title="Shopping Cart"
+            Subtitle="Manage customer cart">
+
+    <Actions>
+        <MudButton Href="/carts"
+                   Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Filled.ArrowBack">
+            Back
+        </MudButton>
+
+        @if (_cart is not null && _cart.Items.Any())
+        {
+            <MudButton Color="Color.Error"
+                       Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.DeleteSweep"
+                       OnClick="ClearCart"
+                       Disabled="_processing">
+                Clear Cart
+            </MudButton>
+        }
+    </Actions>
+</PageHeader>
+
+@if (_loading)
+{
+    <MudProgressLinear Indeterminate="true"
+                       Color="Color.Primary"
+                       Class="cart-details-progress" />
+}
+else if (_cart is null)
+{
+    <MudAlert Severity="Severity.Error"
+              Variant="Variant.Outlined">
+        @(_error ?? "Cart not found.")
+    </MudAlert>
+}
+else
+{
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <MudAlert Severity="Severity.Error"
+                  Variant="Variant.Outlined"
+                  Class="cart-details-error">
+            @_error
+        </MudAlert>
+    }
+
+    <div class="cart-details-layout">
+
+        <div class="cart-details-main">
+
+            <!-- Cart items -->
+            <MudPaper Elevation="0" Class="cart-details-card">
+
+                <div class="cart-details-card-header">
+                    <div>
+                        <MudText Typo="Typo.h6" Class="cart-details-title">
+                            Cart Items
+                        </MudText>
+
+                        <MudText Typo="Typo.body2" Class="cart-details-subtitle">
+                            Products added to this shopping cart
+                        </MudText>
+                    </div>
+
+                    <MudChip T="string"
+                             Size="Size.Small"
+                             Variant="Variant.Outlined"
+                             Color="Color.Default">
+                        @_cart.Items.Count items
+                    </MudChip>
+                </div>
+
+                @if (_cart.Items.Any())
+                {
+                    <MudTable T="CartItemResponse"
+                              Items="_cart.Items"
+                              Hover="true"
+                              Dense="true"
+                              Class="cart-details-table">
+
+                        <HeaderContent>
+                            <MudTh>Product</MudTh>
+                            <MudTh>Price</MudTh>
+                            <MudTh align="center">Quantity</MudTh>
+                            <MudTh align="right">Total</MudTh>
+                            <MudTh align="right">Actions</MudTh>
+                        </HeaderContent>
+
+                        <RowTemplate>
+                            <MudTd DataLabel="Product">
+                                <div class="cart-product">
+                                    <div class="cart-product-icon">
+                                        <MudIcon Icon="@Icons.Material.Filled.Inventory2"
+                                                 Size="Size.Small" />
+                                    </div>
+
+                                    <div class="cart-product-info">
+                                        <MudText Typo="Typo.body2"
+                                                 Class="cart-product-name">
+                                            @context.Name
+                                        </MudText>
+
+                                        <MudText Typo="Typo.caption"
+                                                 Class="cart-product-id">
+                                            @context.ProductId
+                                        </MudText>
+                                    </div>
+                                </div>
+                            </MudTd>
+
+                            <MudTd DataLabel="Price">
+                                <MudText Typo="Typo.body2">
+                                    @($"{context.Price:N2} {context.Currency}")
+                                </MudText>
+                            </MudTd>
+
+                            <MudTd DataLabel="Quantity" align="center">
+                                <MudChip T="string"
+                                         Size="Size.Small"
+                                         Variant="Variant.Outlined">
+                                    @context.Quantity
+                                </MudChip>
+                            </MudTd>
+
+                            <MudTd DataLabel="Total" align="right">
+                                <MudText Typo="Typo.body2"
+                                         Class="cart-product-total">
+                                    @($"{context.TotalPrice:N2} {context.Currency}")
+                                </MudText>
+                            </MudTd>
+
+                            <MudTd DataLabel="Actions" align="right">
+                                <div class="cart-product-actions">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                   Size="Size.Small"
+                                                   Color="Color.Default"
+                                                   title="Change quantity"
+                                                   Disabled="_processing"
+                                                   OnClick="@(() => ChangeQuantity(context))" />
+
+                                    <MudIconButton Icon="@Icons.Material.Filled.DeleteOutline"
+                                                   Size="Size.Small"
+                                                   Color="Color.Error"
+                                                   title="Remove item"
+                                                   Disabled="_processing"
+                                                   OnClick="@(() => RemoveItem(context.ProductId))" />
+                                </div>
+                            </MudTd>
+                        </RowTemplate>
+
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2"
+                                     Class="cart-details-empty">
+                                No items in this cart.
+                            </MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+                }
+                else
+                {
+                    <div class="cart-details-empty-state">
+                        <MudIcon Icon="@Icons.Material.Outlined.ShoppingCart"
+                                 Size="Size.Large" />
+
+                        <MudText Typo="Typo.subtitle1">
+                            Your cart is empty
+                        </MudText>
+
+                        <MudText Typo="Typo.body2">
+                            Add products to see them here.
+                        </MudText>
+                    </div>
+                }
+
+            </MudPaper>
+
+            @if (_cart.Items.Any())
+            {
+                <!-- Coupon -->
+                <MudPaper Elevation="0" Class="cart-details-card cart-coupon-card">
+
+                    <div class="cart-details-card-header">
+                        <div>
+                            <MudText Typo="Typo.h6" Class="cart-details-title">
+                                Discount Coupon
+                            </MudText>
+
+                            <MudText Typo="Typo.body2" Class="cart-details-subtitle">
+                                Apply a coupon to this cart
+                            </MudText>
+                        </div>
+
+                        <MudIcon Icon="@Icons.Material.Outlined.LocalOffer"
+                                 Color="Color.Default"
+                                 Size="Size.Medium" />
+                    </div>
+
+                    @if (string.IsNullOrWhiteSpace(_cart.CouponCode))
+                    {
+                        <div class="cart-coupon-form">
+
+                            <MudTextField T="string"
+                                          @bind-Value="_couponCode"
+                                          Label="Coupon code"
+                                          Placeholder="Enter coupon code"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Immediate="true"
+                                          Disabled="_couponLoading"
+                                          Class="cart-coupon-input" />
+
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Check"
+                                       OnClick="ApplyCoupon"
+                                       Disabled="_couponLoading || string.IsNullOrWhiteSpace(_couponCode)"
+                                       Class="cart-coupon-button">
+
+                                @if (_couponLoading)
+                                {
+                                    <MudProgressCircular Size="Size.Small"
+                                                         Indeterminate="true" />
+                                }
+                                else
+                                {
+                                    <span>Apply</span>
+                                }
+                            </MudButton>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cart-coupon-applied">
+                            <div class="cart-coupon-applied-info">
+                                <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                                         Color="Color.Success" />
+
+                                <div>
+                                    <MudText Typo="Typo.caption">
+                                        Applied coupon
+                                    </MudText>
+
+                                    <MudText Typo="Typo.body2"
+                                             Class="cart-coupon-code">
+                                        @_cart.CouponCode
+                                    </MudText>
+                                </div>
+                            </div>
+
+                            <MudButton Variant="Variant.Outlined"
+                                       Color="Color.Error"
+                                       Size="Size.Small"
+                                       OnClick="RemoveCoupon"
+                                       Disabled="_couponLoading">
+                                Remove
+                            </MudButton>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(_couponError))
+                    {
+                        <MudAlert Severity="Severity.Error"
+                                  Dense="true"
+                                  Variant="Variant.Text"
+                                  Class="cart-coupon-error">
+                            @_couponError
+                        </MudAlert>
+                    }
+
+                </MudPaper>
+            }
+
+        </div>
+
+        <!-- Order summary -->
+        @if (_cart.Items.Any())
+        {
+            <aside class="cart-details-sidebar">
+
+                <MudPaper Elevation="0" Class="cart-details-card cart-summary-card">
+
+                    <MudText Typo="Typo.h6" Class="cart-details-title">
+                        Order Summary
+                    </MudText>
+
+                    <div class="cart-summary-line">
+                        <MudText Typo="Typo.body2">
+                            Subtotal
+                        </MudText>
+
+                        <MudText Typo="Typo.body2">
+                            @_cart.SubTotal.ToString("N2") @_cart.Currency
+                        </MudText>
+                    </div>
+
+                    @if (_cart.Discount > 0)
+                    {
+                        <div class="cart-summary-line">
+                            <MudText Typo="Typo.body2">
+                                Discount
+                            </MudText>
+
+                            <MudText Typo="Typo.body2"
+                                     Class="cart-summary-discount">
+                                -@_cart.Discount.ToString("N2") @_cart.Currency
+                            </MudText>
+                        </div>
+                    }
+
+                    <MudDivider Class="cart-summary-divider" />
+
+                    <div class="cart-summary-total">
+                        <MudText Typo="Typo.subtitle1">
+                            Total
+                        </MudText>
+
+                        <MudText Typo="Typo.h6"
+                                 Class="cart-summary-total-value">
+                            @_cart.TotalAmount.ToString("N2") @_cart.Currency
+                        </MudText>
+                    </div>
+
+                    <MudText Typo="Typo.caption"
+                             Class="cart-summary-caption">
+                        Total amount after discounts
+                    </MudText>
+
+                </MudPaper>
+
+            </aside>
+        }
+
+    </div>
+}

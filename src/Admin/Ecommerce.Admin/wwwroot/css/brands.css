@@ -1,0 +1,121 @@
+﻿
+.brands-add-button {
+    min-height: 38px;
+    padding: 0 16px;
+    border-radius: var(--admin-radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: none;
+}
+
+.brands-card {
+    overflow: hidden;
+    width: 100%;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    box-shadow: var(--admin-shadow-sm);
+}
+
+.brands-table {
+    background: transparent;
+}
+
+    .brands-table ::deep .mud-table-container {
+        overflow-x: auto;
+    }
+
+    .brands-table ::deep table {
+        border-collapse: collapse;
+    }
+
+    .brands-table ::deep .mud-table-head {
+        background: #FAFAFA;
+    }
+
+        .brands-table ::deep .mud-table-head .mud-table-cell {
+            height: 44px;
+            padding: 0 20px;
+            color: var(--admin-text-secondary);
+            border-bottom: 1px solid var(--admin-border);
+            font-size: 11px;
+            font-weight: 650;
+            letter-spacing: .45px;
+            text-transform: uppercase;
+        }
+
+    .brands-table ::deep .mud-table-body .mud-table-cell {
+        height: 68px;
+        padding: 10px 20px;
+        color: var(--admin-text);
+        border-bottom: 1px solid var(--admin-border);
+        font-size: 13px;
+    }
+
+    .brands-table ::deep .mud-table-body .mud-table-row:last-child .mud-table-cell {
+        border-bottom: none;
+    }
+
+    .brands-table ::deep .mud-table-row:hover {
+        background: var(--admin-surface-hover);
+    }
+
+.brands-name-cell {
+    min-width: 180px;
+}
+
+.brands-avatar {
+    width: 36px;
+    height: 36px;
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.brands-name {
+    color: var(--admin-text);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+    .brands-name:hover {
+        color: var(--admin-accent);
+    }
+
+.brands-id {
+    max-width: 230px;
+    overflow: hidden;
+    color: var(--admin-muted);
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.brands-divider {
+    border-color: var(--admin-border);
+}
+
+.brands-footer {
+    min-height: 46px;
+    padding: 0 20px;
+}
+
+.brands-count {
+    color: var(--admin-text-secondary);
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .brands-table ::deep .mud-table-head .mud-table-cell,
+    .brands-table ::deep .mud-table-body .mud-table-cell {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .brands-id {
+        max-width: 150px;
+    }
+}

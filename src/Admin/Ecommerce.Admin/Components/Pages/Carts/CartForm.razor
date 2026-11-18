@@ -3,32 +3,57 @@
 <EditForm Model="Model" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
 
-    <MudPaper Class="form-card">
+    <MudPaper Elevation="0" Class="cart-form-card">
+        <div class="cart-form-header">
+            <div>
+                <MudText Typo="Typo.subtitle1" Class="cart-form-title">
+                    Customer information
+                </MudText>
 
-       <MudTextField T="string"
-              Label="Customer Id"
-              @bind-Value="Model.CustomerId"
-              Variant="Variant.Outlined"
-              Required="true" />
+                <MudText Typo="Typo.body2" Class="cart-form-subtitle">
+                    Enter the customer associated with this shopping cart.
+                </MudText>
+            </div>
 
-        <MudStack Row="true"
-                  Justify="Justify.FlexEnd"
-                  Class="form-actions">
+            <MudIcon Icon="@Icons.Material.Outlined.ShoppingCart"
+                     Class="cart-form-icon" />
+        </div>
 
+        <MudDivider />
+
+        <div class="cart-form-content">
+            <MudTextField T="string"
+                          Label="Customer ID"
+                          @bind-Value="Model.CustomerId"
+                          For="@(() => Model.CustomerId)"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          Immediate="true"
+                          Placeholder="Enter customer ID"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Outlined.Person"
+                          Class="cart-form-field" />
+
+            <MudText Typo="Typo.caption" Class="cart-form-hint">
+                Specify the ID of the customer who owns this cart.
+            </MudText>
+        </div>
+
+        <MudDivider />
+
+        <div class="cart-form-footer">
             <MudButton ButtonType="ButtonType.Submit"
                        Variant="Variant.Filled"
                        Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.Save">
-                Save
+                       StartIcon="@Icons.Material.Outlined.Save"
+                       Class="cart-form-save-button">
+                Save cart
             </MudButton>
-
-        </MudStack>
-
+        </div>
     </MudPaper>
 </EditForm>
 
-@code
-{
+@code {
     [Parameter, EditorRequired]
     public CartFormModel Model { get; set; } = default!;
 

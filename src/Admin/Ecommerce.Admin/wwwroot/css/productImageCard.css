@@ -1,0 +1,107 @@
+﻿
+.product-image-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 320px;
+    background: var(--admin-surface, #fff);
+    border: 1px solid var(--admin-border, #eaeaea);
+    border-radius: var(--admin-radius-lg, 14px);
+    overflow: hidden;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+    .product-image-card:hover {
+        border-color: var(--admin-border-strong, #d4d4d4);
+        box-shadow: var(--admin-shadow-sm, 0 2px 8px rgba(0,0,0,.04));
+    }
+
+.product-image-header {
+    min-height: 48px;
+    padding: 8px 12px;
+}
+
+.product-image-label {
+    color: var(--admin-text-secondary, #737373);
+    font-weight: 600;
+}
+
+::deep .drag-handle {
+    cursor: grab;
+    color: var(--admin-muted, #a3a3a3);
+}
+
+    ::deep .drag-handle:active {
+        cursor: grabbing;
+    }
+
+.product-image-preview {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    min-height: 180px;
+    margin: 0 12px;
+    padding: 12px;
+    overflow: hidden;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.product-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.product-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--admin-muted, #a3a3a3);
+}
+
+.product-image-primary-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    color: #166534;
+    background: #dcfce7;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.product-image-content {
+    flex: 1;
+    min-height: 0;
+    padding: 10px 14px;
+}
+
+.product-image-alt {
+    display: block;
+    overflow: hidden;
+    color: var(--admin-text-secondary, #737373);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-image-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 12px;
+    margin-top: auto;
+}
+
+    .product-image-actions .mud-button-root {
+        min-height: 34px;
+        font-weight: 600;
+    }

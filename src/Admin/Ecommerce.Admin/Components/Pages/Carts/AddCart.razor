@@ -1,0 +1,94 @@
+﻿@page "/carts/create"
+
+@using Ecommerce.Admin.ApiClients.Carts
+@using Ecommerce.Admin.ApiClients.Carts.Contracts
+@using Ecommerce.Admin.ApiClients.Carts.Models
+
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Create Cart</PageTitle>
+
+<PageHeader Title="Create Cart"
+            Subtitle="Create a new shopping cart for a customer">
+    <Actions>
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Outlined.ArrowBack"
+                   OnClick="GoBack"
+                   Disabled="_saving"
+                   Class="create-cart-back-button">
+            Back
+        </MudButton>
+    </Actions>
+</PageHeader>
+
+<div class="create-cart-container">
+    <CartForm Model="Model"
+              OnSubmit="CreateCart" />
+
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <MudAlert Severity="Severity.Error"
+                  Variant="Variant.Outlined"
+                  Class="create-cart-error">
+            @_error
+        </MudAlert>
+    }
+</div>
+
+@code {
+    [Inject]
+    private ICartApiClient ApiClient { get; set; } = default!;
+
+    private CartFormModel Model { get; set; } = new();
+
+    private bool _saving;
+    private string? _error;
+
+    private async Task CreateCart(CartFormModel model)
+    {
+        if (_saving)
+            return;
+
+        _saving = true;
+        _error = null;
+
+        try
+        {
+            if (!Guid.TryParse(model.CustomerId, out var customerId) ||
+                customerId == Guid.Empty)
+            {
+                _error = "Please enter a valid customer ID.";
+                return;
+            }
+
+            var request = new CreateCartRequest(customerId);
+
+            await ApiClient.CreateAsync(request);
+
+            Snackbar.Add(
+                "Shopping cart created successfully.",
+                Severity.Success);
+
+            Navigation.NavigateTo("/carts");
+        }
+        catch (HttpRequestException)
+        {
+            _error = "Failed to create shopping cart. Please try again.";
+        }
+        catch (Exception)
+        {
+            _error = "An unexpected error occurred while creating the cart.";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/carts");
+    }
+}

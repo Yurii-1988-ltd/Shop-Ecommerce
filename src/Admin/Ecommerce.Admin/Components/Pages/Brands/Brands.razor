@@ -1,0 +1,217 @@
+﻿@page "/brands"
+
+@using MudBlazor
+@using Ecommerce.Admin.ApiClients.Brands.Contracts
+
+@inject IBrandApiClient Api
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageHeader Title="Brands"
+            Subtitle="Manage your brand catalog">
+
+    <Actions>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Href="/brands/create"
+                   Class="brands-add-button">
+            Add brand
+        </MudButton>
+    </Actions>
+
+</PageHeader>
+
+<SearchToolbar Placeholder="Search brands..."
+               OnRefresh="LoadBrands" />
+
+<MudPaper Class="brands-card" Elevation="0">
+
+    <MudTable T="BrandListItemResponse"
+              Items="_filteredBrands"
+              Hover="true"
+              Dense="true"
+              Striped="false"
+              Loading="_loading"
+              Class="brands-table">
+
+        <HeaderContent>
+            <MudTh>Brand</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh align="right">Actions</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Brand">
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="2"
+                          Class="brands-name-cell">
+
+                    <MudAvatar Size="Size.Medium"
+                               Variant="Variant.Filled"
+                               Class="brands-avatar">
+                        @GetInitial(context.Name)
+                    </MudAvatar>
+
+                    <MudStack Spacing="0">
+                        <MudLink Href="@($"/brands/{context.Id}")"
+                                 Underline="Underline.None"
+                                 Class="brands-name">
+                            @context.Name
+                        </MudLink>
+
+                        <MudText Typo="Typo.caption"
+                                 Class="brands-id">
+                            @context.Id
+                        </MudText>
+                    </MudStack>
+
+                </MudStack>
+            </MudTd>
+
+            <MudTd DataLabel="Status">
+                <StatusChip IsActive="@context.IsActive" />
+            </MudTd>
+
+            <MudTd DataLabel="Actions" align="right">
+                <EntityActions OnDetails="@(() => Details(context.Id))"
+                               OnEdit="@(() => Edit(context.Id))"
+                               OnDelete="@(() => Delete(context))" />
+            </MudTd>
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <EmptyState Title="No brands found"
+                        Description="Add your first brand or change your search criteria."
+                        ActionText="Add brand"
+                        ActionHref="/brands/create" />
+        </NoRecordsContent>
+
+    </MudTable>
+
+    @if (!_loading && _brands.Count > 0)
+    {
+        <MudDivider Class="brands-divider" />
+
+        <MudStack Row="true"
+                  Justify="Justify.SpaceBetween"
+                  AlignItems="AlignItems.Center"
+                  Class="brands-footer">
+
+            <MudText Typo="Typo.caption" Class="brands-count">
+                Showing @_filteredBrands.Count() of @_brands.Count brands
+            </MudText>
+
+        </MudStack>
+    }
+
+</MudPaper>
+
+@code {
+    private readonly List<BrandListItemResponse> _brands = [];
+
+    private bool _loading;
+    private string _searchText = string.Empty;
+
+    private IEnumerable<BrandListItemResponse> _filteredBrands =>
+        string.IsNullOrWhiteSpace(_searchText)
+            ? _brands
+            : _brands.Where(x =>
+                x.Name.Contains(
+                    _searchText,
+                    StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBrands();
+    }
+
+    private async Task LoadBrands()
+    {
+        try
+        {
+            _loading = true;
+
+            var result = await Api.GetAllAsync(1, 20);
+
+            _brands.Clear();
+
+            if (result?.Items is not null)
+            {
+                _brands.AddRange(result.Items);
+            }
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(
+                "Unable to load brands. Please try again.",
+                Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private static string GetInitial(string? name)
+    {
+        return string.IsNullOrWhiteSpace(name)
+            ? "?"
+            : name.Trim()[0].ToString().ToUpperInvariant();
+    }
+
+    private void Details(Guid id)
+    {
+        Navigation.NavigateTo($"/brands/{id}");
+    }
+
+    private void Edit(Guid id)
+    {
+        Navigation.NavigateTo($"/brands/edit/{id}");
+    }
+
+    private async Task Delete(BrandListItemResponse brand)
+    {
+        var parameters = new DialogParameters
+        {
+            {
+                nameof(ConfirmationDialog.Title),
+                "Delete brand"
+            },
+            {
+                nameof(ConfirmationDialog.Message),
+                $"Are you sure you want to delete '{brand.Name}'?\n\nThis action cannot be undone."
+            }
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmationDialog>(
+            "Delete brand",
+            parameters);
+
+        var dialogResult = await dialog.Result;
+
+        if (dialogResult is null || dialogResult.Canceled)
+        {
+            return;
+        }
+
+        try
+        {
+            await Api.DeleteAsync(brand.Id);
+
+            Snackbar.Add(
+                $"Brand '{brand.Name}' deleted successfully.",
+                Severity.Success);
+
+            await LoadBrands();
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(
+                "Unable to delete brand. Please try again.",
+                Severity.Error);
+        }
+    }
+}
